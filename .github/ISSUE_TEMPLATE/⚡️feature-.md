@@ -7,11 +7,12 @@ assignees: ''
 
 ---
 
+## :heavy_check_mark: 요구사항
+**endpoint** : `GET /example`
+해당 기능에 대한 요구사항을 적어주세요.
+
 ## :heavy_check_mark: 체크 리스트
-- [ ] 예시
+- [ ] 작업해야 할 내용을 세분화해서 작성해주세요.
 
-## :heavy_check_mark: 작업 내용 설명
-작업 내용에 대해 자세히 설명해주세요.
-
-## :heavy_check_mark: 참고사항
-로직 변경 등 리뷰어나 다른 팀원들이 참고해야 할 사항을 적어주세요.
+## :memo: 기타 사항
+(Optional) 메모할 내용이 있으면 작성해주세요.
