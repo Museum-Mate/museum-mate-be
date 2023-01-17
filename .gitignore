@@ -1,7 +1,6 @@
 HELP.md
 .gradle
 build/
-!gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
 
@@ -389,5 +388,7 @@ $RECYCLE.BIN/
 
 # Config
 #src/main/resources/application.yml
+
+!gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,intellij+all,visualstudiocode,java,python,react,redis
