@@ -380,6 +380,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # Config
-src/main/resources/application.yml
+#src/main/resources/application.yml
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,intellij+all,visualstudiocode,java,python,react,redis
