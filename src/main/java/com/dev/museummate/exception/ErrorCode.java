@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
     DUPLICATE_USERNAME(HttpStatus.CONFLICT, "User name conflict"),
-    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "email conflict");
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "email conflict"),
+    EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND,"email not found"),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "invalid password");
 
     private HttpStatus httpStatus;
     private String message;
