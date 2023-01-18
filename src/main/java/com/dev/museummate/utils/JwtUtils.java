@@ -20,7 +20,10 @@ public class JwtUtils {
     private static final long refreshExpireTimeMs = 1000 * 60 * 30;
 
     private static Claims extractClaims(String token, String secretKey){
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public static String createAccessToken(String email, String secretKey){
