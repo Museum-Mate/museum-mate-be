@@ -1,10 +1,9 @@
 package com.dev.musiummate.domain.dto.user;
 
-import com.dev.musiummate.domain.UserEntity;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import com.dev.musiummate.domain.entity.UserEntity;
 
 @Getter
 @NoArgsConstructor
