@@ -1,9 +1,7 @@
-package com.dev.musiummate.domain;
+package com.dev.musiummate.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.dev.musiummate.domain.UserRole;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,9 +21,11 @@ public class UserEntity {
     private String birth;
     private String phoneNumber;
     private String address;
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
 
     @Builder
-    public UserEntity(Long id, String email, String password, String userName, String birth, String phoneNumber, String address) {
+    public UserEntity(Long id, String email, String password, String userName, String birth, String phoneNumber, String address, UserRole role) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -33,5 +33,6 @@ public class UserEntity {
         this.birth = birth;
         this.phoneNumber = phoneNumber;
         this.address = address;
+        this.role = role;
     }
 }
