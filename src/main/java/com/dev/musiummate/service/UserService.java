@@ -1,10 +1,9 @@
 package com.dev.musiummate.service;
 
-import com.dev.musiummate.configuration.EncrypterConfig;
-import com.dev.musiummate.domain.UserEntity;
 import com.dev.musiummate.domain.dto.user.UserDto;
 import com.dev.musiummate.domain.dto.user.UserJoinRequest;
 import com.dev.musiummate.domain.dto.user.UserJoinResponse;
+import com.dev.musiummate.domain.entity.UserEntity;
 import com.dev.musiummate.exception.AppException;
 import com.dev.musiummate.exception.ErrorCode;
 import com.dev.musiummate.repository.UserRepository;
