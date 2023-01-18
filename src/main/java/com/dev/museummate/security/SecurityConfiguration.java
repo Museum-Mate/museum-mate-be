@@ -31,8 +31,8 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/users/join","/users/login").permitAll()
-                .requestMatchers(HttpMethod.POST).authenticated())
+                        .requestMatchers("/users/join","/users/login").permitAll()
+                        .requestMatchers(HttpMethod.POST).authenticated())
 //                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
 //                .and()
 //                .addFilterBefore(new JwtFilter(jwtUtils, secretKey), UsernamePasswordAuthenticationFilter.class)
