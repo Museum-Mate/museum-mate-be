@@ -47,9 +47,9 @@ spring:
             descriptor:
               sql: trace
 
-  ## JWT
-  #  jwt:
-  #    secret:
+# JWT
+jwt:
+  secret: example
 
   ## Redis
 #  redis:
