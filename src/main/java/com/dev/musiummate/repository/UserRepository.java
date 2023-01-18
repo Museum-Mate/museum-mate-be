@@ -1,7 +1,6 @@
 package com.dev.musiummate.repository;
 
-import com.dev.musiummate.domain.UserEntity;
-import org.apache.catalina.User;
+import com.dev.musiummate.domain.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
