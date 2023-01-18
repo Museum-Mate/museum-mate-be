@@ -46,14 +46,16 @@ spring:
           type:
             descriptor:
               sql: trace
-
+  data:
+    redis:
+      host:
+        localhost
+      port:
+        6379
 # JWT
 jwt:
   secret: example
 
-  ## Redis
-#  redis:
-#    host:
-#    port:
+
 
 #########################################################
