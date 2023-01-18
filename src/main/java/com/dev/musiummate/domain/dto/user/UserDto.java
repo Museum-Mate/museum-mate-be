@@ -15,7 +15,7 @@ public class UserDto {
     private String userName;
     private String birth;
     private String phoneNumber;
-    private String Address;
+    private String address;
 
     @Builder
     public UserDto(Long id, String email, String password, String userName, String birth, String phoneNumber, String address) {
@@ -25,7 +25,7 @@ public class UserDto {
         this.userName = userName;
         this.birth = birth;
         this.phoneNumber = phoneNumber;
-        Address = address;
+        this.address = address;
     }
 
     public static UserDto toDto(UserEntity savedUser) {
