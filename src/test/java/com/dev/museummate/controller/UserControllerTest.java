@@ -2,6 +2,8 @@ package com.dev.museummate.controller;
 
 import com.dev.museummate.domain.dto.user.UserJoinRequest;
 import com.dev.museummate.domain.dto.user.UserJoinResponse;
+import com.dev.museummate.domain.dto.user.UserLoginRequest;
+import com.dev.museummate.domain.dto.user.UserLoginResponse;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.service.UserService;
@@ -109,6 +111,64 @@ class UserControllerTest {
                 .andDo(print())
                 .andExpect(status().isConflict());
     }
+
+    @Test
+    @DisplayName("로그인 - 성공")
+    @WithMockUser
+    void login_success() throws Exception {
+
+        UserLoginRequest userLoginRequest = new UserLoginRequest("chlalswns200@naver.com", "1q2w3e4r!");
+        UserLoginResponse userLoginResponse = new UserLoginResponse("acceetoken1234");
+
+        when(userService.login(userLoginRequest))
+                .thenReturn(any());
+
+        mockMvc.perform(post("/users/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userLoginRequest)))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    @DisplayName("로그인 - 실패 #1 해당 유저 없음")
+    @WithMockUser
+    void login_fail_1() throws Exception {
+
+        UserLoginRequest userLoginRequest = new UserLoginRequest("chlalswns200@aver.com", "1q2w3e4r!");
+
+        when(userService.login(any()))
+                .thenThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+
+        mockMvc.perform(post("/api/v1/users/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userLoginRequest)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("로그인 - 실패 #2 비밀번호 틀림")
+    @WithMockUser
+    void login_fail_2() throws Exception {
+
+        UserLoginRequest userLoginRequest = new UserLoginRequest("chlalswns200@gmail.com", "1q2w3e4r!");
+
+        when(userService.login(any()))
+                .thenThrow(new AppException(ErrorCode.INVALID_PASSWORD,""));
+
+        mockMvc.perform(post("/users/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userLoginRequest)))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+
 
 
 }
