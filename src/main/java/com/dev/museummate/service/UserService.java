@@ -1,9 +1,9 @@
 package com.dev.museummate.service;
 
-import com.dev.museummate.domain.UserEntity;
 import com.dev.museummate.domain.dto.user.UserDto;
 import com.dev.museummate.domain.dto.user.UserJoinRequest;
 import com.dev.museummate.domain.dto.user.UserJoinResponse;
+import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.repository.UserRepository;

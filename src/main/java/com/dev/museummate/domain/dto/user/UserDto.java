@@ -1,9 +1,9 @@
 package com.dev.museummate.domain.dto.user;
 
-import com.dev.museummate.domain.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import com.dev.museummate.domain.entity.UserEntity;
 
 @Getter
 @NoArgsConstructor

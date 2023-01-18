@@ -1,6 +1,7 @@
 package com.dev.museummate.domain.dto.user;
 
-import com.dev.museummate.domain.UserEntity;
+import com.dev.museummate.domain.UserRole;
+import com.dev.museummate.domain.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class UserJoinRequest {
                 .userName(this.userName)
                 .phoneNumber(this.phoneNumber)
                 .password(encodedPassword)
+                .role(UserRole.ROLE_USER)
                 .build();
     }
 }
