@@ -34,6 +34,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/users/join","/users/login").permitAll()
                         .requestMatchers(HttpMethod.GET,"/example/security").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/example/security/admin").hasRole("ADMIN")
                         .anyRequest().permitAll()   //고정
                 )
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
