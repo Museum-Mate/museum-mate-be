@@ -1,13 +1,18 @@
 package com.dev.museummate.utils;
 
+import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+
+import java.util.List;
 
 
 @Component
