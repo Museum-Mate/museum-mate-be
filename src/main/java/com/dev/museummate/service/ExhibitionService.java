@@ -1,10 +1,10 @@
-package com.dev.musiummate.service;
+package com.dev.museummate.service;
 
-import com.dev.musiummate.domain.dto.ExhibitionResponse;
-import com.dev.musiummate.domain.entity.ExhibitionEntity;
-import com.dev.musiummate.exception.AppException;
-import com.dev.musiummate.exception.ErrorCode;
-import com.dev.musiummate.repository.ExhibitionRepository;
+import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
+import com.dev.museummate.domain.entity.ExhibitionEntity;
+import com.dev.museummate.exception.AppException;
+import com.dev.museummate.exception.ErrorCode;
+import com.dev.museummate.repository.ExhibitionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

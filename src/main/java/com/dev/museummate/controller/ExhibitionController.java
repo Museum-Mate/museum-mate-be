@@ -1,8 +1,8 @@
-package com.dev.musiummate.controller;
+package com.dev.museummate.controller;
 
-import com.dev.musiummate.configuration.Response;
-import com.dev.musiummate.domain.dto.ExhibitionResponse;
-import com.dev.musiummate.service.ExhibitionService;
+import com.dev.museummate.configuration.Response;
+import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
+import com.dev.museummate.service.ExhibitionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

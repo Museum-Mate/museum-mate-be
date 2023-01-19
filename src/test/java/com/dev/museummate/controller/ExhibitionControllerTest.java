@@ -1,7 +1,7 @@
-package com.dev.musiummate.controller;
+package com.dev.museummate.controller;
 
-import com.dev.musiummate.domain.dto.ExhibitionResponse;
-import com.dev.musiummate.service.ExhibitionService;
+import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
+import com.dev.museummate.service.ExhibitionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ExhibitionController.class)
@@ -38,7 +37,7 @@ class ExhibitionControllerTest {
     // 아직 데이터가 없어서 나중에 채울 예정
     @BeforeEach
     void setup() {
-        exhibitionResponse1 = new ExhibitionResponse("a", "a", "a", "a", "a", "a", "a");
+        exhibitionResponse1 = new ExhibitionResponse("a", "a", "a", "a", "a", "a", "a",1l);
     }
 
     @Test

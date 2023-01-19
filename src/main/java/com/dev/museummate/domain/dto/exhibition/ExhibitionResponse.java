@@ -1,4 +1,4 @@
-package com.dev.museummate.domain.dto;
+package com.dev.museummate.domain.dto.exhibition;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
