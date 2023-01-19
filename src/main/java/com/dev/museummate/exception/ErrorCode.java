@@ -12,6 +12,7 @@ public enum ErrorCode {
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, "Post Not Found"),
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND,"email not found"),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "invalid password"),
+    USERNAME_NOT_FOUND(HttpStatus.NOT_FOUND, "Username Not Found")
     ;
     private HttpStatus httpStatus;
     private String message;
