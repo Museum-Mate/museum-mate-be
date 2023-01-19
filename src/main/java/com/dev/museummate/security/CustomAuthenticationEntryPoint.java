@@ -21,11 +21,13 @@ import java.io.IOException;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+        ErrorCode errorCode = (ErrorCode) request.getAttribute("errorCode");
 
-        // 인증이 필요하지만 토큰이 입력되지 않았을 경우
+        if(errorCode == null){
+            errorCode = ErrorCode.TOKEN_NOT_FOUND;
+        }
+
         ObjectMapper objectMapper = new ObjectMapper();
-
-        ErrorCode errorCode = ErrorCode.TOKEN_NOT_FOUND;
 
         response.setStatus(errorCode.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
