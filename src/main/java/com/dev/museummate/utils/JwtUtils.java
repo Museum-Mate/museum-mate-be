@@ -11,7 +11,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-
 import java.util.List;
 
 
@@ -58,6 +57,25 @@ public class JwtUtils {
     public static boolean isExpired(String token, String secretKey) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
                 .getBody().getExpiration().before(new Date());
+
+    public static Long getExpiration(String accessToken, String secretKey) {
+        // accessToken 남은 유효시간
+        Date expiration = Jwts.parser().setSigningKey(secretKey)
+                .parseClaimsJws(accessToken).getBody().getExpiration();
+        // 현재 시간
+        Long now = new Date().getTime();
+        return (expiration.getTime() - now);
+    }
+
+    private UserEntity getUser(String token, String secretKey){
+        String email = extractClaims(token, secretKey).get("email").toString();
+        UserEntity userEntity = userService.findUserByEmail(email);
+        return userEntity;
+    }
+    public UsernamePasswordAuthenticationToken getAuthentication(String token, String secretKey) {
+        UserEntity userEntity = getUser(token,secretKey);
+        return new UsernamePasswordAuthenticationToken(userEntity.getEmail(),
+                null, List.of(new SimpleGrantedAuthority(userEntity.getRole().name())));
     }
 
     public static Long getExpiration(String accessToken, String secretKey) {
