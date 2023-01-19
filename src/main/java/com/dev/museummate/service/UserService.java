@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
+    private final RedisDao redisDao;
 
     @Value("${jwt.secret}")
     private String secretKey;
