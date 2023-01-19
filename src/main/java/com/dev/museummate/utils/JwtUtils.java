@@ -26,14 +26,14 @@ public class JwtUtils {
                 .getBody();
     }
 
-    public static String createAccessToken(String email, String secretKey){
+    public static String createAccessToken(String email, String secretKey, long expiredTimeMs){
         Claims claims = Jwts.claims();  //토큰의 내용에 값을 넣기 위해 Claims 객체 생성
         claims.put("email", email);
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + accessExpireTimeMs))
+                .setExpiration(new Date(System.currentTimeMillis() + expiredTimeMs))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }

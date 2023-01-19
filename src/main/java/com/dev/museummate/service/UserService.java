@@ -1,6 +1,5 @@
 package com.dev.museummate.service;
 
-import com.dev.museummate.configuration.redis.RedisDao;
 import com.dev.museummate.domain.dto.user.*;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
@@ -9,26 +8,31 @@ import com.dev.museummate.repository.UserRepository;
 import com.dev.museummate.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
-import org.springframework.util.StringUtils;
-
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
-    private final RedisDao redisDao;
-    private final RedisTemplate redisTemplate;
 
     @Value("${jwt.secret}")
     private String secretKey;
 
+    private long accessExpireTimeMs = 1000 * 60 * 5;
+
+    public UserEntity findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.",email)));
+    }
+
     public UserJoinResponse join(UserJoinRequest userJoinRequest) {
+
+        userRepository.findByUserName(userJoinRequest.getUserName())
+                .ifPresent(user ->{
+                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 유저네임입니다.",userJoinRequest.getUserName()));
+                });
 
         userRepository.findByEmail(userJoinRequest.getAddress())
                 .ifPresent(user -> {
