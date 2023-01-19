@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -134,4 +135,76 @@ public class SecurityFilterTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("MethodNotAllowed 테스트 - 허용되지 않은 Http Method로 접근한 경우: 토큰 있을 때")
+    void MethodNotAllowed() throws Exception {
+        String token = createToken(user,1000 * 60);
+
+        when(userService.findUserByEmail(any())).thenReturn(user);
+
+        mockMvc.perform(post("/example/security")
+                        .header("Authorization","Bearer " + token))
+                .andExpect(status().isMethodNotAllowed())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("MethodNotAllowed 테스트 - 허용되지 않은 Http Method로 접근한 경우: 토큰 없을 때")
+    void MethodNotAllowed2() throws Exception {
+
+        when(userService.findUserByEmail(any())).thenReturn(user);
+
+        mockMvc.perform(post("/example/security"))
+                .andExpect(status().isMethodNotAllowed())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("MethodNotAllowed 테스트 - 허용되지 않은 Http Method로 접근한 경우: 토큰 적절하지 않을 때")
+    void MethodNotAllowed3() throws Exception {
+        String token = "abc";
+
+        when(userService.findUserByEmail(any())).thenReturn(user);
+
+        mockMvc.perform(post("/example/security")
+                        .header("Authorization","Bearer " + token))
+                .andExpect(status().isMethodNotAllowed())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("NotFound 테스트 - 정의되지 않은 url에 접근한 경우: 토큰 있을 때")
+    void NotFound() throws Exception {
+        String token = createToken(user,1000 * 60);
+
+        when(userService.findUserByEmail(any())).thenReturn(user);
+
+        mockMvc.perform(get("/notDefinedUrl")
+                        .header("Authorization","Bearer " + token))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("NotFound 테스트 - 정의되지 않은 url에 접근한 경우: 토큰 없을 때")
+    void NotFound2() throws Exception {
+        when(userService.findUserByEmail(any())).thenReturn(user);
+
+        mockMvc.perform(get("/notDefinedUrl"))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("NotFound 테스트 - 정의되지 않은 url에 접근한 경우: 토큰 적절하지 않을 때")
+    void NotFound3() throws Exception {
+        String token = "abc";
+
+        when(userService.findUserByEmail(any())).thenReturn(user);
+
+        mockMvc.perform(get("/notDefinedUrl")
+                        .header("Authorization","Bearer " + token))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
 }
