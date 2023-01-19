@@ -1,5 +1,6 @@
 package com.dev.museummate.service;
 
+import com.dev.museummate.configuration.redis.RedisDao;
 import com.dev.museummate.domain.dto.user.*;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
@@ -16,18 +17,12 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
+    private final RedisDao redisDao;
 
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private long accessExpireTimeMs = 1000 * 60 * 5;
-
     public UserJoinResponse join(UserJoinRequest userJoinRequest) {
-
-        userRepository.findByUserName(userJoinRequest.getUserName())
-                .ifPresent(user ->{
-                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 유저네임입니다.",userJoinRequest.getUserName()));
-                });
 
         userRepository.findByEmail(userJoinRequest.getAddress())
                 .ifPresent(user -> {
@@ -53,9 +48,12 @@ public class UserService {
             throw new AppException(ErrorCode.INVALID_PASSWORD,String.format("잘못된 비밀번호 입니다."));
         }
 
-        String accessToken = JwtUtils.createAccessToken(userLoginRequest.getEmail(), secretKey, accessExpireTimeMs);
+        String accessToken = JwtUtils.createAccessToken(userLoginRequest.getEmail(), secretKey);
+        String refreshToken = JwtUtils.createRefreshToken(userLoginRequest.getEmail(), secretKey);
 
-        return new UserLoginResponse(accessToken);
+        redisDao.setValues("RT:" + findUser.getEmail(), refreshToken);
+
+        return new UserLoginResponse(accessToken,refreshToken);
 
     }
 }
