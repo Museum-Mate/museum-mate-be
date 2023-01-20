@@ -1,5 +1,6 @@
 package com.dev.museummate.security;
 
+import com.dev.museummate.configuration.redis.RedisDao;
 import com.dev.museummate.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfiguration {
 
     private final JwtUtils jwtUtils;
+    private final RedisDao redisDao;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -42,7 +44,7 @@ public class SecurityConfiguration {
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
-                .addFilterBefore(new JwtFilter(jwtUtils, secretKey), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(jwtUtils, redisDao, secretKey), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class)
                 .build();
     }
