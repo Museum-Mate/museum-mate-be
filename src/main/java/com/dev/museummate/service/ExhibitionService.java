@@ -42,9 +42,9 @@ public class ExhibitionService {
     }
 
     // 해당하는 exhibition을 Bookmark에 추가
-    public BookmarkResponse addToBookmark(long exhibitionId, String userName) {
-        UserEntity user = userRepository.findByUserName(userName)
-                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "존재하지 않는 유저입니다."));
+    public BookmarkResponse addToBookmark(long exhibitionId, String email) {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND, "존재하지 않는 유저입니다."));
         ExhibitionEntity selectedExhibition = exhibitionRepository.findById(exhibitionId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_POST, "존재하지 않는 게시물입니다."));
         Optional<BookmarkEntity> selected = bookmarkRepository.findByExhibitionAndUser(selectedExhibition, user);
