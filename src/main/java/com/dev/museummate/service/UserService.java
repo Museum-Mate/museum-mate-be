@@ -1,5 +1,6 @@
 package com.dev.museummate.service;
 
+import com.dev.museummate.configuration.redis.RedisDao;
 import com.dev.museummate.domain.dto.user.*;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
@@ -27,7 +28,10 @@ public class UserService {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private long accessExpireTimeMs = 1000 * 60 * 5;
+    private static final long accessExpireTimeMs = 1000 * 60 * 5;
+    private static final long refreshExpireTimeMs = 1000 * 60 * 30;
+
+
 
     public UserEntity findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() ->
@@ -65,8 +69,8 @@ public class UserService {
             throw new AppException(ErrorCode.INVALID_PASSWORD,String.format("잘못된 비밀번호 입니다."));
         }
 
-        String accessToken = JwtUtils.createAccessToken(userLoginRequest.getEmail(), secretKey);
-        String refreshToken = JwtUtils.createRefreshToken(userLoginRequest.getEmail(), secretKey);
+        String accessToken = JwtUtils.createAccessToken(userLoginRequest.getEmail(), secretKey, accessExpireTimeMs);
+        String refreshToken = JwtUtils.createRefreshToken(userLoginRequest.getEmail(), secretKey, refreshExpireTimeMs);
 
         redisDao.setValues("RT:" + findUser.getEmail(), refreshToken,60*30,TimeUnit.SECONDS);
 
@@ -93,7 +97,7 @@ public class UserService {
         }
 
         // 4. 새로운 토큰 생성
-        String accessToken = JwtUtils.createAccessToken(findUser.getEmail(), secretKey);
+        String accessToken = JwtUtils.createAccessToken(findUser.getEmail(), secretKey ,accessExpireTimeMs);
 
         // 5. RefreshToken Redis 업데이트
         redisDao.setValues("RT:" + findUser.getEmail(), refreshToken);
