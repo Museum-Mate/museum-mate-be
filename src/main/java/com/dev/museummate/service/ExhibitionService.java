@@ -1,5 +1,6 @@
 package com.dev.museummate.service;
 
+import com.dev.museummate.domain.dto.bookmark.BookmarkResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.domain.entity.BookmarkEntity;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
@@ -41,7 +42,7 @@ public class ExhibitionService {
     }
 
     // 해당하는 exhibition을 Bookmark에 추가
-    public String addToBookmark(long exhibitionId, String userName) {
+    public BookmarkResponse addToBookmark(long exhibitionId, String userName) {
         UserEntity user = userRepository.findByUserName(userName)
                 .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "존재하지 않는 유저입니다."));
         ExhibitionEntity selectedExhibition = exhibitionRepository.findById(exhibitionId)
@@ -51,10 +52,10 @@ public class ExhibitionService {
         if(!selected.isPresent()) {
             BookmarkEntity bookmark = BookmarkEntity.of(selectedExhibition, user);
             bookmarkRepository.save(bookmark);
-            return "북마크에 추가되었습니다!";
+            return new BookmarkResponse("북마크에 추가되었습니다!");
         }else {
             bookmarkRepository.delete(selected.get());
-            return "북마크에서 삭제되었습니다!";
+            return new BookmarkResponse("북마크에서 삭제되었습니다!");
         }
     }
 
