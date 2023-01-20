@@ -74,13 +74,4 @@ public class JwtUtils {
         return new UsernamePasswordAuthenticationToken(userEntity.getEmail(),
                 null, List.of(new SimpleGrantedAuthority(userEntity.getRole().name())));
     }
-
-    public static Long getExpiration(String accessToken, String secretKey) {
-        // accessToken 남은 유효시간
-        Date expiration = Jwts.parser().setSigningKey(secretKey)
-                .parseClaimsJws(accessToken).getBody().getExpiration();
-        // 현재 시간
-        Long now = new Date().getTime();
-        return (expiration.getTime() - now);
-    }
 }
