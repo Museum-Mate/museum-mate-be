@@ -22,6 +22,11 @@ public class UserService {
 
     private long accessExpireTimeMs = 1000 * 60 * 5;
 
+    public UserEntity findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() ->
+                new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.",email)));
+    }
+
     public UserJoinResponse join(UserJoinRequest userJoinRequest) {
 
         userRepository.findByUserName(userJoinRequest.getUserName())
@@ -58,4 +63,6 @@ public class UserService {
         return new UserLoginResponse(accessToken);
 
     }
+
+
 }
