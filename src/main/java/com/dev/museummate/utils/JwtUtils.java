@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.List;
 
+import java.util.List;
+
 
 @Component
 @RequiredArgsConstructor
@@ -37,7 +39,7 @@ public class JwtUtils {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
-
+    
     public static String createRefreshToken(String email, String secretKey,long expireTime) {
         Claims claims = Jwts.claims();  //토큰의 내용에 값을 넣기 위해 Claims 객체 생성
         claims.put("email", email);
