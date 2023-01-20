@@ -6,12 +6,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.web.servlet.MockMvc;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -59,6 +65,24 @@ class ExhibitionControllerTest {
                 .andExpect(jsonPath("$.result.galleryDetail").exists())
                 .andDo(print());
 
+    }
+
+    @Test
+    @DisplayName("전시회 전체 리스트 조회 성공")
+    void exhibitionList_success () throws Exception {
+
+        mockMvc.perform(get("api/v1/exhibitions")
+                        .param("size", "20")
+                        .param("sort", "name, DESC"))
+                .andExpect(status().isOk());
+
+        ArgumentCaptor<Pageable> pageableArgumentCaptor = ArgumentCaptor.forClass(Pageable.class);
+
+        verify(exhibitionService).findAllExhibitions(pageableArgumentCaptor.capture());
+        PageRequest pageRequest = (PageRequest) pageableArgumentCaptor.getAllValues();
+
+        assertEquals(20, pageRequest.getPageSize());
+        assertEquals(Sort.by("name", "DESC"), pageRequest.withSort(Sort.by("name", "DESC")).getSort());
     }
 
 }
