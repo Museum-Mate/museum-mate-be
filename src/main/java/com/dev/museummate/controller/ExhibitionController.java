@@ -20,7 +20,7 @@ public class ExhibitionController {
         return Response.success(exhibitionResponse);
     }
 
-    @PostMapping("/{exhibitionId}/bookmark")
+    @PostMapping("/{exhibitionId}/bookmarks")
     public Response addToBookmark(@PathVariable long exhibitionId, Authentication authentication) {
         String result = exhibitionService.addToBookmark(exhibitionId, authentication.getName());
         return Response.success(result);
