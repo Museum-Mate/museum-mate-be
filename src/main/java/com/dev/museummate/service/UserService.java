@@ -79,9 +79,7 @@ public class UserService {
 
     public UserLoginResponse reissue(UserReissueRequest userReissueRequest, String email) {
 
-        UserEntity findUser = userRepository.findByEmail(email)
-                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND,
-                        String.format("%s는 없는 계정입니다.", email)));
+        UserEntity findUser = findUserByEmail(email);
 
         if (JwtUtils.isExpired(userReissueRequest.getRefreshToken(), secretKey)) {
             throw new AppException(ErrorCode.INVALID_TOKEN,"만료된 토큰입니다.");
