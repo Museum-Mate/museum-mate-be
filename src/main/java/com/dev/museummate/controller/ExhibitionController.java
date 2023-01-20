@@ -1,6 +1,7 @@
 package com.dev.museummate.controller;
 
 import com.dev.museummate.configuration.Response;
+import com.dev.museummate.domain.dto.bookmark.BookmarkResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.service.ExhibitionService;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +23,8 @@ public class ExhibitionController {
 
     @PostMapping("/{exhibitionId}/bookmark")
     public Response addToBookmark(@PathVariable long exhibitionId, Authentication authentication) {
-        String result = exhibitionService.addToBookmark(exhibitionId, authentication.getName());
-        return Response.success(result);
+        BookmarkResponse bookmarkResponse = exhibitionService.addToBookmark(exhibitionId, authentication.getName());
+        return Response.success(bookmarkResponse);
     }
 
 }
