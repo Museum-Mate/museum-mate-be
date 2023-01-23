@@ -6,6 +6,7 @@ import lombok.*;
 
 @Entity
 @Getter
+@Table(name = "exhibition")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExhibitionEntity {
 

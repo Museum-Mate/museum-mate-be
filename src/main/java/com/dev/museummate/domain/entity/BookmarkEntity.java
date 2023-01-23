@@ -5,6 +5,7 @@ import lombok.*;
 
 @Entity
 @Getter
+@Table(name = "bookmark")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BookmarkEntity {
 

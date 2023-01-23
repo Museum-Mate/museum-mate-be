@@ -19,7 +19,7 @@ public class UserEntity extends BaseEntity{
      * userName : 유저 실명
      */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
     private String password;
