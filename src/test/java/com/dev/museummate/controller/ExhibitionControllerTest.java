@@ -5,13 +5,19 @@ import com.dev.museummate.service.ExhibitionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,33 +38,68 @@ class ExhibitionControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    private ExhibitionResponse exhibitionResponse1;
+    @Nested
+    @DisplayName("전시 상세 조회")
+    class GetExhibition {
+        @Test
+        @WithMockUser
+        @DisplayName("전시 상세 조회 성공")
+        void getOne_Success() throws Exception {
+            Long exhibitionId = 1L;
 
-    // 아직 데이터가 없어서 나중에 채울 예정
-    @BeforeEach
-    void setup() {
-        exhibitionResponse1 = new ExhibitionResponse("a", "a", "a", "a", "a", "a", "a",1l);
+            ExhibitionResponse exhibitionResponse =
+                    ExhibitionResponse.builder()
+                            .galleryId(exhibitionId)
+                            .name("test")
+                            .startsAt("2022-12-01")
+                            .endsAt("2022-12-31")
+                            .price("10000")
+                            .ageLimit("10")
+                            .detailInfo("test")
+                            .galleryDetail("test")
+                            .build();
+
+            given(exhibitionService.getOne(exhibitionId)).willReturn(exhibitionResponse);
+
+            mockMvc.perform(get("/api/v1/exhibitions/" + exhibitionId)
+                            .with(csrf()))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+                    .andExpect(jsonPath("$.result.name").exists())
+                    .andExpect(jsonPath("$.result.startsAt").exists())
+                    .andExpect(jsonPath("$.result.endsAt").exists())
+                    .andExpect(jsonPath("$.result.price").exists())
+                    .andExpect(jsonPath("$.result.ageLimit").exists())
+                    .andExpect(jsonPath("$.result.detailInfo").exists())
+                    .andExpect(jsonPath("$.result.galleryDetail").exists())
+                    .andDo(print());
+        }
+
+        @Test
+        @DisplayName("전시 상세 조회 실패 - 존재하지 않는 전시")
+        void getOne_Fail() throws Exception {
+
+            Long existExhibitionId = 1L;
+            Long notExistExhibitionId = 2L;
+
+            ExhibitionResponse exhibitionResponse =
+                    ExhibitionResponse.builder()
+                            .galleryId(1L)
+                            .name("test")
+                            .startsAt("2022-12-01")
+                            .endsAt("2022-12-31")
+                            .price("10000")
+                            .ageLimit("10")
+                            .detailInfo("test")
+                            .galleryDetail("test")
+                            .build();
+
+            given(exhibitionService.getOne(1L)).willReturn(exhibitionResponse);
+
+            mockMvc.perform(get("/api/v1/exhibitions/" + notExistExhibitionId)
+                            .with(csrf()))
+                    .andExpect(status().is4xxClientError())
+                    .andDo(print());
+        }
     }
-
-    @Test
-    @DisplayName("전시 상세 조회 성공")
-    void getOneSuccess() throws Exception{
-        long exhibitionId = 1l;
-
-        given(exhibitionService.getOne(exhibitionId)).willReturn(exhibitionResponse1);
-
-        mockMvc.perform(get("/exhibiitons/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
-                .andExpect(jsonPath("$.result.name").exists())
-                .andExpect(jsonPath("$.result.startsAt").exists())
-                .andExpect(jsonPath("$.result.endsAt").exists())
-                .andExpect(jsonPath("$.result.price").exists())
-                .andExpect(jsonPath("$.result.ageLimit").exists())
-                .andExpect(jsonPath("$.result.detailInfo").exists())
-                .andExpect(jsonPath("$.result.galleryDetail").exists())
-                .andDo(print());
-
-    }
-
 }
