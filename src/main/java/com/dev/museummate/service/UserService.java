@@ -31,13 +31,6 @@ public class UserService {
     private static final long accessExpireTimeMs = 1000 * 60 * 5;
     private static final long refreshExpireTimeMs = 1000 * 60 * 30;
 
-
-
-    public UserEntity findUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(() ->
-                new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.",email)));
-    }
-
     public UserEntity findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() ->
                 new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.",email)));

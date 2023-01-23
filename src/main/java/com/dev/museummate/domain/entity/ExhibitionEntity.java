@@ -2,21 +2,16 @@ package com.dev.museummate.domain.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExhibitionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String name;
     private String startsAt;
@@ -30,4 +25,16 @@ public class ExhibitionEntity {
     @JoinColumn(name = "gallery_id")
     private GalleryEntity gallery;
 
+    @Builder
+    public ExhibitionEntity(long id, String name, String startsAt, String endsAt, String price, String ageLimit, String detailInfo, String galleryDetail, GalleryEntity gallery) {
+        this.id = id;
+        this.name = name;
+        this.startsAt = startsAt;
+        this.endsAt = endsAt;
+        this.price = price;
+        this.ageLimit = ageLimit;
+        this.detailInfo = detailInfo;
+        this.galleryDetail = galleryDetail;
+        this.gallery = gallery;
+    }
 }

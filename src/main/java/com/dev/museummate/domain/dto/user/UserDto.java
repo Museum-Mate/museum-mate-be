@@ -1,12 +1,13 @@
 package com.dev.museummate.domain.dto.user;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import com.dev.museummate.domain.entity.UserEntity;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserDto {
     private Long id;
     private String email;
@@ -27,6 +28,9 @@ public class UserDto {
         this.address = address;
     }
 
+    /**
+     * UserEntity를 UserDto로 변환
+     */
     public static UserDto toDto(UserEntity savedUser) {
 
         return UserDto.builder()

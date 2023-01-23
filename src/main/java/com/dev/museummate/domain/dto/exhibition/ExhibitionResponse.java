@@ -18,5 +18,5 @@ public class ExhibitionResponse {
     private String ageLimit;
     private String detailInfo;
     private String galleryDetail;
-    private long galleryId;
+    private Long galleryId;
 }
