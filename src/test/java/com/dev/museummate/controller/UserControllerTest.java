@@ -17,8 +17,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -326,6 +328,54 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsBytes(userReissueRequest)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 체크 - 성공")
+    @WithMockUser
+    void userName_check_success() throws Exception {
+
+        UserCheckRequest userCheckRequest = new UserCheckRequest("chlalswns200");
+
+        //given
+        given(userService.userNameCheck(any()))
+                .willReturn("사용 가능한 닉네임 입니다.");
+
+        //when
+        mockMvc.perform(post("/api/v1/users/check")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userCheckRequest)))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        //then
+
+
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 체크 - 실패#1 닉네임 중복")
+    @WithMockUser
+    void userName_check_fail() throws Exception {
+
+        UserCheckRequest userCheckRequest = new UserCheckRequest("chlalswns200");
+
+        //given
+        given(userService.userNameCheck(any()))
+                .willThrow(new AppException(ErrorCode.DUPLICATE_USERNAME,""));
+
+        //when
+        mockMvc.perform(post("/api/v1/users/check")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userCheckRequest)))
+                .andDo(print())
+                .andExpect(status().isConflict());
+
+        //then
+
+
     }
 
 
