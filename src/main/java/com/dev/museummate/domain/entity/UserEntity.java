@@ -12,8 +12,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserEntity extends BaseEntity{
+
+    /**
+     * id : idx
+     * email : 유저 이메일
+     * userName : 유저 실명
+     */
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String email;
     private String password;

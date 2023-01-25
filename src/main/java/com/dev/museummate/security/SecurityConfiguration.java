@@ -1,5 +1,6 @@
 package com.dev.museummate.security;
 
+import com.dev.museummate.configuration.redis.RedisDao;
 import com.dev.museummate.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -17,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfiguration {
 
     private final JwtUtils jwtUtils;
+    private final RedisDao redisDao;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -31,11 +34,18 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/users/join","/users/login").permitAll()
-                .requestMatchers(HttpMethod.POST).authenticated())
-//                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-//                .and()
-//                .addFilterBefore(new JwtFilter(jwtUtils, secretKey), UsernamePasswordAuthenticationFilter.class)
+                        .requestMatchers("/api/v1/users/join","/api/v1/users/login").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/example/security").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/example/security/admin").hasRole("ADMIN")
+                        .requestMatchers("/api/v1/users/reissue","/api/v1/users/logout").authenticated()
+                        .anyRequest().permitAll()   //고정
+                )
+                .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
+                .and()
+                .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                .and()
+                .addFilterBefore(new JwtFilter(jwtUtils, redisDao, secretKey), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class)
                 .build();
     }
 }

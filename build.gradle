@@ -19,17 +19,41 @@ repositories {
 }
 
 dependencies {
+    // Spring Boot
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'io.jsonwebtoken:jjwt:0.9.1'
-    compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-    annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // Security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    // Javax
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.4'
+
+    // Lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Lombok for TestCode
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // Swagger (springdoc)
+    implementation 'org.springdoc:springdoc-openapi-starter-common:2.0.2'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+    // Jwt
+    implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+    // MySQL
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 }
 
 tasks.named('test') {
