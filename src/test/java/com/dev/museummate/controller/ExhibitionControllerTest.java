@@ -1,6 +1,8 @@
 package com.dev.museummate.controller;
 
 import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
+import com.dev.museummate.exception.AppException;
+import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.service.ExhibitionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -110,7 +112,8 @@ class ExhibitionControllerTest {
     
     @Test
     @DisplayName("전시 상세 조회 성공")
-    void getOneSuccess() throws Exception{
+    @WithMockUser
+    void getOneSuccess() throws Exception {
         long exhibitionId = 1l;
 
         given(exhibitionService.getOne(exhibitionId)).willReturn(exhibitionResponse1);
@@ -128,7 +131,8 @@ class ExhibitionControllerTest {
                 .andDo(print());
 
     }
-
+    
+    
     @Test
     @DisplayName("전시회 전체 리스트 조회 성공")
     void exhibitionList_success () throws Exception {
@@ -146,3 +150,41 @@ class ExhibitionControllerTest {
         assertEquals(20, pageRequest.getPageSize());
         assertEquals(Sort.by("name", "DESC"), pageRequest.withSort(Sort.by("name", "DESC")).getSort());
     }
+
+    @Test
+    @DisplayName("북마크 추가 성공")
+    @WithMockUser
+    void addToBookmarkSuccess() throws Exception {
+        doNothing().when(exhibitionService).addToBookmark(any(), any());
+        mockMvc.perform(post("/exhibition/1/bookmark")
+                        .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("북마크 추가 실패 - 해당 전시 게시물이 없는 경우")
+    @WithMockUser
+    void addToBookmarkFailure1() throws Exception {
+        doThrow(new AppException(ErrorCode.NOT_FOUND_POST, "")).when(exhibitionService).addToBookmark(any(), any());
+        mockMvc.perform(post("/exhibition/1/bookmark")
+                        .with(csrf()))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("북마크 추가 실패 - 로그인 되지 않은 경우")
+    @WithAnonymousUser
+    void addToBookmarkFailure2() throws Exception {
+        doNothing().when(exhibitionService).addToBookmark(any(), any());
+        mockMvc.perform(post("/exhibition/1/bookmark")
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized())
+                .andDo(print());
+    }
+}
+
+
+

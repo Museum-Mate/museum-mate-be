@@ -26,18 +26,12 @@ public class ExhibitionController {
 
         return Response.success(exhibitionResponse);
     }
-
+    
     // 전시회 전체 조회
     @GetMapping
     public Response<Page<ExhibitionResponse>> findAllExhibitions (@PageableDefault(size = 20,
             sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
         return Response.success(exhibitionService.findAllExhibitions(pageable));
-    }
-
-    // 전시회 단건 조회
-    @GetMapping("/{exhibitionId}")
-    public Response<ExhibitionResponse> findOneExhibition (@PathVariable Long id) {
-        return Response.success(exhibitionService.findOneExhibition(id));
     }
 
     @PostMapping("/{exhibitionId}/bookmarks")
