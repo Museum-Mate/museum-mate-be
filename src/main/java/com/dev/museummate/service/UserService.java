@@ -37,7 +37,7 @@ public class UserService {
                 new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.",email)));
     }
 
-    public UserJoinResponse join(UserJoinRequest userJoinRequest) {
+    public UserDto join(UserJoinRequest userJoinRequest) {
 
         userRepository.findByUserName(userJoinRequest.getUserName())
                 .ifPresent(user ->{
@@ -54,7 +54,7 @@ public class UserService {
 
         UserDto userDto = UserDto.toDto(savedUser);
 
-        return new UserJoinResponse(userDto.getUserName());
+        return userDto;
 
     }
 
