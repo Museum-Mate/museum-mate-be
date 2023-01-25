@@ -43,7 +43,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
             log.info("잘못된 토큰입니다: {}",request.getHeader(HttpHeaders.AUTHORIZATION));
             request.setAttribute("errorCode", ErrorCode.INVALID_TOKEN);
             filterChain.doFilter(request, response);
-        } catch (AppException e){   // 유저가 존재하지 않는 경우
+        } catch (AppException e){   // 유저가 존재하지 않는 경우, 로그아웃된 경우
             log.info("App Exception: {}",request.getHeader(HttpHeaders.AUTHORIZATION));
             request.setAttribute("errorCode", e.getErrorCode());
             filterChain.doFilter(request, response);
