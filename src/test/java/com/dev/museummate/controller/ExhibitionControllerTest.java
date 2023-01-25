@@ -7,14 +7,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -102,4 +107,42 @@ class ExhibitionControllerTest {
                     .andDo(print());
         }
     }
-}
+    
+    @Test
+    @DisplayName("전시 상세 조회 성공")
+    void getOneSuccess() throws Exception{
+        long exhibitionId = 1l;
+
+        given(exhibitionService.getOne(exhibitionId)).willReturn(exhibitionResponse1);
+
+        mockMvc.perform(get("/exhibiitons/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+                .andExpect(jsonPath("$.result.name").exists())
+                .andExpect(jsonPath("$.result.startsAt").exists())
+                .andExpect(jsonPath("$.result.endsAt").exists())
+                .andExpect(jsonPath("$.result.price").exists())
+                .andExpect(jsonPath("$.result.ageLimit").exists())
+                .andExpect(jsonPath("$.result.detailInfo").exists())
+                .andExpect(jsonPath("$.result.galleryDetail").exists())
+                .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("전시회 전체 리스트 조회 성공")
+    void exhibitionList_success () throws Exception {
+
+        mockMvc.perform(get("api/v1/exhibitions")
+                        .param("size", "20")
+                        .param("sort", "name, DESC"))
+                .andExpect(status().isOk());
+
+        ArgumentCaptor<Pageable> pageableArgumentCaptor = ArgumentCaptor.forClass(Pageable.class);
+
+        verify(exhibitionService).findAllExhibitions(pageableArgumentCaptor.capture());
+        PageRequest pageRequest = (PageRequest) pageableArgumentCaptor.getAllValues();
+
+        assertEquals(20, pageRequest.getPageSize());
+        assertEquals(Sort.by("name", "DESC"), pageRequest.withSort(Sort.by("name", "DESC")).getSort());
+    }
