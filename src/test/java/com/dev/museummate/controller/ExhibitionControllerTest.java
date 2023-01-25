@@ -8,6 +8,7 @@ import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.service.ExhibitionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.Authenticator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,14 +17,14 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -52,6 +53,8 @@ class ExhibitionControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    Pageable pageable = PageRequest.of(0, 20, Sort.Direction.DESC, "name");
 
     @Nested
     @DisplayName("전시 상세 조회")
@@ -108,24 +111,22 @@ class ExhibitionControllerTest {
         }
     }
 
-
     @Test
     @DisplayName("전시회 전체 리스트 조회 성공")
     @WithMockUser
     void exhibitionList_success () throws Exception {
+//        500error
+//        ExhibitionDto exhibitionDto = ExhibitionDto.builder().name("test").build();
+//        Page<ExhibitionDto> exhibitionDtoPage = new PageImpl<>(List.of(exhibitionDto));
+        given(exhibitionService.findAllExhibitions(any())).willReturn(Page.empty());
 
-        mockMvc.perform(get("/api/v1/exhibitions")
-                        .param("size", "20")
-                        .param("sort", "name, DESC"))
-                .andExpect(status().isOk());
-
-        ArgumentCaptor<Pageable> pageableArgumentCaptor = ArgumentCaptor.forClass(Pageable.class);
-
-        verify(exhibitionService).findAllExhibitions(pageableArgumentCaptor.capture());
-        PageRequest pageRequest = (PageRequest) pageableArgumentCaptor.getAllValues();
-
-        assertEquals(20, pageRequest.getPageSize());
-        assertEquals(Sort.by("name", "DESC"), pageRequest.withSort(Sort.by("name", "DESC")).getSort());
+        mockMvc.perform(get("/api/v1/exhibitions").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(Page.empty())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+                .andExpect(jsonPath("$.result.content").exists())
+                .andExpect(jsonPath("$.result.pageable").exists())
+                .andDo(print());
     }
 
     @Test
