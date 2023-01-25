@@ -12,16 +12,18 @@ public class UserDto {
     private Long id;
     private String email;
     private String password;
+    private String name;
     private String userName;
     private String birth;
     private String phoneNumber;
     private String address;
 
     @Builder
-    public UserDto(Long id, String email, String password, String userName, String birth, String phoneNumber, String address) {
+    public UserDto(Long id, String email, String password, String name, String userName, String birth, String phoneNumber, String address) {
         this.id = id;
         this.email = email;
         this.password = password;
+        this.name = name;
         this.userName = userName;
         this.birth = birth;
         this.phoneNumber = phoneNumber;
@@ -37,6 +39,7 @@ public class UserDto {
                 .id(savedUser.getId())
                 .email(savedUser.getPassword())
                 .password(savedUser.getPassword())
+                .name(savedUser.getName())
                 .userName(savedUser.getUserName())
                 .birth(savedUser.getBirth())
                 .phoneNumber(savedUser.getPhoneNumber())

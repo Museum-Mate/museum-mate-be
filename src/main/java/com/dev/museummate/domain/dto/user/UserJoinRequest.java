@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class UserJoinRequest {
     private String email;
     private String password;
+    private String name;
     private String userName;
     private String birth;
     private String phoneNumber;
@@ -24,6 +25,7 @@ public class UserJoinRequest {
                 .address(this.address)
                 .birth(this.birth)
                 .email(this.email)
+                .name(this.name)
                 .userName(this.userName)
                 .phoneNumber(this.phoneNumber)
                 .password(encodedPassword)

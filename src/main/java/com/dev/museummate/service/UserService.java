@@ -41,7 +41,7 @@ public class UserService {
 
         userRepository.findByUserName(userJoinRequest.getUserName())
                 .ifPresent(user ->{
-                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 유저네임입니다.",userJoinRequest.getUserName()));
+                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 닉네임입니다.",userJoinRequest.getUserName()));
                 });
 
         userRepository.findByEmail(userJoinRequest.getAddress())
