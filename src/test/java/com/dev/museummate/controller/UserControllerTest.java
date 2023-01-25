@@ -43,6 +43,7 @@ class UserControllerTest {
 
         UserJoinRequest userJoinRequest = UserJoinRequest.builder()
                 .userName("chlalswns200")
+                .name("최민준")
                 .password("1q2w3e4r!")
                 .address("대한민국")
                 .email("chlalsnws200@naver.com")
@@ -63,12 +64,13 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("회원가입 - 실패 #1 유저이름 중복")
+    @DisplayName("회원가입 - 실패 #1 유저네임 중복")
     @WithMockUser
     void join_fail_1() throws Exception {
 
         UserJoinRequest userJoinRequest = UserJoinRequest.builder()
                 .userName("chlalswns200")
+                .name("최민준")
                 .password("1q2w3e4r!")
                 .address("대한민국")
                 .email("chlalsnws200@naver.com")
@@ -94,6 +96,7 @@ class UserControllerTest {
 
         UserJoinRequest userJoinRequest = UserJoinRequest.builder()
                 .userName("chlalswns200")
+                .name("최민준")
                 .password("1q2w3e4r!")
                 .address("대한민국")
                 .email("chlalsnws200@naver.com")
