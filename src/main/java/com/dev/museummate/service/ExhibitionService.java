@@ -29,37 +29,19 @@ public class ExhibitionService {
     private final UserRepository userRepository;
     private final BookmarkRepository bookmarkRepository;
 
-    public Page<ExhibitionResponse> findAllExhibitions (Pageable pageable) {
-        return ExhibitionResponse.of(exhibitionRepository.findAll(pageable));
-    }
-
-    public ExhibitionResponse findOneExhibition (Long id) {
-        ExhibitionEntity exhibition = findExhibition(id);
-        return ExhibitionResponse.of(exhibition);
-    }
-
-    public ExhibitionEntity findExhibition (Long exhibitionId) {
-        return exhibitionRepository.findById(exhibitionId).orElseThrow(() ->
-                new ExhibitionException(ErrorCode.NOT_FOUND_POST, "존재하지 않는 전시회입니다."));
+    public Page<ExhibitionDto> findAllExhibitions (Pageable pageable) {
+        Page<ExhibitionEntity> exhibitionEntities = exhibitionRepository.findAll(pageable);
+        return exhibitionEntities.map(exhibition -> ExhibitionDto.toDto(exhibition));
     }
 
     // 전시 상세 조회
-    public ExhibitionResponse getOne(long exhibitionId) {
+    public ExhibitionDto getOne(long exhibitionId) {
         ExhibitionEntity selectedExhibition = exhibitionRepository.findById(exhibitionId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_POST, "존재하지 않는 전시회입니다."));
 
         ExhibitionDto selectedExhibitionDto = ExhibitionDto.toDto(selectedExhibition);
 
-        return new ExhibitionResponse(
-                selectedExhibitionDto.getName(),
-                selectedExhibitionDto.getStartsAt(),
-                selectedExhibitionDto.getEndsAt(),
-                selectedExhibitionDto.getPrice(),
-                selectedExhibitionDto.getAgeLimit(),
-                selectedExhibitionDto.getDetailInfo(),
-                selectedExhibitionDto.getGalleryDetail(),
-                selectedExhibitionDto.getGallery().getId()
-        );
+        return selectedExhibitionDto;
     }
 
     // 해당하는 exhibition을 Bookmark에 추가
