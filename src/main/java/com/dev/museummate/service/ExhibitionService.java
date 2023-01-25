@@ -34,7 +34,7 @@ public class ExhibitionService {
     // 전시 상세 조회
     public ExhibitionDto getOne(long exhibitionId) {
         ExhibitionEntity selectedExhibition = exhibitionRepository.findById(exhibitionId)
-                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_POST, "존재하지 않는 전시회입니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.EXHIBITION_NOT_FOUND, "존재하지 않는 전시회입니다."));
 
         ExhibitionDto selectedExhibitionDto = ExhibitionDto.toDto(selectedExhibition);
 
@@ -46,7 +46,7 @@ public class ExhibitionService {
 
         // 유저 네임 검증
         // TODO: 22.01.21 userName -> email로 변경
-        UserEntity user = userRepository.findByUserName(email)
+        UserEntity user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND, "존재하지 않는 유저입니다."));
 
         // 전시회 검증
