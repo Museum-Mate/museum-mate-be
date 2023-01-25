@@ -1,4 +1,4 @@
-package com.dev.museummate.configuration;
+package com.dev.museummate.configuration.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,15 +22,11 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, String> redisTemplate() {
-
-        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
-
+    public RedisTemplate<?, ?> redisTemplate(){
+        RedisTemplate<?, ?> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
-
         redisTemplate.setConnectionFactory(redisConnectionFactory());
-
         return redisTemplate;
     }
 }

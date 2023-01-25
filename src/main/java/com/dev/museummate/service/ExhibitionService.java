@@ -1,5 +1,8 @@
 package com.dev.museummate.service;
 
+import com.dev.museummate.domain.dto.exhibition.BookmarkAddResponse;
+import com.dev.museummate.domain.dto.exhibition.BookmarkDto;
+import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.domain.entity.BookmarkEntity;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
@@ -43,35 +46,55 @@ public class ExhibitionService {
     // 전시 상세 조회
     public ExhibitionResponse getOne(long exhibitionId) {
         ExhibitionEntity selectedExhibition = exhibitionRepository.findById(exhibitionId)
-                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_POST, "존재하지 않는 게시물입니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_POST, "존재하지 않는 전시회입니다."));
+
+        ExhibitionDto selectedExhibitionDto = ExhibitionDto.toDto(selectedExhibition);
 
         return new ExhibitionResponse(
-                selectedExhibition.getName(),
-                selectedExhibition.getStartsAt(),
-                selectedExhibition.getEndsAt(),
-                selectedExhibition.getPrice(),
-                selectedExhibition.getAgeLimit(),
-                selectedExhibition.getDetailInfo(),
-                selectedExhibition.getGalleryDetail(),
-                selectedExhibition.getGallery().getId()
+                selectedExhibitionDto.getName(),
+                selectedExhibitionDto.getStartsAt(),
+                selectedExhibitionDto.getEndsAt(),
+                selectedExhibitionDto.getPrice(),
+                selectedExhibitionDto.getAgeLimit(),
+                selectedExhibitionDto.getDetailInfo(),
+                selectedExhibitionDto.getGalleryDetail(),
+                selectedExhibitionDto.getGallery().getId()
         );
     }
 
     // 해당하는 exhibition을 Bookmark에 추가
-    public String addToBookmark(long exhibitionId, String userName) {
-        UserEntity user = userRepository.findByUserName(userName)
-                .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "존재하지 않는 유저입니다."));
+    public BookmarkAddResponse addToBookmark(long exhibitionId, String email) {
+
+        // 유저 네임 검증
+        // TODO: 22.01.21 userName -> email로 변경
+        UserEntity user = userRepository.findByUserName(email)
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND, "존재하지 않는 유저입니다."));
+
+        // 전시회 검증
         ExhibitionEntity selectedExhibition = exhibitionRepository.findById(exhibitionId)
-                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_POST, "존재하지 않는 게시물입니다."));
+                .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND_POST, "존재하지 않는 전시회입니다."));
+
         Optional<BookmarkEntity> selected = bookmarkRepository.findByExhibitionAndUser(selectedExhibition, user);
 
         if(!selected.isPresent()) {
-            BookmarkEntity bookmark = BookmarkEntity.of(selectedExhibition, user);
+
+            // Bookmark Entity 생성
+            BookmarkEntity bookmark = BookmarkEntity.CreateBookmark(selectedExhibition, user);
+
+            // Bookmark Entity 저장
             bookmarkRepository.save(bookmark);
-            return "북마크에 추가되었습니다!";
+
+            return BookmarkAddResponse.builder()
+                    .message("북마크에 추가되었습니다.")
+                    .exhibitionId(exhibitionId)
+                    .build();
         }else {
             bookmarkRepository.delete(selected.get());
-            return "북마크에서 삭제되었습니다!";
+
+            return BookmarkAddResponse.builder()
+                    .message("북마크에서 삭제되었습니다.")
+                    .exhibitionId(exhibitionId)
+                    .build();
         }
     }
 
