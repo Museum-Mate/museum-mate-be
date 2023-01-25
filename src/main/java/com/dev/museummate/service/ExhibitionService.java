@@ -1,15 +1,12 @@
 package com.dev.museummate.service;
 
 import com.dev.museummate.domain.dto.exhibition.BookmarkAddResponse;
-import com.dev.museummate.domain.dto.exhibition.BookmarkDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
-import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.domain.entity.BookmarkEntity;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
-import com.dev.museummate.exception.ExhibitionException;
 import com.dev.museummate.repository.BookmarkRepository;
 import com.dev.museummate.repository.ExhibitionRepository;
 import com.dev.museummate.repository.UserRepository;
