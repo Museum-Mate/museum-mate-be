@@ -23,7 +23,7 @@ public class ExhibitionResponse {
     private String galleryDetail;
     private Long galleryId;
 
-    public static Page<ExhibitionResponse> of(Page<ExhibitionEntity> exhibitions) {
+    public static Page<ExhibitionResponse> of(Page<ExhibitionDto> exhibitions) {
         return exhibitions.map(exhibition -> ExhibitionResponse.builder()
                 .id(exhibition.getId())
                 .name(exhibition.getName())

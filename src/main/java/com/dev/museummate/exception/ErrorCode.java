@@ -18,6 +18,7 @@ public enum ErrorCode {
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "Token expired"),
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "Token not found"),
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "Access forbidden"),
+    EXHIBITION_NOT_FOUND(HttpStatus.NOT_FOUND, "Exhibition not found"),
     ;
     private HttpStatus httpStatus;
     private String message;

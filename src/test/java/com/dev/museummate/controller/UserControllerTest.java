@@ -49,12 +49,12 @@ class UserControllerTest {
                 .phoneNumber("01057442067")
                 .birth("19981022")
                 .build();
-        UserJoinResponse userJoinResponse = new UserJoinResponse(userJoinRequest.getUserName());
+        UserDto userDto = UserDto.builder().userName(userJoinRequest.getUserName()).build();
 
         when(userService.join(any()))
-                .thenReturn(userJoinResponse);
+                .thenReturn(userDto);
 
-        mockMvc.perform(post("/users/join")
+        mockMvc.perform(post("/api/v1/users/join")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userJoinRequest)))
@@ -79,7 +79,7 @@ class UserControllerTest {
         when(userService.join(any()))
                 .thenThrow(new AppException(ErrorCode.DUPLICATE_USERNAME,"중복된 userName"));
 
-        mockMvc.perform(post("/users/join")
+        mockMvc.perform(post("/api/v1/users/join")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userJoinRequest)))
@@ -104,7 +104,7 @@ class UserControllerTest {
         when(userService.join(any()))
                 .thenThrow(new AppException(ErrorCode.DUPLICATE_EMAIL,"중복된 이메일"));
 
-        mockMvc.perform(post("/users/join")
+        mockMvc.perform(post("/api/v1/users/join")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userJoinRequest)))
@@ -123,7 +123,7 @@ class UserControllerTest {
         when(userService.login(any()))
                 .thenReturn(userLoginResponse);
 
-        mockMvc.perform(post("/users/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userLoginRequest)))
@@ -160,7 +160,7 @@ class UserControllerTest {
         when(userService.login(any()))
                 .thenThrow(new AppException(ErrorCode.INVALID_PASSWORD,""));
 
-        mockMvc.perform(post("/users/login")
+        mockMvc.perform(post("/api/v1/users/login")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userLoginRequest)))
@@ -181,7 +181,7 @@ class UserControllerTest {
                 .willReturn(userLoginResponse);
 
         //when
-        mockMvc.perform(post("/users/reissue")
+        mockMvc.perform(post("/api/v1/users/reissue")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userReissueRequest))
@@ -204,7 +204,7 @@ class UserControllerTest {
                 .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, "이메일을 찾을 수 없습니다"));
 
         //when
-        mockMvc.perform(post("/users/reissue")
+        mockMvc.perform(post("/api/v1/users/reissue")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userReissueRequest))
@@ -227,7 +227,7 @@ class UserControllerTest {
                 .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, "이메일을 찾을 수 없습니다"));
 
         //when
-        mockMvc.perform(post("/users/reissue")
+        mockMvc.perform(post("/api/v1/users/reissue")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userReissueRequest))
@@ -250,7 +250,7 @@ class UserControllerTest {
                 .willThrow(new AppException(ErrorCode.INVALID_TOKEN, "잘못된 토큰입니다."));
 
         //when
-        mockMvc.perform(post("/users/reissue")
+        mockMvc.perform(post("/api/v1/users/reissue")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userReissueRequest))
@@ -273,7 +273,7 @@ class UserControllerTest {
                 .willThrow(new AppException(ErrorCode.INVALID_REQUEST, "잘못된 요청입니다."));
 
         //when
-        mockMvc.perform(post("/users/reissue")
+        mockMvc.perform(post("/api/v1/users/reissue")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userReissueRequest))
@@ -296,7 +296,7 @@ class UserControllerTest {
                 .willReturn("로그아웃 되었습니다.");
 
         //when
-        mockMvc.perform(post("/users/logout")
+        mockMvc.perform(post("/api/v1/users/logout")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userReissueRequest)))
@@ -317,7 +317,7 @@ class UserControllerTest {
                 .willReturn("로그아웃 되었습니다.");
 
         //when
-        mockMvc.perform(post("/users/logout")
+        mockMvc.perform(post("/api/v1/users/logout")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userReissueRequest)))
