@@ -34,10 +34,10 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/users/join","/users/login").permitAll()
+                        .requestMatchers("/api/v1/users/join","/api/v1/users/login").permitAll()
                         .requestMatchers(HttpMethod.GET,"/example/security").authenticated()
                         .requestMatchers(HttpMethod.GET, "/example/security/admin").hasRole("ADMIN")
-                        .requestMatchers("/users/reissue","/users/logout").authenticated()
+                        .requestMatchers("/api/v1/users/reissue","/api/v1/users/logout").authenticated()
                         .anyRequest().permitAll()   //고정
                 )
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
