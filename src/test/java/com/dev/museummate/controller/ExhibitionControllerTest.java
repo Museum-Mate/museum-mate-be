@@ -1,7 +1,5 @@
 package com.dev.museummate.controller;
 
-import com.dev.museummate.domain.dto.bookmark.BookmarkResponse;
-import com.dev.museummate.domain.dto.exhibition.BookmarkAddResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.domain.entity.GalleryEntity;
@@ -108,7 +106,7 @@ class ExhibitionControllerTest {
                     .andDo(print());
         }
     }
-    
+
 
     @Test
     @DisplayName("전시회 전체 리스트 조회 성공")
@@ -162,4 +160,5 @@ class ExhibitionControllerTest {
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
+
 }
