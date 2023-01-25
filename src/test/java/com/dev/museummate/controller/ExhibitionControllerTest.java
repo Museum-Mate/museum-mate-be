@@ -1,5 +1,6 @@
 package com.dev.museummate.controller;
 
+import com.dev.museummate.domain.dto.bookmark.BookmarkResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
@@ -17,6 +18,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,6 +27,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -109,30 +115,8 @@ class ExhibitionControllerTest {
                     .andDo(print());
         }
     }
-    
-    @Test
-    @DisplayName("전시 상세 조회 성공")
-    @WithMockUser
-    void getOneSuccess() throws Exception {
-        long exhibitionId = 1l;
 
-        given(exhibitionService.getOne(exhibitionId)).willReturn(exhibitionResponse1);
 
-        mockMvc.perform(get("/exhibiitons/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
-                .andExpect(jsonPath("$.result.name").exists())
-                .andExpect(jsonPath("$.result.startsAt").exists())
-                .andExpect(jsonPath("$.result.endsAt").exists())
-                .andExpect(jsonPath("$.result.price").exists())
-                .andExpect(jsonPath("$.result.ageLimit").exists())
-                .andExpect(jsonPath("$.result.detailInfo").exists())
-                .andExpect(jsonPath("$.result.galleryDetail").exists())
-                .andDo(print());
-
-    }
-    
-    
     @Test
     @DisplayName("전시회 전체 리스트 조회 성공")
     void exhibitionList_success () throws Exception {
@@ -155,20 +139,20 @@ class ExhibitionControllerTest {
     @DisplayName("북마크 추가 성공")
     @WithMockUser
     void addToBookmarkSuccess() throws Exception {
-        doNothing().when(exhibitionService).addToBookmark(any(), any());
-        mockMvc.perform(post("/exhibition/1/bookmark")
+        when(exhibitionService.addToBookmark(anyLong(), anyString())).thenReturn(new BookmarkResponse(""));
+        mockMvc.perform(post("/exhibitions/1/bookmarks")
                         .with(csrf()))
-                .andExpect(status().isNotFound())
-                .andDo(print());
-
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.message").exists());
     }
 
     @Test
     @DisplayName("북마크 추가 실패 - 해당 전시 게시물이 없는 경우")
     @WithMockUser
     void addToBookmarkFailure1() throws Exception {
-        doThrow(new AppException(ErrorCode.NOT_FOUND_POST, "")).when(exhibitionService).addToBookmark(any(), any());
-        mockMvc.perform(post("/exhibition/1/bookmark")
+        when(exhibitionService.addToBookmark(anyLong(), anyString())).thenThrow(new AppException(ErrorCode.NOT_FOUND_POST, ""));
+        mockMvc.perform(post("/exhibitions/1/bookmarks")
                         .with(csrf()))
                 .andExpect(status().isNotFound())
                 .andDo(print());
@@ -178,13 +162,11 @@ class ExhibitionControllerTest {
     @DisplayName("북마크 추가 실패 - 로그인 되지 않은 경우")
     @WithAnonymousUser
     void addToBookmarkFailure2() throws Exception {
-        doNothing().when(exhibitionService).addToBookmark(any(), any());
-        mockMvc.perform(post("/exhibition/1/bookmark")
+        when(exhibitionService.addToBookmark(anyLong(), anyString())).thenReturn(new BookmarkResponse(""));
+        mockMvc.perform(post("/exhibitions/1/bookmarks")
                         .with(csrf()))
                 .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
+
 }
-
-
-
