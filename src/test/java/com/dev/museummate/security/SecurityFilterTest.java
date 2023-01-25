@@ -1,5 +1,6 @@
 package com.dev.museummate.security;
 
+import com.dev.museummate.configuration.redis.RedisDao;
 import com.dev.museummate.controller.ExampleController;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.fixture.UserEntityFixture;
@@ -8,11 +9,14 @@ import com.dev.museummate.utils.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -31,6 +35,9 @@ public class SecurityFilterTest {
 
     @MockBean
     UserService userService;
+
+    @MockBean
+    RedisDao redisDao;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -52,6 +59,8 @@ public class SecurityFilterTest {
     @DisplayName("인증 성공 테스트")
     void authenticationSuccess() throws Exception {
         String token = createToken(user,1000 * 60);
+
+        when(redisDao.getValues(any())).thenReturn(null);
 
         when(userService.findUserByEmail(any())).thenReturn(user);
 
@@ -104,12 +113,29 @@ public class SecurityFilterTest {
     }
 
     @Test
+    @DisplayName("인증 실패 테스트 - 로그아웃한 경우 ")
+    void logOutUser() throws Exception {
+        String token = createToken(user,1000 * 60);
+
+        when(redisDao.getValues(any())).thenReturn("logout");
+
+        mockMvc.perform(get("/example/security")
+                        .header("Authorization","Bearer " + token))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.resultCode").value("ERROR"))
+                .andExpect(jsonPath("$.result.errorCode").value("INVALID_TOKEN"))
+                .andExpect(jsonPath("$.result.message").exists())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("접근 성공 테스트 - admin 회원이 전용 페이지에 접근하는 경우")
     void accessSuccess() throws Exception {
         String token = createToken(admin,1000 * 60);
 
-        when(userService.findUserByEmail(any())).thenReturn(admin);
+        when(redisDao.getValues(any())).thenReturn(null);
 
+        when(userService.findUserByEmail(any())).thenReturn(admin);
 
         mockMvc.perform(get("/example/security/admin")
                         .header("Authorization","Bearer " + token))
@@ -123,8 +149,9 @@ public class SecurityFilterTest {
     void accessDenied() throws Exception {
         String token = createToken(user,1000 * 60);
 
-        when(userService.findUserByEmail(any())).thenReturn(user);
+        when(redisDao.getValues(any())).thenReturn(null);
 
+        when(userService.findUserByEmail(any())).thenReturn(user);
 
         mockMvc.perform(get("/example/security/admin")
                         .header("Authorization","Bearer " + token))
@@ -135,10 +162,14 @@ public class SecurityFilterTest {
                 .andDo(print());
     }
 
+
+
     @Test
     @DisplayName("MethodNotAllowed 테스트 - 허용되지 않은 Http Method로 접근한 경우: 토큰 있을 때")
     void MethodNotAllowed() throws Exception {
         String token = createToken(user,1000 * 60);
+
+        when(redisDao.getValues(any())).thenReturn(null);
 
         when(userService.findUserByEmail(any())).thenReturn(user);
 
@@ -176,6 +207,8 @@ public class SecurityFilterTest {
     @DisplayName("NotFound 테스트 - 정의되지 않은 url에 접근한 경우: 토큰 있을 때")
     void NotFound() throws Exception {
         String token = createToken(user,1000 * 60);
+
+        when(redisDao.getValues(any())).thenReturn(null);
 
         when(userService.findUserByEmail(any())).thenReturn(user);
 
