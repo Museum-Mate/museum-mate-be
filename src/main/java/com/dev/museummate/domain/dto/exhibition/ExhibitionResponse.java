@@ -38,7 +38,7 @@ public class ExhibitionResponse {
         );
     }
 
-    public static ExhibitionResponse of(ExhibitionEntity exhibition) {
+    public static ExhibitionResponse of(ExhibitionDto exhibition) {
         return ExhibitionResponse.builder()
                 .id(exhibition.getId())
                 .name(exhibition.getName())
