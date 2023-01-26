@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "user")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserEntity extends BaseEntity{
+public class UserEntity extends BaseTimeEntity{
 
     /**
      * id : idx
