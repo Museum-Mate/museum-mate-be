@@ -11,7 +11,7 @@ create table museum_mate_db.gallery
 
 create table museum_mate_db.user
 (
-    id               bigint                          not null
+    id               bigint auto_increment
         primary key,
     email            varchar(45)                     not null,
     user_name        varchar(10)                     not null,
@@ -35,7 +35,9 @@ create table museum_mate_db.comment
     content          varchar(50) null,
     created_at       datetime    not null comment '생성 시간',
     last_modified_at datetime    not null comment '최종 수정 시간',
-    deleted_at       datetime    null comment '삭제 시간'
+    deleted_at       datetime    null comment '삭제 시간',
+    constraint comment_user_id_fk
+        foreign key (user_id) references museum_mate_db.user (id)
 )
     comment '댓글 (모집 글)';
 
@@ -69,6 +71,10 @@ create table museum_mate_db.exhibition
     deleted_at          datetime     null comment '삭제 시간',
     created_by          varchar(10)  not null comment '생성자',
     last_modified_by    varchar(10)  not null comment '최종 수정자',
+    constraint exhibition_gallery_id_fk
+        foreign key (gallery_id) references museum_mate_db.gallery (id),
+    constraint exhibition_user_id_fk
+        foreign key (user_id) references museum_mate_db.user (id)
 )
     comment '전시 테이블';
 
@@ -81,7 +87,11 @@ create table museum_mate_db.alarm
     alarm_message    varchar(45) not null,
     created_at       datetime    not null comment '생성 시간',
     last_modified_at datetime    not null comment '최종 수정 시간',
-    deleted_at       datetime    null comment '삭제 시간'
+    deleted_at       datetime    null comment '삭제 시간',
+    constraint alarm_exhibition_id_fk
+        foreign key (exhibition_id) references museum_mate_db.exhibition (id),
+    constraint alarm_user_id_fk
+        foreign key (user_id) references museum_mate_db.user (id)
 )
     comment '알람';
 
@@ -93,7 +103,11 @@ create table museum_mate_db.bookmark
     exhibition_id    bigint   not null comment '북마크한 전시 id',
     created_at       datetime not null comment '생성 시간',
     last_modified_at datetime not null comment '최종 수정 시간',
-    deleted_at       datetime null comment '삭제 시간'
+    deleted_at       datetime null comment '삭제 시간',
+    constraint bookmark_exhibition_id_fk
+        foreign key (exhibition_id) references museum_mate_db.exhibition (id),
+    constraint bookmark_user_id_fk
+        foreign key (user_id) references museum_mate_db.user (id)
 )
     comment '북마크';
 
@@ -111,6 +125,11 @@ create table museum_mate_db.review
     last_modified_at int         not null,
     deleted_at       datetime    null,
     created_by       varchar(10) not null comment '생성 유저',
-    last_modifyed_by varchar(10) not null comment '최종 수정 유저'
+    last_modifyed_by varchar(10) not null comment '최종 수정 유저',
+    constraint review_exhibition_id_fk
+        foreign key (exhibition_id) references museum_mate_db.exhibition (id),
+    constraint review_user_id_fk
+        foreign key (user_id) references museum_mate_db.user (id)
 )
     comment '리뷰';
+
