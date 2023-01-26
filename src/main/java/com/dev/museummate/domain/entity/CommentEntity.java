@@ -14,7 +14,7 @@ import org.hibernate.annotations.ColumnDefault;
 public class CommentEntity extends BaseTimeEntity{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(name="user_id")

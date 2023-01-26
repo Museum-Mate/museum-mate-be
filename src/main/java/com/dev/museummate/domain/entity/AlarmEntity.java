@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class AlarmEntity extends BaseTimeEntity{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotNull
     private String alarmMessage;
