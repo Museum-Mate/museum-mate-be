@@ -22,6 +22,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -375,7 +376,50 @@ class UserControllerTest {
 
         //then
 
+    }
 
+    @Test
+    @DisplayName("유저 정보 수정 - 성공")
+    @WithMockUser
+    void user_modify_success() throws Exception {
+
+        UserModifyRequest userModifyRequest = new UserModifyRequest("01012345678", "한국 서울", "modify-123");
+
+        //given
+        given(userService.modifyUser(any(), any()))
+                .willReturn("수정이 완료 되었습니다.");
+
+        //when
+        mockMvc.perform(put("/api/v1/users/modify")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userModifyRequest)))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        //then
+    }
+
+    @Test
+    @DisplayName("유저 정보 수정 실패 #1 - 이메일 조회 실패")
+    @WithMockUser
+    void user_modify_fail() throws Exception {
+
+        UserModifyRequest userModifyRequest = new UserModifyRequest("01012345678", "한국 서울", "modify-123");
+
+        //given
+        given(userService.modifyUser(any(), any()))
+                .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
+
+        //when
+        mockMvc.perform(put("/api/v1/users/modify")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userModifyRequest)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+
+        //then
     }
 
 
