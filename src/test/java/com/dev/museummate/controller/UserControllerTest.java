@@ -17,8 +17,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,6 +45,7 @@ class UserControllerTest {
 
         UserJoinRequest userJoinRequest = UserJoinRequest.builder()
                 .userName("chlalswns200")
+                .name("최민준")
                 .password("1q2w3e4r!")
                 .address("대한민국")
                 .email("chlalsnws200@naver.com")
@@ -63,12 +66,13 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("회원가입 - 실패 #1 유저이름 중복")
+    @DisplayName("회원가입 - 실패 #1 유저네임 중복")
     @WithMockUser
     void join_fail_1() throws Exception {
 
         UserJoinRequest userJoinRequest = UserJoinRequest.builder()
                 .userName("chlalswns200")
+                .name("최민준")
                 .password("1q2w3e4r!")
                 .address("대한민국")
                 .email("chlalsnws200@naver.com")
@@ -94,6 +98,7 @@ class UserControllerTest {
 
         UserJoinRequest userJoinRequest = UserJoinRequest.builder()
                 .userName("chlalswns200")
+                .name("최민준")
                 .password("1q2w3e4r!")
                 .address("대한민국")
                 .email("chlalsnws200@naver.com")
@@ -323,6 +328,54 @@ class UserControllerTest {
                         .content(objectMapper.writeValueAsBytes(userReissueRequest)))
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 체크 - 성공")
+    @WithMockUser
+    void userName_check_success() throws Exception {
+
+        UserCheckRequest userCheckRequest = new UserCheckRequest("chlalswns200");
+
+        //given
+        given(userService.userNameCheck(any()))
+                .willReturn("사용 가능한 닉네임 입니다.");
+
+        //when
+        mockMvc.perform(post("/api/v1/users/check")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userCheckRequest)))
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        //then
+
+
+    }
+
+    @Test
+    @DisplayName("닉네임 중복 체크 - 실패#1 닉네임 중복")
+    @WithMockUser
+    void userName_check_fail() throws Exception {
+
+        UserCheckRequest userCheckRequest = new UserCheckRequest("chlalswns200");
+
+        //given
+        given(userService.userNameCheck(any()))
+                .willThrow(new AppException(ErrorCode.DUPLICATE_USERNAME,""));
+
+        //when
+        mockMvc.perform(post("/api/v1/users/check")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userCheckRequest)))
+                .andDo(print())
+                .andExpect(status().isConflict());
+
+        //then
+
+
     }
 
 

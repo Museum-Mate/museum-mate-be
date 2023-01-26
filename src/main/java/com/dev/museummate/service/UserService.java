@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -41,10 +42,10 @@ public class UserService {
 
         userRepository.findByUserName(userJoinRequest.getUserName())
                 .ifPresent(user ->{
-                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 유저네임입니다.",userJoinRequest.getUserName()));
+                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 닉네임입니다.",userJoinRequest.getUserName()));
                 });
 
-        userRepository.findByEmail(userJoinRequest.getAddress())
+        userRepository.findByEmail(userJoinRequest.getEmail())
                 .ifPresent(user -> {
                     throw new AppException(ErrorCode.DUPLICATE_EMAIL,String.format("%s는 중복 된 이메일입니다.",userJoinRequest.getEmail()));
                 });
@@ -123,5 +124,11 @@ public class UserService {
 
     }
 
-
+    public String userNameCheck(UserCheckRequest userCheckRequest) {
+        userRepository.findByUserName(userCheckRequest.getUserName())
+                .ifPresent(user ->{
+                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 닉네임입니다.",userCheckRequest.getUserName()));
+                });
+        return "사용 가능한 닉네임 입니다.";
+    }
 }

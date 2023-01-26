@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/users/join","/api/v1/users/login").permitAll()
+                        .requestMatchers("/api/v1/users/join","/api/v1/users/login","/api/v1/users/check").permitAll()
                         .requestMatchers(HttpMethod.GET,"/example/security").authenticated()
                         .requestMatchers(HttpMethod.GET, "/example/security/admin").hasRole("ADMIN")
                         .requestMatchers("/api/v1/users/reissue","/api/v1/users/logout").authenticated()

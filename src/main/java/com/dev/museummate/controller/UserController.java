@@ -37,5 +37,11 @@ public class UserController {
         return Response.success(msg);
     }
 
+    @PostMapping("/check")
+    public Response<String> logout(@RequestBody UserCheckRequest userCheckRequest) {
+        String msg = userService.userNameCheck(userCheckRequest);
+        return Response.success(msg);
+    }
+
 
 }
