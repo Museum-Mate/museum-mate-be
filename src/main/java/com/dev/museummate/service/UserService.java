@@ -7,6 +7,7 @@ import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.repository.UserRepository;
 import com.dev.museummate.utils.JwtUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import java.beans.Transient;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -61,9 +63,7 @@ public class UserService {
 
     public UserLoginResponse login(UserLoginRequest userLoginRequest) {
 
-        UserEntity findUser = userRepository.findByEmail(userLoginRequest.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND,
-                        String.format("%s는 없는 계정입니다.", userLoginRequest.getEmail())));
+        UserEntity findUser = findUserByEmail(userLoginRequest.getEmail());
 
         if(!encoder.matches(userLoginRequest.getPassword(), findUser.getPassword())){
             throw new AppException(ErrorCode.INVALID_PASSWORD,String.format("잘못된 비밀번호 입니다."));
@@ -130,5 +130,17 @@ public class UserService {
                     throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 닉네임입니다.",userCheckRequest.getUserName()));
                 });
         return "사용 가능한 닉네임 입니다.";
+    }
+
+    @Transactional
+    public String modifyUser(UserModifyRequest userModifyRequest, String email) {
+
+        UserEntity findUser = findUserByEmail(email);
+
+        findUser.updateInfo(userModifyRequest);
+
+        userRepository.save(findUser);
+
+        return "수정이 완료 되었습니다.";
     }
 }
