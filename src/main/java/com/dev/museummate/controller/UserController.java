@@ -49,5 +49,12 @@ public class UserController {
         return Response.success(msg);
     }
 
+    @DeleteMapping("/delete")
+    public Response<String> delete(Authentication authentication) {
+        String msg = userService.deleteUser(authentication.getName());
+        return Response.success(msg);
+    }
+
+
 
 }
