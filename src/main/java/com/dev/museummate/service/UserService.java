@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -26,7 +27,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final RedisDao redisDao;
-    private final RedisTemplate redisTemplate;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -147,5 +147,14 @@ public class UserService {
         userRepository.save(findUser);
 
         return "수정이 완료 되었습니다.";
+    }
+
+    public String deleteUser(String email) {
+
+        UserEntity findUser = findUserByEmail(email);
+
+        userRepository.delete(findUser);
+
+        return "탈퇴가 완료 되었습니다.";
     }
 }
