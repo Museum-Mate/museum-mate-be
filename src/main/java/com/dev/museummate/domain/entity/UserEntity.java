@@ -1,6 +1,7 @@
 package com.dev.museummate.domain.entity;
 
 import com.dev.museummate.domain.UserRole;
+import com.dev.museummate.domain.dto.user.UserModifyRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -43,5 +44,17 @@ public class UserEntity extends BaseEntity{
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.role = role;
+    }
+
+    public void updateInfo(UserModifyRequest userModifyRequest) {
+        if (userModifyRequest.getUserName().length() > 0) {
+            this.userName = userModifyRequest.getUserName();
+        }
+        if (userModifyRequest.getPhoneNumber().length() > 0) {
+            this.phoneNumber = userModifyRequest.getPhoneNumber();
+        }
+        if (userModifyRequest.getAddress().length() > 0) {
+            this.address = userModifyRequest.getAddress();
+        }
     }
 }
