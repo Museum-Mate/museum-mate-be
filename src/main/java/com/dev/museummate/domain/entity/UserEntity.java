@@ -24,6 +24,7 @@ public class UserEntity extends BaseTimeEntity{
      * email : 유저 이메일
      * userName : 유저 닉네임
      * name : 유저 실명
+     * auth : 이메일 인증 상태 false = 인증 안됨 true = 인증 됨
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +47,8 @@ public class UserEntity extends BaseTimeEntity{
     private String address;
     @Enumerated(EnumType.STRING)
     private UserRole role;
+    private Boolean auth;
+    private String authNum;
 
     @Builder
     public UserEntity(Long id, String email, String password, String name, String userName, String birth, String phoneNumber, String address, UserRole role) {
@@ -58,6 +61,8 @@ public class UserEntity extends BaseTimeEntity{
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.role = role;
+        this.auth = false;
+        this.authNum = "1234";
     }
 
     public void updateInfo(UserModifyRequest userModifyRequest) {
@@ -70,5 +75,12 @@ public class UserEntity extends BaseTimeEntity{
         if (userModifyRequest.getAddress().length() > 0) {
             this.address = userModifyRequest.getAddress();
         }
+    }
+    public void updateAuthNum(String authNum) {
+        this.authNum = authNum;
+    }
+
+    public void updateAuth() {
+        this.auth = true;
     }
 }
