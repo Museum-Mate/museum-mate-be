@@ -10,15 +10,10 @@ import com.dev.museummate.utils.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-
-import java.beans.Transient;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -40,7 +35,7 @@ public class UserService {
                 new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.",email)));
     }
 
-    public UserDto join(UserJoinRequest userJoinRequest) {
+    public String join(UserJoinRequest userJoinRequest) {
 
         userRepository.findByUserName(userJoinRequest.getUserName())
                 .ifPresent(user ->{
@@ -57,7 +52,7 @@ public class UserService {
 
         UserDto userDto = UserDto.toDto(savedUser);
 
-        return userDto;
+        return userDto.getEmail();
 
     }
 
@@ -156,5 +151,17 @@ public class UserService {
         userRepository.delete(findUser);
 
         return "탈퇴가 완료 되었습니다.";
+    }
+
+    @Transactional
+    public String auth(String authNum, String email) {
+        UserEntity findUser = findUserByEmail(email);
+
+        if (findUser.getAuthNum().equals(authNum)) {
+            findUser.updateAuth();
+            userRepository.save(findUser);
+            return "인증이 완료 되었습니다.";
+        }
+        return "인증에 실패 했습니다.";
     }
 }
