@@ -21,8 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -420,6 +419,34 @@ class UserControllerTest {
                 .andExpect(status().isNotFound());
 
         //then
+    }
+
+    @Test
+    @DisplayName("유저 삭제 - 성공")
+    @WithMockUser
+    void user_delete_success() throws Exception {
+        //given
+        given(userService.deleteUser(any()))
+                .willReturn("삭제가 완료 되었습니다.");
+        //when
+        mockMvc.perform(delete("/api/v1/users/delete")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("유저 삭제 - 실패#1 - 유저 찾을 수 없음")
+    @WithMockUser
+    void user_delete_fail() throws Exception {
+        //given
+        given(userService.deleteUser(any()))
+                .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+        //when
+        mockMvc.perform(delete("/api/v1/users/delete")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
 
