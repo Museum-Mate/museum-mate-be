@@ -47,7 +47,7 @@ public class MyControllerTest {
                 .ageLimit("test")
                 .price("100원")
                 .detailInfo("test")
-                .galleryDetail("test")
+                .galleryLocation("test")
                 .gallery(new GalleryEntity(1l,"test","test","test","test")).build();
 
     }
