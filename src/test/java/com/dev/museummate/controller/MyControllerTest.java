@@ -45,6 +45,7 @@ public class MyControllerTest {
                 .startsAt("test")
                 .endsAt("test")
                 .ageLimit("test")
+                .price("100원")
                 .detailInfo("test")
                 .galleryDetail("test")
                 .gallery(new GalleryEntity(1l,"test","test","test","test")).build();
