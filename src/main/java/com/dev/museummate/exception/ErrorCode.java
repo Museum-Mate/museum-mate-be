@@ -19,6 +19,7 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "Token not found"),
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "Access forbidden"),
     EXHIBITION_NOT_FOUND(HttpStatus.NOT_FOUND, "Exhibition not found"),
+    INVALID_MAIL(HttpStatus.UNAUTHORIZED, "invalid email"),
     ;
     private HttpStatus httpStatus;
     private String message;
