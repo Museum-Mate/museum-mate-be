@@ -38,10 +38,23 @@ public class UserController {
     }
 
     @PostMapping("/check")
-    public Response<String> logout(@RequestBody UserCheckRequest userCheckRequest) {
+    public Response<String> check(@RequestBody UserCheckRequest userCheckRequest) {
         String msg = userService.userNameCheck(userCheckRequest);
         return Response.success(msg);
     }
+
+    @PutMapping("/modify")
+    public Response<String> modify(@RequestBody UserModifyRequest userModifyRequest,Authentication authentication) {
+        String msg = userService.modifyUser(userModifyRequest, authentication.getName());
+        return Response.success(msg);
+    }
+
+    @DeleteMapping("/delete")
+    public Response<String> delete(Authentication authentication) {
+        String msg = userService.deleteUser(authentication.getName());
+        return Response.success(msg);
+    }
+
 
 
 }
