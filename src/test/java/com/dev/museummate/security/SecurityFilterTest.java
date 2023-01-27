@@ -64,7 +64,7 @@ public class SecurityFilterTest {
 
         when(userService.findUserByEmail(any())).thenReturn(user);
 
-        mockMvc.perform(get("/example/security")
+        mockMvc.perform(get("/api/v1/example/security")
                         .header("Authorization","Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().string("security test success"))
@@ -77,7 +77,7 @@ public class SecurityFilterTest {
     void authenticationFailExpired() throws Exception {
         String token = createToken(user,1);
 
-        mockMvc.perform(get("/example/security")
+        mockMvc.perform(get("/api/v1/example/security")
                         .header("Authorization","Bearer " + token))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").value("ERROR"))
@@ -90,7 +90,7 @@ public class SecurityFilterTest {
     @DisplayName("인증 실패 테스트 - 토큰 없음")
     void authenticationFailNull() throws Exception {
 
-        mockMvc.perform(get("/example/security"))
+        mockMvc.perform(get("/api/v1/example/security"))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").value("ERROR"))
                 .andExpect(jsonPath("$.result.errorCode").value("TOKEN_NOT_FOUND"))
@@ -103,7 +103,7 @@ public class SecurityFilterTest {
     void authenticationFailWrong() throws Exception {
         String token = "abc";
 
-        mockMvc.perform(get("/example/security")
+        mockMvc.perform(get("/api/v1/example/security")
                         .header("Authorization","Bearer " + token))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").value("ERROR"))
@@ -119,7 +119,7 @@ public class SecurityFilterTest {
 
         when(redisDao.getValues(any())).thenReturn("logout");
 
-        mockMvc.perform(get("/example/security")
+        mockMvc.perform(get("/api/v1/example/security")
                         .header("Authorization","Bearer " + token))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.resultCode").value("ERROR"))
@@ -137,7 +137,7 @@ public class SecurityFilterTest {
 
         when(userService.findUserByEmail(any())).thenReturn(admin);
 
-        mockMvc.perform(get("/example/security/admin")
+        mockMvc.perform(get("/api/v1/example/security/admin")
                         .header("Authorization","Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(content().string("security test success"))
@@ -153,7 +153,7 @@ public class SecurityFilterTest {
 
         when(userService.findUserByEmail(any())).thenReturn(user);
 
-        mockMvc.perform(get("/example/security/admin")
+        mockMvc.perform(get("/api/v1/example/security/admin")
                         .header("Authorization","Bearer " + token))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.resultCode").value("ERROR"))
@@ -173,7 +173,7 @@ public class SecurityFilterTest {
 
         when(userService.findUserByEmail(any())).thenReturn(user);
 
-        mockMvc.perform(post("/example/security")
+        mockMvc.perform(post("/api/v1/example/security")
                         .header("Authorization","Bearer " + token))
                 .andExpect(status().isMethodNotAllowed())
                 .andDo(print());
@@ -185,7 +185,7 @@ public class SecurityFilterTest {
 
         when(userService.findUserByEmail(any())).thenReturn(user);
 
-        mockMvc.perform(post("/example/security"))
+        mockMvc.perform(post("/api/v1/example/security"))
                 .andExpect(status().isMethodNotAllowed())
                 .andDo(print());
     }
@@ -197,7 +197,7 @@ public class SecurityFilterTest {
 
         when(userService.findUserByEmail(any())).thenReturn(user);
 
-        mockMvc.perform(post("/example/security")
+        mockMvc.perform(post("/api/v1/example/security")
                         .header("Authorization","Bearer " + token))
                 .andExpect(status().isMethodNotAllowed())
                 .andDo(print());
@@ -212,7 +212,7 @@ public class SecurityFilterTest {
 
         when(userService.findUserByEmail(any())).thenReturn(user);
 
-        mockMvc.perform(get("/notDefinedUrl")
+        mockMvc.perform(get("/api/v1/notDefinedUrl")
                         .header("Authorization","Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andDo(print());
@@ -223,7 +223,7 @@ public class SecurityFilterTest {
     void NotFound2() throws Exception {
         when(userService.findUserByEmail(any())).thenReturn(user);
 
-        mockMvc.perform(get("/notDefinedUrl"))
+        mockMvc.perform(get("/api/v1/notDefinedUrl"))
                 .andExpect(status().isNotFound())
                 .andDo(print());
     }
@@ -235,7 +235,7 @@ public class SecurityFilterTest {
 
         when(userService.findUserByEmail(any())).thenReturn(user);
 
-        mockMvc.perform(get("/notDefinedUrl")
+        mockMvc.perform(get("/api/v1/notDefinedUrl")
                         .header("Authorization","Bearer " + token))
                 .andExpect(status().isNotFound())
                 .andDo(print());

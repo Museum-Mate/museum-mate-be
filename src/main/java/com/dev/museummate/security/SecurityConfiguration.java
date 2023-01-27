@@ -34,11 +34,12 @@ public class SecurityConfiguration {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/users/join","/api/v1/users/login","/api/v1/users/check").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/example/security").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/example/security/admin").hasRole("ADMIN")
-                        .requestMatchers("/api/v1/users/reissue","/api/v1/users/logout","/api/v1/users/modify").authenticated()
-                        .anyRequest().permitAll()   //고정
+                .requestMatchers("/api/v1/users/join","/api/v1/users/login","/api/v1/users/check").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/example/security").authenticated()
+                .requestMatchers(HttpMethod.GET, "/api/v1/example/security/admin").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET,"/api/v1/my/calendars").authenticated()
+                .requestMatchers("/api/v1/users/reissue","/api/v1/users/logout","/api/v1/users/modify").authenticated()
+                .anyRequest().permitAll()   //고정
                 )
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
