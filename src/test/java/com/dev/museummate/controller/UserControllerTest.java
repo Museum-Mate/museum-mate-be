@@ -209,6 +209,24 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("로그인 - 실패 #3 인증 되지 않은 이메일 접근")
+    @WithMockUser
+    void login_fail_3() throws Exception {
+
+        UserLoginRequest userLoginRequest = new UserLoginRequest("chlalswns200@gmail.com", "1q2w3e4r!");
+
+        when(userService.login(any()))
+                .thenThrow(new AppException(ErrorCode.INVALID_MAIL,""));
+
+        mockMvc.perform(post("/api/v1/users/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userLoginRequest)))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     @DisplayName("재발급 - 성공")
     @WithMockUser
     void reissue_success() throws Exception {
