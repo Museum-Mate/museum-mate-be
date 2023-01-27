@@ -37,5 +37,17 @@ public class UserController {
         return Response.success(msg);
     }
 
+    @PostMapping("/check")
+    public Response<String> check(@RequestBody UserCheckRequest userCheckRequest) {
+        String msg = userService.userNameCheck(userCheckRequest);
+        return Response.success(msg);
+    }
+
+    @PutMapping("/modify")
+    public Response<String> modify(@RequestBody UserModifyRequest userModifyRequest,Authentication authentication) {
+        String msg = userService.modifyUser(userModifyRequest, authentication.getName());
+        return Response.success(msg);
+    }
+
 
 }
