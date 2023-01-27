@@ -17,7 +17,7 @@ spring:
   ## DB (datasource)
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:8080
+    url: jdbc:mysql://localhost:8080/
     username:
     password:
     ### DBCP( Database Connection Pool )
