@@ -3,6 +3,7 @@ package com.dev.museummate.domain.entity;
 import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.dto.user.UserModifyRequest;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,8 +17,7 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE user SET deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at is NULL")
-
-public class UserEntity extends BaseEntity{
+public class UserEntity extends BaseTimeEntity{
 
     /**
      * id : idx
@@ -27,13 +27,22 @@ public class UserEntity extends BaseEntity{
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @NotNull
     private Long id;
+    @Column(unique = true)
+    @NotNull
     private String email;
+    @NotNull
     private String password;
+    @NotNull
     private String name;
+    @NotNull
     private String userName;
+    @NotNull
     private String birth;
+    @NotNull
     private String phoneNumber;
+    @NotNull
     private String address;
     @Enumerated(EnumType.STRING)
     private UserRole role;

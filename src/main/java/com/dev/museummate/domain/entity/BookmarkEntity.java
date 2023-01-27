@@ -1,13 +1,15 @@
 package com.dev.museummate.domain.entity;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
 @Getter
 @Table(name = "bookmark")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BookmarkEntity {
+public class BookmarkEntity extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,10 +17,12 @@ public class BookmarkEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @NotNull
     private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "exhibition_id")
+    @NotNull
     private ExhibitionEntity exhibition;
 
     @Builder
