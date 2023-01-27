@@ -63,6 +63,10 @@ public class UserService {
         if(!encoder.matches(userLoginRequest.getPassword(), findUser.getPassword())){
             throw new AppException(ErrorCode.INVALID_PASSWORD,String.format("잘못된 비밀번호 입니다."));
         }
+        if (findUser.getAuth().equals(Boolean.FALSE)) {
+            throw new AppException(ErrorCode.INVALID_MAIL, String.format("인증 되지 않은 이메일 입니다."));
+        }
+
 
         String accessToken = JwtUtils.createAccessToken(userLoginRequest.getEmail(), secretKey, accessExpireTimeMs);
         String refreshToken = JwtUtils.createRefreshToken(userLoginRequest.getEmail(), secretKey, refreshExpireTimeMs);
