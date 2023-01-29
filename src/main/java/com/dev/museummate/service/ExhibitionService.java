@@ -1,7 +1,10 @@
 package com.dev.museummate.service;
 
+import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.dto.exhibition.BookmarkAddResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
+import com.dev.museummate.domain.dto.exhibition.ExhibitionEditRequest;
+import com.dev.museummate.domain.dto.exhibition.ExhibitionWriteRequest;
 import com.dev.museummate.domain.entity.BookmarkEntity;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.UserEntity;
@@ -14,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -26,8 +30,11 @@ public class ExhibitionService {
     private final UserRepository userRepository;
     private final BookmarkRepository bookmarkRepository;
 
+    // 전시회 전체 조회
     public Page<ExhibitionDto> findAllExhibitions (Pageable pageable) {
+
         Page<ExhibitionEntity> exhibitionEntities = exhibitionRepository.findAll(pageable);
+
         return exhibitionEntities.map(exhibition -> ExhibitionDto.toDto(exhibition));
     }
 
@@ -39,6 +46,38 @@ public class ExhibitionService {
         ExhibitionDto selectedExhibitionDto = ExhibitionDto.toDto(selectedExhibition);
 
         return selectedExhibitionDto;
+    }
+
+    // 유저가 전시회 직접 등록
+    public ExhibitionDto write(ExhibitionWriteRequest exhibitionWriteRequest, String email) {
+        UserEntity user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND, "존재하지 않는 유저입니다."));
+
+        ExhibitionEntity savedExhibition = exhibitionRepository.save(exhibitionWriteRequest.toEntity(user));
+
+        ExhibitionDto selectedExhibitionDto = ExhibitionDto.toDto(savedExhibition);
+
+        return selectedExhibitionDto;
+    }
+
+    public ExhibitionEntity getExihibitionById(Long exhibitionId) {
+
+        return exhibitionRepository.findById(exhibitionId).orElseThrow(() ->
+                new AppException(ErrorCode.NOT_FOUND_POST, String.format("해당 포스트는 존재하지 않습니다.")));
+    }
+
+    public ExhibitionDto edit(Long exhibitionId, ExhibitionEditRequest exhibitionEditRequest, String email) {
+
+        UserEntity user = userRepository.findByEmail(email).orElseThrow(() ->
+                new AppException(ErrorCode.EMAIL_NOT_FOUND, "존재하지 않는 유저입니다."));
+
+        ExhibitionEntity exhibitionEntity = getExihibitionById(exhibitionId);
+
+        ExhibitionEntity savedExhibition = exhibitionRepository.save(exhibitionEditRequest.toEntity(user));
+        authorization(user, savedExhibition.getUser());
+        ExhibitionDto exhibitionDto = ExhibitionDto.toDto(savedExhibition);
+
+        return exhibitionDto;
     }
 
     // 해당하는 exhibition을 Bookmark에 추가
@@ -77,4 +116,13 @@ public class ExhibitionService {
         }
     }
 
+    // 권한 있는 사용자만 edit 허용
+    public void authorization(UserEntity authorizedUser, UserEntity editor) {
+        if(!authorizedUser.getRole().equals(UserRole.ROLE_EDITOR.toString()) && !authorizedUser.getEmail()
+                .equals(editor.getEmail())){
+
+            throw new AppException(ErrorCode.INVALID_PERMISSION, String.format("게시물을 수정할 권한이 없습니다.",
+                    authorizedUser.getEmail()));
+        }
+    }
 }
