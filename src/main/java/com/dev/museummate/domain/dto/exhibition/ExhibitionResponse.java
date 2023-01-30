@@ -20,8 +20,18 @@ public class ExhibitionResponse {
     private String price;
     private String ageLimit;
     private String detailInfo;
-    private String galleryDetail;
+    private String galleryLocation;
     private Long galleryId;
+    private String statMale;
+    private String statFemale;
+    private String statAge10;
+    private String statAge20;
+    private String statAge30;
+    private String statAge40;
+    private String statAge50;
+    private String mainImgUrl;
+    private String noticeImgUrl;
+    private String detailImgUrl;
 
     public static Page<ExhibitionResponse> of(Page<ExhibitionDto> exhibitions) {
         return exhibitions.map(exhibition -> ExhibitionResponse.builder()
@@ -32,13 +42,22 @@ public class ExhibitionResponse {
                 .price(exhibition.getPrice())
                 .ageLimit(exhibition.getAgeLimit())
                 .detailInfo(exhibition.getDetailInfo())
-                .galleryDetail(exhibition.getGalleryDetail())
+                .galleryLocation(exhibition.getGalleryLocation())
                 .galleryId(exhibition.getGallery().getId())
-                .build()
-        );
+                .statMale(exhibition.getStatMale())
+                .statFemale(exhibition.getStatFemale())
+                .statAge10(exhibition.getStatAge10())
+                .statAge20(exhibition.getStatAge20())
+                .statAge30(exhibition.getStatAge30())
+                .statAge40(exhibition.getStatAge40())
+                .statAge50(exhibition.getStatAge50())
+                .mainImgUrl(exhibition.getMainImgUrl())
+                .noticeImgUrl(exhibition.getNoticeImgUrl())
+                .detailImgUrl(exhibition.getDetailImgUrl())
+                .build());
     }
 
-    public static ExhibitionResponse of(ExhibitionDto exhibition) {
+    public static ExhibitionResponse of(ExhibitionEntity exhibition) {
         return ExhibitionResponse.builder()
                 .id(exhibition.getId())
                 .name(exhibition.getName())
@@ -47,8 +66,19 @@ public class ExhibitionResponse {
                 .price(exhibition.getPrice())
                 .ageLimit(exhibition.getAgeLimit())
                 .detailInfo(exhibition.getDetailInfo())
-                .galleryDetail(exhibition.getGalleryDetail())
+                .galleryLocation(exhibition.getGalleryLocation())
                 .galleryId(exhibition.getId())
+                .statMale(exhibition.getStatMale())
+                .statFemale(exhibition.getStatFemale())
+                .statFemale(exhibition.getStatAge10())
+                .statAge10(exhibition.getStatAge10())
+                .statAge20(exhibition.getStatAge20())
+                .statAge30(exhibition.getStatAge30())
+                .statAge40(exhibition.getStatAge40())
+                .statAge50(exhibition.getStatAge50())
+                .mainImgUrl(exhibition.getMainImgUrl())
+                .noticeImgUrl(exhibition.getNoticeImgUrl())
+                .detailImgUrl(exhibition.getDetailImgUrl())
                 .build();
     }
 }
