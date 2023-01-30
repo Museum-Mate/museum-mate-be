@@ -11,13 +11,13 @@ import org.hibernate.annotations.ColumnDefault;
 @Table(name = "comment")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CommentEntity extends BaseTimeEntity{
+public class CommentEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private UserEntity user;
 
     @ColumnDefault("0")
@@ -26,5 +26,9 @@ public class CommentEntity extends BaseTimeEntity{
 
     @NotNull
     private String content;
+
+    @ManyToOne
+    @JoinColumn(name = "gathering")
+    private GatheringEntity gathering;
 
 }
