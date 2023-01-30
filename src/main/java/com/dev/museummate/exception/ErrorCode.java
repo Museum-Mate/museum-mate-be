@@ -11,6 +11,7 @@ public enum ErrorCode {
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "email conflict"),
     NOT_FOUND_POST(HttpStatus.NOT_FOUND, "Post Not Found"),
     EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND,"email not found"),
+    INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "Unauthorized access" ),
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "invalid password"),
     INVALID_REQUEST(HttpStatus.UNAUTHORIZED, "invalid quest"),
     USERNAME_NOT_FOUND(HttpStatus.NOT_FOUND, "Username Not Found"),
@@ -19,6 +20,7 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "Token not found"),
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "Access forbidden"),
     EXHIBITION_NOT_FOUND(HttpStatus.NOT_FOUND, "Exhibition not found"),
+    DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Database Error" )
     ;
     private HttpStatus httpStatus;
     private String message;
