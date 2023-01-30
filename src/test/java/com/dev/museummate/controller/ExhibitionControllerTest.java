@@ -94,7 +94,6 @@ class ExhibitionControllerTest {
                     .andExpect(jsonPath("$.result.price").exists())
                     .andExpect(jsonPath("$.result.ageLimit").exists())
                     .andExpect(jsonPath("$.result.detailInfo").exists())
-                    .andExpect(jsonPath("$.result.galleryDetail").exists())
                     .andDo(print());
         }
 
@@ -177,22 +176,19 @@ class ExhibitionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(exhibitionWriteRequest)))
                 .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.result.name").exists())
-//                .andExpect(jsonPath("$.result.startsAt").exists())
-//                .andExpect(jsonPath("$.result.endsAt").exists())
-//                .andExpect(jsonPath("$.result.price").exists())
-//                .andExpect(jsonPath("$.result.ageLimit").exists())
-//                .andExpect(jsonPath("$.result.detailInfo").exists())
-//                .andExpect(jsonPath("$.result.galleryLocation").exists())
-//                .andExpect(jsonPath("$.result.gallery").exists())
-//                .andExpect(jsonPath("$.result.user").exists())
-//                .andExpect(jsonPath("$.result.statMale").exists())
-//                .andExpect(jsonPath("$.result.statFemale").exists())
-//                .andExpect(jsonPath("$.result.statAge10").exists())
-//                .andExpect(jsonPath("$.result.statAge20").exists())
-//                .andExpect(jsonPath("$.result.statAge30").exists())
-//                .andExpect(jsonPath("$.result.statAge40").exists())
-//                .andExpect(jsonPath("$.result.statAge50").exists())
+                .andExpect(jsonPath("$.result.name").exists())
+                .andExpect(jsonPath("$.result.startsAt").exists())
+                .andExpect(jsonPath("$.result.endsAt").exists())
+                .andExpect(jsonPath("$.result.price").exists())
+                .andExpect(jsonPath("$.result.ageLimit").exists())
+                .andExpect(jsonPath("$.result.detailInfo").exists())
+                .andExpect(jsonPath("$.result.statMale").exists())
+                .andExpect(jsonPath("$.result.statFemale").exists())
+                .andExpect(jsonPath("$.result.statAge10").exists())
+                .andExpect(jsonPath("$.result.statAge20").exists())
+                .andExpect(jsonPath("$.result.statAge30").exists())
+                .andExpect(jsonPath("$.result.statAge40").exists())
+                .andExpect(jsonPath("$.result.statAge50").exists())
                 .andDo(print());
     }
 
