@@ -40,7 +40,7 @@ public class GatheringService {
         GatheringEntity savedEntity = gatheringRepository.save(gatheringEntity);
         GatheringDto savedDto = savedEntity.of();
 
-        participantRepository.save(new ParticipantEntity(findUser, savedEntity, Boolean.FALSE));
+        participantRepository.save(new ParticipantEntity(findUser, savedEntity, Boolean.TRUE,Boolean.TRUE));
 
         return savedDto;
     }

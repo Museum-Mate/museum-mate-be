@@ -35,10 +35,12 @@ public class ParticipantEntity extends BaseTimeEntity {
     @NotNull
     private Boolean hostFlag;
 
-    @Builder
-    public ParticipantEntity(UserEntity user, GatheringEntity gathering, Boolean hostFlag) {
+    private Boolean approve;
+
+    public ParticipantEntity(UserEntity user, GatheringEntity gathering, Boolean hostFlag, Boolean approve) {
         this.user = user;
         this.gathering = gathering;
         this.hostFlag = hostFlag;
+        this.approve = approve;
     }
 }
