@@ -59,6 +59,7 @@ dependencies {
 
     // Thymeleaf
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '3.0.1'
+
 }
 
 tasks.named('test') {
