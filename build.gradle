@@ -54,6 +54,9 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // Mail
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
+
 }
 
 tasks.named('test') {

@@ -38,7 +38,7 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET,"/api/v1/example/security").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/example/security/admin").hasRole("ADMIN")
                         .requestMatchers("/api/v1/users/reissue","/api/v1/users/logout","/api/v1/users/modify","/api/v1/users/delete").authenticated()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/my/calendars").authenticated()
+                        .requestMatchers(HttpMethod.GET,"/api/v1/my/**").authenticated()
                         .anyRequest().permitAll()   //고정
                 )
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
