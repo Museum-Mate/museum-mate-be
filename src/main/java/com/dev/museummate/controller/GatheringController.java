@@ -7,6 +7,7 @@ import com.dev.museummate.domain.dto.gathering.GatheringPostResponse;
 import com.dev.museummate.service.GatheringService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,5 +25,11 @@ public class GatheringController {
 
         GatheringDto gatheringDto = gatheringService.posts(gatheringPostRequest,authentication.getName());
         return Response.success(new GatheringPostResponse(gatheringDto.getId()));
+    }
+
+    @PostMapping("/{gatheringId}/enroll")
+    public Response<String> enroll(@PathVariable Long gatheringId,Authentication authentication) {
+        String msg = gatheringService.enroll(gatheringId,authentication.getName());
+        return Response.success(msg);
     }
 }
