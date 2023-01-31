@@ -26,7 +26,7 @@ public class ReviewController {
   [X] 리뷰 등록, WriteReviewResponse 반환
    */
   @PostMapping("/{exhibitionId}")
-  public Response<ReviewDto> writeReview(@RequestBody WriteReviewRequest writeReviewRequest,
+  public Response<WriteReviewResponse> writeReview(@RequestBody WriteReviewRequest writeReviewRequest,
       @PathVariable Long exhibitionId,
       Authentication authentication) {
     // authentication에서 name 추출
