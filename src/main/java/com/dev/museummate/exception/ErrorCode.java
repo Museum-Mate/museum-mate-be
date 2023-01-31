@@ -19,6 +19,8 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "Token not found"),
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "Access forbidden"),
     EXHIBITION_NOT_FOUND(HttpStatus.NOT_FOUND, "Exhibition not found"),
+    GATHERING_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "Gathering post not found"),
+    DUPLICATED_ENROLL(HttpStatus.CONFLICT, "User is Duplicate"),
     ;
     private HttpStatus httpStatus;
     private String message;
