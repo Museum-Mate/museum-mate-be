@@ -17,7 +17,7 @@ public class ReviewDto {
     private String content;
     private Integer star;
     private String userName; // From UserEntity
-    private Long exhibitionId; // From ExhibitionEntity
+    private String exhibitionName; // From ExhibitionEntity
     private String visitedDate;
     private LocalDateTime createdAt; // 최초 생성 일시
     private LocalDateTime lastModifiedAt; // 최종 수정 일시
@@ -28,7 +28,7 @@ public class ReviewDto {
     // Constructor
     @Builder
     public ReviewDto(Long id, String title, String content,
-                     Integer star, String userName, Long exhibitionId,
+                     Integer star, String userName, String exhibitionName,
                      String visitedDate,
                      LocalDateTime createdAt,
                      LocalDateTime lastModifiedAt,
@@ -41,7 +41,7 @@ public class ReviewDto {
         this.content = content;
         this.star = star;
         this.userName = userName;
-        this.exhibitionId = exhibitionId;
+        this.exhibitionName = exhibitionName;
         this.visitedDate = visitedDate;
         this.createdAt = createdAt;
         this.lastModifiedAt = lastModifiedAt;
@@ -62,7 +62,7 @@ public class ReviewDto {
                 reviewEntity.getContent(),
                 reviewEntity.getStar(),
                 reviewEntity.getUser().getUserName(),
-                reviewEntity.getExhibition().getId(),
+                reviewEntity.getExhibition().getName(),
                 reviewEntity.getVisitedDate(),
                 reviewEntity.getCreatedAt(),
                 reviewEntity.getLastModifiedAt(),
