@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.security.core.parameters.P;
 
 @Entity
 @Table(name = "participant")
@@ -43,5 +44,13 @@ public class ParticipantEntity extends BaseTimeEntity {
         this.gathering = gathering;
         this.hostFlag = hostFlag;
         this.approve = approve;
+    }
+    public static ParticipantEntity of(UserEntity findUser,GatheringEntity findGathering,Boolean hostFlag,Boolean approve) {
+        return ParticipantEntity.builder()
+                                .user(findUser)
+                                .gathering(findGathering)
+                                .hostFlag(hostFlag)
+                                .approve(approve)
+                                .build();
     }
 }
