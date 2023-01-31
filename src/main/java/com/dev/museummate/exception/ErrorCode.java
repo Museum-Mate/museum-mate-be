@@ -20,9 +20,10 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "Token not found"),
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "Access forbidden"),
     EXHIBITION_NOT_FOUND(HttpStatus.NOT_FOUND, "Exhibition not found"),
-    CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Review Contents not Found")
-    DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Database Error" )
+    CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Review Contents not Found"),
+    DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Database Error" ),
     INVALID_MAIL(HttpStatus.UNAUTHORIZED, "invalid email"),
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "Review is Not Found")
     ;
     private HttpStatus httpStatus;
     private String message;
