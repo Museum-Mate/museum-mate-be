@@ -21,6 +21,7 @@ public enum ErrorCode {
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "Access forbidden"),
     EXHIBITION_NOT_FOUND(HttpStatus.NOT_FOUND, "Exhibition not found"),
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Database Error" )
+    INVALID_MAIL(HttpStatus.UNAUTHORIZED, "invalid email"),
     ;
     private HttpStatus httpStatus;
     private String message;
