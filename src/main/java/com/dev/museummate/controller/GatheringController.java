@@ -35,6 +35,11 @@ public class GatheringController {
         String msg = gatheringService.enroll(gatheringId,authentication.getName());
         return Response.success(msg);
     }
+    @GetMapping("/{gatheringId}/enroll/{participantId}")
+    public Response<String> approve(@PathVariable Long gatheringId,@PathVariable Long participantId, Authentication authentication) {
+        String msg = gatheringService.approve(gatheringId,participantId,authentication.getName());
+        return Response.success(msg);
+    }
 
     @GetMapping("/{gatheringId}/enroll/list")
     public Response<List<GatheringResponse>> enrollList(@PathVariable Long gatheringId, Authentication authentication) {
@@ -47,4 +52,5 @@ public class GatheringController {
         List<GatheringResponse> approveList = gatheringService.approveList(gatheringId);
         return Response.success(approveList);
     }
+
 }
