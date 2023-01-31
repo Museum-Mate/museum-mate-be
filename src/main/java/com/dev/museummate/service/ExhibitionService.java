@@ -2,6 +2,7 @@ package com.dev.museummate.service;
 
 import com.dev.museummate.domain.dto.exhibition.BookmarkAddResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
+import com.dev.museummate.domain.dto.exhibition.ExhibitionEditRequest;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionWriteRequest;
 import com.dev.museummate.domain.entity.BookmarkEntity;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
@@ -90,4 +91,22 @@ public class ExhibitionService {
         }
     }
 
+    public ExhibitionEntity getExihibitionById(Long exhibitionId) {
+
+        return exhibitionRepository.findById(exhibitionId).orElseThrow(() ->
+            new AppException(ErrorCode.NOT_FOUND_POST, String.format("해당 포스트는 존재하지 않습니다.")));
+    }
+
+    public ExhibitionDto edit(Long exhibitionId, ExhibitionEditRequest exhibitionEditRequest, String email) {
+
+        UserEntity user = userRepository.findByEmail(email).orElseThrow(() ->
+            new AppException(ErrorCode.EMAIL_NOT_FOUND, "존재하지 않는 유저입니다."));
+
+        ExhibitionEntity exhibitionEntity = getExihibitionById(exhibitionId);
+
+        ExhibitionEntity savedExhibition = exhibitionRepository.save(exhibitionEditRequest.toEntity(user));
+        ExhibitionDto exhibitionDto = ExhibitionDto.toDto(savedExhibition);
+
+        return exhibitionDto;
+    }
 }
