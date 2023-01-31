@@ -56,4 +56,7 @@ public class ParticipantEntity extends BaseTimeEntity {
 
     }
 
+    public void approveUser() {
+        this.approve = Boolean.TRUE;
+    }
 }
