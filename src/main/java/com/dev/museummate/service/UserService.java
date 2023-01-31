@@ -10,15 +10,10 @@ import com.dev.museummate.utils.JwtUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-
-import java.beans.Transient;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -40,7 +35,7 @@ public class UserService {
                 new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.",email)));
     }
 
-    public UserDto join(UserJoinRequest userJoinRequest) {
+    public String join(UserJoinRequest userJoinRequest) {
 
         userRepository.findByUserName(userJoinRequest.getUserName())
                 .ifPresent(user ->{
@@ -57,7 +52,7 @@ public class UserService {
 
         UserDto userDto = UserDto.toDto(savedUser);
 
-        return userDto;
+        return userDto.getEmail();
 
     }
 
@@ -68,6 +63,10 @@ public class UserService {
         if(!encoder.matches(userLoginRequest.getPassword(), findUser.getPassword())){
             throw new AppException(ErrorCode.INVALID_PASSWORD,String.format("잘못된 비밀번호 입니다."));
         }
+        if (findUser.getAuth().equals(Boolean.FALSE)) {
+            throw new AppException(ErrorCode.INVALID_MAIL, String.format("인증 되지 않은 이메일 입니다."));
+        }
+
 
         String accessToken = JwtUtils.createAccessToken(userLoginRequest.getEmail(), secretKey, accessExpireTimeMs);
         String refreshToken = JwtUtils.createRefreshToken(userLoginRequest.getEmail(), secretKey, refreshExpireTimeMs);
@@ -156,5 +155,17 @@ public class UserService {
         userRepository.delete(findUser);
 
         return "탈퇴가 완료 되었습니다.";
+    }
+
+    @Transactional
+    public String auth(String authNum, String email) {
+        UserEntity findUser = findUserByEmail(email);
+
+        if (findUser.getAuthNum().equals(authNum)) {
+            findUser.updateAuth();
+            userRepository.save(findUser);
+            return "인증이 완료 되었습니다.";
+        }
+        return "인증에 실패 했습니다.";
     }
 }
