@@ -2,21 +2,28 @@ package com.dev.museummate.controller;
 
 import com.dev.museummate.configuration.Response;
 import com.dev.museummate.domain.dto.user.*;
+import com.dev.museummate.service.MailService;
 import com.dev.museummate.service.UserService;
+import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final MailService mailService;
+
     @PostMapping("/join")
-    public Response<UserJoinResponse> join(@RequestBody UserJoinRequest userJoinRequest) {
-        UserDto userDto = userService.join(userJoinRequest);
-        return Response.success(new UserJoinResponse(userDto.getUserName()));
+    public Response<String> join(@RequestBody UserJoinRequest userJoinRequest) throws MessagingException, UnsupportedEncodingException {
+        String email = userService.join(userJoinRequest);
+        String msg = mailService.sendEmail(email);
+        return Response.success(msg);
     }
 
     @PostMapping("/login")
@@ -55,6 +62,10 @@ public class UserController {
         return Response.success(msg);
     }
 
-
+    @GetMapping("/auth")
+    public Response<String> auth(@RequestParam("authNum") String authNum, @RequestParam("email") String email) {
+        String msg = userService.auth(authNum, email);
+        return Response.success(msg);
+    }
 
 }
