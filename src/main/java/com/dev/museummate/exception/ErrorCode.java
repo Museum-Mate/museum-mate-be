@@ -21,6 +21,7 @@ public enum ErrorCode {
     EXHIBITION_NOT_FOUND(HttpStatus.NOT_FOUND, "Exhibition not found"),
     GATHERING_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "Gathering post not found"),
     DUPLICATED_ENROLL(HttpStatus.CONFLICT, "User is Duplicate"),
+    PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "Participant not found"),
     ;
     private HttpStatus httpStatus;
     private String message;
