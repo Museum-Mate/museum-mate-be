@@ -98,8 +98,10 @@ class ReviewControllerTest {
 
         ReviewDto reviewDto = ReviewDto.toDto(testReview);
 
+        WriteReviewResponse writeReviewResponse = WriteReviewResponse.fromDtoToResponse(reviewDto);
+
         when(reviewService.writeReview(any(), any(), any()))
-                .thenReturn(new WriteReviewResponse(reviewDto.getId(), "리뷰등록성공"));
+                .thenReturn(reviewDto);
 
         mockMvc.perform(post("/api/v1/reviews/1")
                         .with(csrf())
@@ -108,7 +110,6 @@ class ReviewControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
                 .andExpect(jsonPath("$.result.id").exists())
-                .andExpect(jsonPath("$.result.message").exists())
                 .andDo(print());
     }
 
@@ -148,16 +149,6 @@ class ReviewControllerTest {
                 .build();
 
         UserEntity testUser = UserEntityFixture.getUser("test@mail.com", "password");
-
-        ReviewEntity testReview = ReviewEntity.builder()
-                .id(1L)
-                .title(writeReviewRequest.getTitle())
-
-                .star(writeReviewRequest.getStar())
-                .user(testUser)
-                .exhibition(exhibitionEntity)
-                .visitedDate(writeReviewRequest.getVisitedDate())
-                .build();
 
         when(reviewService.writeReview(any(), any(), any()))
                 .thenThrow(new AppException(ErrorCode.CONTENT_NOT_FOUND, ""));

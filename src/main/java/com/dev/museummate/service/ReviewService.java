@@ -2,7 +2,6 @@ package com.dev.museummate.service;
 
 import com.dev.museummate.domain.dto.review.ReviewDto;
 import com.dev.museummate.domain.dto.review.WriteReviewRequest;
-import com.dev.museummate.domain.dto.review.WriteReviewResponse;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.ReviewEntity;
 import com.dev.museummate.domain.entity.UserEntity;
@@ -23,9 +22,9 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 
     /*
-    Returns Response
+    Service Layer returns Dto to Controller Layer
      */
-    public WriteReviewResponse writeReview(String email,
+    public ReviewDto writeReview(String email,
                                            WriteReviewRequest writeReviewRequest,
                                            Long exhibitionId) {
         // 유저 검증 (한 번 더 하는 것)
@@ -52,8 +51,8 @@ public class ReviewService {
         reviewRepository.save(review);
 
         // ReviewDto 생성
-        ReviewDto reviewDto = ReviewDto.toDto(review);
+        ReviewDto savedReviewDto = ReviewDto.toDto(review);
 
-        return new WriteReviewResponse(reviewDto.getId(), "리뷰등록성공");
+        return savedReviewDto;
     }
 }

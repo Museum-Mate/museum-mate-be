@@ -1,6 +1,7 @@
 package com.dev.museummate.controller;
 
 import com.dev.museummate.configuration.Response;
+import com.dev.museummate.domain.dto.review.ReviewDto;
 import com.dev.museummate.domain.dto.review.WriteReviewRequest;
 import com.dev.museummate.domain.dto.review.WriteReviewResponse;
 import com.dev.museummate.service.ReviewService;
@@ -22,20 +23,23 @@ public class ReviewController {
   private final ReviewService reviewService;
 
   /*
-  [X] 리뷰 등록
+  [X] 리뷰 등록, WriteReviewResponse 반환
    */
   @PostMapping("/{exhibitionId}")
-  public Response<WriteReviewResponse> writeReview(@RequestBody WriteReviewRequest writeReviewRequest,
+  public Response<ReviewDto> writeReview(@RequestBody WriteReviewRequest writeReviewRequest,
       @PathVariable Long exhibitionId,
       Authentication authentication) {
     // authentication에서 name 추출
     String email = authentication.getName();
 
     // review service를 통해 review dto 생성
-    WriteReviewResponse writeReviewResponse =
+    ReviewDto savedReviewDto =
         reviewService.writeReview(email, writeReviewRequest, exhibitionId);
 
-    // writeReviewResponse 생성
+    // From savedReviewDto to WriteReviewResponse
+    WriteReviewResponse writeReviewResponse = WriteReviewResponse.fromDtoToResponse(savedReviewDto);
+
+    // writeReviewResponse 반환
     return Response.success(writeReviewResponse);
   }
 
