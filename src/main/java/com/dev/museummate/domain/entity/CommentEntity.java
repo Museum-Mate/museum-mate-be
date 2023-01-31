@@ -3,6 +3,7 @@ package com.dev.museummate.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
@@ -31,4 +32,12 @@ public class CommentEntity extends BaseEntity {
     @JoinColumn(name = "gathering")
     private GatheringEntity gathering;
 
+    @Builder
+    public CommentEntity(Long id, UserEntity user, Long parentId, String content, GatheringEntity gathering) {
+        this.id = id;
+        this.user = user;
+        this.parentId = parentId;
+        this.content = content;
+        this.gathering = gathering;
+    }
 }
