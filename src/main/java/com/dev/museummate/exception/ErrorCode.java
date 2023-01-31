@@ -20,6 +20,8 @@ public enum ErrorCode {
     TOKEN_NOT_FOUND(HttpStatus.UNAUTHORIZED, "Token not found"),
     FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "Access forbidden"),
     EXHIBITION_NOT_FOUND(HttpStatus.NOT_FOUND, "Exhibition not found"),
+    GATHERING_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "Gathering post not found"),
+    DUPLICATED_ENROLL(HttpStatus.CONFLICT, "User is Duplicate"),
     CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Review Contents not Found")
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Database Error" )
     INVALID_MAIL(HttpStatus.UNAUTHORIZED, "invalid email"),
