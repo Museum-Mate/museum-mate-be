@@ -13,6 +13,8 @@ import com.dev.museummate.repository.GatheringRepository;
 import com.dev.museummate.repository.ParticipantRepository;
 import com.dev.museummate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +28,11 @@ public class GatheringService {
     public UserEntity findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() ->
                                                                  new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.", email)));
+    }
+
+    public GatheringEntity findPostById(long id) {
+        return gatheringRepository.findById(id).orElseThrow(() ->
+                                                                new AppException(ErrorCode.NOT_FOUND_POST, "존재하지 않는 게시물입니다."));
     }
 
     public GatheringDto posts(GatheringPostRequest gatheringPostRequest, String email) {
@@ -43,5 +50,18 @@ public class GatheringService {
         participantRepository.save(new ParticipantEntity(findUser, savedEntity, Boolean.TRUE,Boolean.TRUE));
 
         return savedDto;
+    }
+
+    public Page<GatheringDto> findAllGatherings(Pageable pageable) {
+        Page<GatheringEntity> gatheringEntities = gatheringRepository.findAll(pageable);
+        return gatheringEntities.map(gathering -> GatheringDto.toDto(gathering));
+    }
+
+    public GatheringDto getOne(long gatheringId) {
+        GatheringEntity gatheringEntity = findPostById(gatheringId);
+
+        GatheringDto selectedGatheringDto = GatheringDto.toDto(gatheringEntity);
+
+        return selectedGatheringDto;
     }
 }
