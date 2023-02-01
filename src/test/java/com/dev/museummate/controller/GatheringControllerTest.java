@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
+import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.GalleryEntity;
 import com.dev.museummate.domain.entity.UserEntity;
@@ -171,7 +172,24 @@ class GatheringControllerTest {
                                                     .lastModifiedBy("test")
                                                     .build();
 
-            given(gatheringService.getOne(gatheringId)).willReturn(gatheringDto);
+            Integer currentPeople = 2;
+
+            GatheringResponse gatheringResponse = GatheringResponse.builder()
+                                                                   .id(gatheringId)
+                                                                   .meetDateTime(gatheringDto.getMeetDateTime())
+                                                                   .meetLocation(gatheringDto.getMeetLocation())
+                                                                   .currentPeople(currentPeople)
+                                                                   .maxPeople(gatheringDto.getMaxPeople())
+                                                                   .title(gatheringDto.getTitle())
+                                                                   .content(gatheringDto.getContent())
+                                                                   .close(gatheringDto.getClose())
+                                                                   .exhibitionName(gatheringDto.getExhibition().getName())
+                                                                   .exhibitionMainUrl(gatheringDto.getExhibition().getMainImgUrl())
+                                                                   .userName(gatheringDto.getUser().getUserName())
+                                                                   .createdAt(gatheringDto.getCreatedAt())
+                                                                   .build();
+
+            given(gatheringService.getOne(gatheringId)).willReturn(gatheringResponse);
 
             mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/gatherings/" + gatheringId)
                                                   .with(csrf())
@@ -181,17 +199,15 @@ class GatheringControllerTest {
                    .andExpect(jsonPath("$.result.id").exists())
                    .andExpect(jsonPath("$.result.meetDateTime").exists())
                    .andExpect(jsonPath("$.result.meetLocation").exists())
+                   .andExpect(jsonPath("$.result.currentPeople").exists())
                    .andExpect(jsonPath("$.result.maxPeople").exists())
                    .andExpect(jsonPath("$.result.title").exists())
                    .andExpect(jsonPath("$.result.content").exists())
                    .andExpect(jsonPath("$.result.close").exists())
-                   .andExpect(jsonPath("$.result.exhibitionId").exists())
-                   .andExpect(jsonPath("$.result.userId").exists())
+                   .andExpect(jsonPath("$.result.exhibitionName").exists())
+                   .andExpect(jsonPath("$.result.exhibitionMainUrl").exists())
+                   .andExpect(jsonPath("$.result.userName").exists())
                    .andExpect(jsonPath("$.result.createdAt").exists())
-                   .andExpect(jsonPath("$.result.lastModifiedAt").exists())
-                   .andExpect(jsonPath("$.result.deletedAt").exists())
-                   .andExpect(jsonPath("$.result.createdBy").exists())
-                   .andExpect(jsonPath("$.result.lastModifiedBy").exists())
                    .andDo(print());
         }
 
