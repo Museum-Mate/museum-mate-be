@@ -3,6 +3,7 @@ package com.dev.museummate.domain.dto.gathering;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,35 +18,48 @@ public class GatheringResponse {
     private Long id;
     private String meetDateTime;
     private String meetLocation;
+    private Integer currentPeople;
     private Integer maxPeople;
     private String title;
     private String content;
     private Boolean close;
-    private Long exhibitionId;
-    private Long userId;
+    private String exhibitionName;
+    private String exhibitionMainUrl;
+    private String userName;
     private LocalDateTime createdAt;
-    private LocalDateTime lastModifiedAt;
-    private LocalDateTime deletedAt;
-    private String createdBy;
-    private String lastModifiedBy;
 
     public static Page<GatheringResponse> of(Page<GatheringDto> gatherings) {
         return gatherings.map(gathering -> GatheringResponse.builder()
             .id(gathering.getId())
             .meetDateTime(gathering.getMeetDateTime())
             .meetLocation(gathering.getMeetLocation())
+            .currentPeople(gathering.getCurrentPeople())
             .maxPeople(gathering.getMaxPeople())
             .title(gathering.getTitle())
             .content(gathering.getContent())
             .close(gathering.getClose())
-            .exhibitionId(gathering.getExhibition().getId())
-            .userId(gathering.getUser().getId())
+            .exhibitionName(gathering.getExhibition().getName())
+            .exhibitionMainUrl(gathering.getExhibition().getMainImgUrl())
+            .userName(gathering.getUser().getUserName())
             .createdAt(gathering.getCreatedAt())
-            .lastModifiedAt(gathering.getLastModifiedAt())
-            .deletedAt(gathering.getDeletedAt())
-            .createdBy(gathering.getCreatedBy())
-            .lastModifiedBy(gathering.getLastModifiedBy())
             .build());
+    }
+
+    public static GatheringResponse createGetOne(GatheringDto gatheringDto, Integer currentPeople) {
+        return GatheringResponse.builder()
+            .id(gatheringDto.getId())
+            .meetDateTime(gatheringDto.getMeetDateTime())
+            .meetLocation(gatheringDto.getMeetLocation())
+            .currentPeople(currentPeople)
+            .maxPeople(gatheringDto.getMaxPeople())
+            .title(gatheringDto.getTitle())
+            .content(gatheringDto.getContent())
+            .close(gatheringDto.getClose())
+            .exhibitionName(gatheringDto.getExhibition().getName())
+            .exhibitionMainUrl(gatheringDto.getExhibition().getMainImgUrl())
+            .userName(gatheringDto.getUser().getUserName())
+            .createdAt(gatheringDto.getCreatedAt())
+            .build();
     }
 
 }
