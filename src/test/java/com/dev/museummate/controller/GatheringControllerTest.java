@@ -302,4 +302,60 @@ class GatheringControllerTest {
                .andExpect(status().isNotFound());
     }
 
+    @Test
+    @DisplayName("참가 신청 취소 - 성공")
+    @WithMockUser
+    void enroll_cancel_success() throws Exception {
+
+        given(gatheringService.cancel(any(),any()))
+            .willReturn("신청 취소 완료");
+
+        mockMvc.perform(delete("/api/v1/gathering/1/cancel")
+                            .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("참가 신청 취소 - 실패#1 이메일 조회 실패")
+    @WithMockUser
+    void enroll_cancel_fail_1() throws Exception {
+
+        given(gatheringService.cancel(any(), any()))
+            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
+
+        mockMvc.perform(delete("/api/v1/gathering/1/cancel")
+                            .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("참가 신청 취소 - 실패#2 전시 조회 실패")
+    @WithMockUser
+    void enroll_cancel_fail_2() throws Exception {
+
+        given(gatheringService.cancel(any(), any()))
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, ""));
+
+        mockMvc.perform(delete("/api/v1/gathering/1/cancel")
+                            .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("참가 신청 취소 - 실패#3 전시 조회 실패")
+    @WithMockUser
+    void enroll_cancel_fail_3() throws Exception {
+
+        given(gatheringService.cancel(any(), any()))
+            .willThrow(new AppException(ErrorCode.PARTICIPANT_NOT_FOUND, ""));
+
+        mockMvc.perform(delete("/api/v1/gathering/1/cancel")
+                            .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isNotFound());
+    }
+
 }
