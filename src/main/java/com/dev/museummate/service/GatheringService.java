@@ -40,10 +40,10 @@ public class GatheringService {
 
         GatheringDto gatheringDto = gatheringPostRequest.toDto();
         GatheringEntity gatheringEntity = gatheringDto.toEntity(findUser, findExhibition);
-        GatheringEntity savedEntity = gatheringRepository.save(gatheringEntity);
-        GatheringDto savedDto = savedEntity.of();
+        GatheringEntity savedGathering = gatheringRepository.save(gatheringEntity);
+        GatheringDto savedDto = savedGathering.of();
 
-        participantRepository.save(new ParticipantEntity(findUser, savedEntity, Boolean.TRUE,Boolean.TRUE));
+        participantRepository.save(ParticipantEntity.of(findUser, savedGathering, Boolean.TRUE, Boolean.TRUE));
 
         return savedDto;
     }
@@ -59,7 +59,7 @@ public class GatheringService {
                                  throw new AppException(ErrorCode.DUPLICATED_ENROLL, "이미 신청 되었습니다.");
                              });
 
-        participantRepository.save(new ParticipantEntity(findUser, findGatheringPost, Boolean.FALSE, Boolean.FALSE));
+        participantRepository.save(ParticipantEntity.of(findUser, findGatheringPost, Boolean.FALSE, Boolean.FALSE));
         return "신청이 완료 되었습니다.";
     }
 
