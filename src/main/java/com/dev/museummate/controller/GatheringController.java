@@ -36,30 +36,28 @@ public class GatheringController {
     @GetMapping()
     public Response<Page<GatheringResponse>> findAllGatherings(@PageableDefault(size = 20,
             sort = "id", direction = Direction.DESC) Pageable pageable) {
-        Page<GatheringDto> gatheringDtos = gatheringService.findAllGatherings(pageable);
-        return Response.success(GatheringResponse.of(gatheringDtos));
+        Page<GatheringResponse> gatheringResponses = gatheringService.findAllGatherings(pageable);
+        return Response.success(gatheringResponses);
     }
 
     @GetMapping("/{gatheringId}")
     public Response getOne(@PathVariable Long gatheringId) {
 
-        GatheringDto gatheringDto = gatheringService.getOne(gatheringId);
+        GatheringResponse gatheringResponse = gatheringService.getOne(gatheringId);
 
         return Response.success(GatheringResponse.builder()
-                                                 .id(gatheringDto.getId())
-                                                 .meetDateTime(gatheringDto.getMeetDateTime())
-                                                 .meetLocation(gatheringDto.getMeetLocation())
-                                                 .maxPeople(gatheringDto.getMaxPeople())
-                                                 .title(gatheringDto.getTitle())
-                                                 .content(gatheringDto.getContent())
-                                                 .close(gatheringDto.getClose())
-                                                 .exhibitionId(gatheringDto.getExhibition().getId())
-                                                 .userId(gatheringDto.getUser().getId())
-                                                 .createdAt(gatheringDto.getCreatedAt())
-                                                 .lastModifiedAt(gatheringDto.getLastModifiedAt())
-                                                 .deletedAt(gatheringDto.getDeletedAt())
-                                                 .createdBy(gatheringDto.getCreatedBy())
-                                                 .lastModifiedBy(gatheringDto.getLastModifiedBy())
+                                                 .id(gatheringResponse.getId())
+                                                 .meetDateTime(gatheringResponse.getMeetDateTime())
+                                                 .meetLocation(gatheringResponse.getMeetLocation())
+                                                 .currentPeople(gatheringResponse.getCurrentPeople())
+                                                 .maxPeople(gatheringResponse.getMaxPeople())
+                                                 .title(gatheringResponse.getTitle())
+                                                 .content(gatheringResponse.getContent())
+                                                 .close(gatheringResponse.getClose())
+                                                 .exhibitionName(gatheringResponse.getExhibitionName())
+                                                 .exhibitionMainUrl(gatheringResponse.getExhibitionMainUrl())
+                                                 .userName(gatheringResponse.getUserName())
+                                                 .createdAt(gatheringResponse.getCreatedAt())
                                                  .build());
     }
 }

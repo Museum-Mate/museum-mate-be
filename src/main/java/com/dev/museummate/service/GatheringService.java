@@ -2,6 +2,7 @@ package com.dev.museummate.service;
 
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
+import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.GatheringEntity;
 import com.dev.museummate.domain.entity.ParticipantEntity;
@@ -12,8 +13,11 @@ import com.dev.museummate.repository.ExhibitionRepository;
 import com.dev.museummate.repository.GatheringRepository;
 import com.dev.museummate.repository.ParticipantRepository;
 import com.dev.museummate.repository.UserRepository;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +29,7 @@ public class GatheringService {
     private final UserRepository userRepository;
     private final ExhibitionRepository exhibitionRepository;
     private final ParticipantRepository participantRepository;
+
     public UserEntity findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() ->
                                                                  new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.", email)));
@@ -52,16 +57,34 @@ public class GatheringService {
         return savedDto;
     }
 
-    public Page<GatheringDto> findAllGatherings(Pageable pageable) {
+    public Page<GatheringResponse> findAllGatherings(Pageable pageable) {
         Page<GatheringEntity> gatheringEntities = gatheringRepository.findAll(pageable);
-        return gatheringEntities.map(gathering -> GatheringDto.toDto(gathering));
+
+        List<GatheringResponse> gatheringResponseList = new ArrayList<>();
+
+        for(GatheringEntity gathering : gatheringEntities) {
+
+            GatheringDto selectedGatheringDto = GatheringDto.toDto(gathering);
+
+            Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gathering.getId());
+
+            GatheringResponse gatheringResponse = GatheringResponse.createGetOne(selectedGatheringDto, currentPeople);
+
+            gatheringResponseList.add(gatheringResponse);
+        }
+
+        return new PageImpl<>(gatheringResponseList, pageable, gatheringEntities.getTotalElements());
     }
 
-    public GatheringDto getOne(long gatheringId) {
+    public GatheringResponse getOne(long gatheringId) {
         GatheringEntity gatheringEntity = findPostById(gatheringId);
+
+        Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
 
         GatheringDto selectedGatheringDto = GatheringDto.toDto(gatheringEntity);
 
-        return selectedGatheringDto;
+        GatheringResponse gatheringResponse = GatheringResponse.createGetOne(selectedGatheringDto, currentPeople);
+
+        return gatheringResponse;
     }
 }
