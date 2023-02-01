@@ -119,8 +119,28 @@ public class GatheringService {
 
         if (currentPeople.equals(findGatheringPost.getMaxPeople())) {
             findGatheringPost.closePost();
+            gatheringRepository.save(findGatheringPost);
         }
 
         return "신청을 승인 했습니다.";
+    }
+
+    public String cancel(Long gatheringId, String email) {
+        UserEntity findUser = findUserByEmail(email);
+        GatheringEntity findGatheringPost = gatheringRepository.findById(gatheringId)
+                                                               .orElseThrow(() -> new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,
+                                                                                                   "존재하지 않는 모집 글 입니다."));
+        ParticipantEntity participant = participantRepository.findByUserIdAndGatheringId(findUser.getId(), findGatheringPost.getId())
+                                                             .orElseThrow(() -> new AppException(ErrorCode.PARTICIPANT_NOT_FOUND,
+                                                                                                 "신청자를 찾을 수 없습니다."));
+        participantRepository.delete(participant);
+
+        Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
+        if (!currentPeople.equals(findGatheringPost.getMaxPeople())) {
+            findGatheringPost.openPost();
+            gatheringRepository.save(findGatheringPost);
+        }
+        return "신청이 취소 되었습니다.";
+
     }
 }

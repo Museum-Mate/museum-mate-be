@@ -9,6 +9,7 @@ import com.dev.museummate.service.GatheringService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -51,6 +52,12 @@ public class GatheringController {
     public Response<List<GatheringResponse>> approveList(@PathVariable Long gatheringId) {
         List<GatheringResponse> approveList = gatheringService.approveList(gatheringId);
         return Response.success(approveList);
+    }
+
+    @DeleteMapping("/{gatheringId}/cancel")
+    public Response<String> cancel(@PathVariable Long gatheringId,Authentication authentication) {
+        String msg = gatheringService.cancel(gatheringId, authentication.getName());
+        return Response.success(msg);
     }
 
 }
