@@ -54,6 +54,12 @@ dependencies {
     // Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    // Mail
+    implementation 'com.sun.mail:jakarta.mail:2.0.1'
+
+    // Thymeleaf
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '3.0.1'
+
 }
 
 tasks.named('test') {
