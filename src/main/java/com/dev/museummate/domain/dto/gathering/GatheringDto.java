@@ -3,6 +3,7 @@ package com.dev.museummate.domain.dto.gathering;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.GatheringEntity;
 import com.dev.museummate.domain.entity.UserEntity;
+import com.dev.museummate.service.GatheringService;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
@@ -20,6 +21,8 @@ public class GatheringDto {
     private Long id;
     private String meetDateTime;
     private String meetLocation;
+
+    private Integer currentPeople;
     private Integer maxPeople;
     private String title;
     private String content;
@@ -69,6 +72,7 @@ public class GatheringDto {
             .id(gatheringEntity.getId())
             .meetDateTime(gatheringEntity.getMeetDateTime())
             .meetLocation(gatheringEntity.getMeetLocation())
+            .currentPeople(null)
             .maxPeople(gatheringEntity.getMaxPeople())
             .title(gatheringEntity.getTitle())
             .content(gatheringEntity.getContent())
