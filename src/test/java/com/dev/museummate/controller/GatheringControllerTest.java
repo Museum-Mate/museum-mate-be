@@ -178,7 +178,7 @@ class GatheringControllerTest {
     @DisplayName("참가 신청 목록 조회 - 성공")
     @WithMockUser
     void enrollList_success() throws Exception {
-
+      
         List<ParticipantDto> lger = new ArrayList<>();
 
         given(gatheringService.enrollList(any(),any()))
@@ -232,5 +232,74 @@ class GatheringControllerTest {
         //then
     }
 
+    @Test
+    @DisplayName("참가 신청 승인 - 성공")
+    @WithMockUser
+    void approve_success() throws Exception {
+
+        given(gatheringService.approve(any(), any(), any()))
+            .willReturn("신청을 승인합니다.");
+
+        mockMvc.perform(get("/api/v1/gathering/1/enroll/1")
+                            .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("참가 신청 승인 - 실패#1 이메일 조회 실패")
+    @WithMockUser
+    void approve_fail_1() throws Exception {
+
+        given(gatheringService.approve(any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+
+        mockMvc.perform(get("/api/v1/gathering/1/enroll/1")
+                            .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("참가 신청 승인 - 실패#2 모집글 조회 실패")
+    @WithMockUser
+    void approve_fail_2() throws Exception {
+
+        given(gatheringService.approve(any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,""));
+
+        mockMvc.perform(get("/api/v1/gathering/1/enroll/1")
+                            .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("참가 신청 승인 - 실패#3 모집 글 작성자가 아닌 사람이 조회 시도")
+    @WithMockUser
+    void approve_fail_3() throws Exception {
+
+        given(gatheringService.approve(any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.INVALID_REQUEST,""));
+
+        mockMvc.perform(get("/api/v1/gathering/1/enroll/1")
+                            .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("참가 신청 승인 - 실패#4 참가 신청자 조회 실패")
+    @WithMockUser
+    void approve_fail_4() throws Exception {
+
+        given(gatheringService.approve(any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.PARTICIPANT_NOT_FOUND,""));
+
+        mockMvc.perform(get("/api/v1/gathering/1/enroll/1")
+                            .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isNotFound());
+    }
 
 }

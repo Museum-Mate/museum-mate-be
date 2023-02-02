@@ -14,6 +14,7 @@ import com.dev.museummate.repository.ExhibitionRepository;
 import com.dev.museummate.repository.GatheringRepository;
 import com.dev.museummate.repository.ParticipantRepository;
 import com.dev.museummate.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,9 @@ public class GatheringService {
         GatheringEntity findGatheringPost = gatheringRepository.findById(gatheringId)
                                                                .orElseThrow(() -> new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,
                                                                                                    "존재하지 않는 모집 글 입니다."));
+        if (findGatheringPost.getClose().equals(Boolean.TRUE)) {
+            throw new AppException(ErrorCode.FORBIDDEN_ACCESS, "모집이 종료된 게시글 입니다.");
+        }
 
         participantRepository.findByUserIdAndGatheringId(findUser.getId(), findGatheringPost.getId())
                              .ifPresent(p -> {
@@ -63,7 +67,7 @@ public class GatheringService {
         participantRepository.save(new ParticipantEntity(findUser, findGatheringPost, Boolean.FALSE, Boolean.FALSE));
         return "신청이 완료 되었습니다.";
     }
-
+  
     public List<ParticipantDto> enrollList(Long gatheringId, String email) {
 
         UserEntity findUser = findUserByEmail(email);
@@ -83,9 +87,11 @@ public class GatheringService {
     }
 
     public List<ParticipantDto> approveList(Long gatheringId) {
+      
         GatheringEntity findGatheringPost = gatheringRepository.findById(gatheringId)
                                                                .orElseThrow(() -> new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,
                                                                                                    "존재하지 않는 모집 글 입니다."));
+      
         List<ParticipantEntity> findParticipantList = participantRepository.findAllByGatheringIdAndApprove(gatheringId,Boolean.TRUE);
 
         List<ParticipantDto> participantDtos = findParticipantList.stream()
@@ -93,5 +99,31 @@ public class GatheringService {
                                                                   .collect(Collectors.toList());
 
         return participantDtos;
+    }
+
+    @Transactional
+    public String approve(Long gatheringId, Long participantId, String email) {
+
+        UserEntity findUser = findUserByEmail(email);
+        GatheringEntity findGatheringPost = gatheringRepository.findById(gatheringId)
+                                                               .orElseThrow(() -> new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,
+                                                                                                   "존재하지 않는 모집 글 입니다."));
+        if (!findUser.getId().equals(findGatheringPost.getUser().getId())) {
+            throw new AppException(ErrorCode.INVALID_REQUEST, "글 작성자만 조회 가능합니다.");
+        }
+
+        ParticipantEntity participant = participantRepository.findById(participantId)
+                                                             .orElseThrow(() -> new AppException(ErrorCode.PARTICIPANT_NOT_FOUND,
+                                                                                                 "존재하지 않는 참여자 입니다."));
+        participant.approveUser();
+        participantRepository.save(participant);
+
+        Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
+
+        if (currentPeople.equals(findGatheringPost.getMaxPeople())) {
+            findGatheringPost.closePost();
+        }
+
+        return "신청을 승인 했습니다.";
     }
 }

@@ -55,8 +55,7 @@ public class ParticipantEntity extends BaseTimeEntity {
                                 .hostFlag(hostFlag)
                                 .approve(approve)
                                 .build();
-    }
-
+      
     public ParticipantDto toDto() {
         return ParticipantDto.builder()
                              .id(this.id)
@@ -67,4 +66,9 @@ public class ParticipantEntity extends BaseTimeEntity {
                              .createdAt(this.getCreatedAt())
                              .build();
     }
+
+    public void approveUser() {
+        this.approve = Boolean.TRUE;
+    }         
+      
 }

@@ -76,4 +76,13 @@ public class GatheringEntity extends BaseEntity {
                            .createdBy(this.getCreatedBy())
                            .build();
     }
+
+
+    public void openPost() {
+        this.close = Boolean.FALSE;
+    }
+
+    public void closePost() {
+        this.close = Boolean.TRUE;
+    }
 }

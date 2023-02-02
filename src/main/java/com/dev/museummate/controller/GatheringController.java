@@ -37,6 +37,12 @@ public class GatheringController {
         String msg = gatheringService.enroll(gatheringId,authentication.getName());
         return Response.success(msg);
     }
+  
+    @GetMapping("/{gatheringId}/enroll/{participantId}")
+    public Response<String> approve(@PathVariable Long gatheringId,@PathVariable Long participantId, Authentication authentication) {
+        String msg = gatheringService.approve(gatheringId,participantId,authentication.getName());
+        return Response.success(msg);
+    }
 
     @GetMapping("/{gatheringId}/enroll/list")
     public Response<List<GatheringResponse>> enrollList(@PathVariable Long gatheringId, Authentication authentication) {
@@ -51,8 +57,8 @@ public class GatheringController {
     public Response<List<GatheringResponse>> approveList(@PathVariable Long gatheringId) {
         List<ParticipantDto> participantDtos = gatheringService.approveList(gatheringId);
         List<GatheringResponse> approveResponses = participantDtos.stream()
-                                                                  .map(ParticipantDto::toResponse)
-                                                                  .collect(Collectors.toList());
+                                                                    .map(ParticipantDto::toResponse)
+                                                                    .collect(Collectors.toList());
         return Response.success(approveResponses);
     }
 }
