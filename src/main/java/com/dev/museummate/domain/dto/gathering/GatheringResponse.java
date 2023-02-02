@@ -10,10 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Page;
 
-@Builder
 @Getter
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class GatheringResponse {
     private Long id;
     private String meetDateTime;
@@ -30,19 +30,19 @@ public class GatheringResponse {
 
     public static Page<GatheringResponse> of(Page<GatheringDto> gatherings) {
         return gatherings.map(gathering -> GatheringResponse.builder()
-            .id(gathering.getId())
-            .meetDateTime(gathering.getMeetDateTime())
-            .meetLocation(gathering.getMeetLocation())
-            .currentPeople(gathering.getCurrentPeople())
-            .maxPeople(gathering.getMaxPeople())
-            .title(gathering.getTitle())
-            .content(gathering.getContent())
-            .close(gathering.getClose())
-            .exhibitionName(gathering.getExhibition().getName())
-            .exhibitionMainUrl(gathering.getExhibition().getMainImgUrl())
-            .userName(gathering.getUser().getUserName())
-            .createdAt(gathering.getCreatedAt())
-            .build());
+                                                            .id(gathering.getId())
+                                                            .meetDateTime(gathering.getMeetDateTime())
+                                                            .meetLocation(gathering.getMeetLocation())
+                                                            .currentPeople(gathering.getCurrentPeople())
+                                                            .maxPeople(gathering.getMaxPeople())
+                                                            .title(gathering.getTitle())
+                                                            .content(gathering.getContent())
+                                                            .close(gathering.getClose())
+                                                            .exhibitionName(gathering.getExhibition().getName())
+                                                            .exhibitionMainUrl(gathering.getExhibition().getMainImgUrl())
+                                                            .userName(gathering.getUser().getUserName())
+                                                            .createdAt(gathering.getCreatedAt())
+                                                            .build());
     }
 
     public static GatheringResponse createGetOne(GatheringDto gatheringDto) {
@@ -61,5 +61,4 @@ public class GatheringResponse {
                                 .createdAt(gatheringDto.getCreatedAt())
                                 .build();
     }
-
 }

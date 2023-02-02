@@ -39,6 +39,7 @@ spring:
       hibernate:
         format_sql: true
 
+  ## Logging
   logging:
     level:
       org:
@@ -46,15 +47,34 @@ spring:
           type:
             descriptor:
               sql: trace
+
+  ## Redis
   data:
     redis:
       host:
         localhost
       port:
         6379
+
+  ## Mail
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username:
+    password:
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
+
+
 # JWT
 jwt:
   secret: example
+
+
 
 # Swagger (springdoc-openapi-ui)
 springdoc:
