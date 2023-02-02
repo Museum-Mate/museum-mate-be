@@ -1,12 +1,12 @@
 package com.dev.museummate.domain.dto.review;
 
-import com.dev.museummate.controller.ReviewController;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class DeleteReviewResponse {
 
     private String message;
