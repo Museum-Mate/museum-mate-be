@@ -12,9 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -59,5 +61,20 @@ public class GatheringController {
                                                  .userName(gatheringResponse.getUserName())
                                                  .createdAt(gatheringResponse.getCreatedAt())
                                                  .build());
+    }
+
+    @PutMapping("/{gatheringId}")
+    public Response edit(@PathVariable Long gatheringId, @RequestBody GatheringPostRequest gatheringPostRequest,
+                         Authentication authentication) {
+
+        GatheringDto gatheringDto = gatheringService.edit(gatheringId, gatheringPostRequest, authentication.getName());
+        return Response.success(new GatheringPostResponse(gatheringDto.getId()));
+    }
+
+    @DeleteMapping("/{gatheringId}")
+    public Response delete(@PathVariable Long gatheringId, Authentication authentication) {
+
+        Long deletedId = gatheringService.delete(gatheringId, authentication.getName());
+        return Response.success(new GatheringPostResponse(deletedId));
     }
 }

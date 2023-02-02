@@ -40,6 +40,10 @@ public class GatheringService {
                                                                 new AppException(ErrorCode.NOT_FOUND_POST, "존재하지 않는 게시물입니다."));
     }
 
+    public void checkUser(UserEntity authenticatedUser, UserEntity writer) {
+        if(!authenticatedUser.getId().equals(writer.getId())) throw new AppException(ErrorCode.FORBIDDEN_ACCESS, "접근할 수 없습니다.");
+    }
+
     public GatheringDto posts(GatheringPostRequest gatheringPostRequest, String email) {
 
         UserEntity findUser = findUserByEmail(email);
@@ -86,5 +90,35 @@ public class GatheringService {
         GatheringResponse gatheringResponse = GatheringResponse.createGetOne(selectedGatheringDto, currentPeople);
 
         return gatheringResponse;
+    }
+
+    public GatheringDto edit(Long gatheringId, GatheringPostRequest gatheringPostRequest, String email) {
+        UserEntity user = findUserByEmail(email);
+
+        GatheringEntity savedGathering = findPostById(gatheringId);
+
+        checkUser(user, savedGathering.getUser());
+
+        savedGathering.editGathering(gatheringPostRequest.getMeetDateTime(),
+                                     gatheringPostRequest.getMeetLocation(),
+                                     gatheringPostRequest.getMaxPeople(),
+                                     gatheringPostRequest.getTitle(),
+                                     gatheringPostRequest.getContent()
+        );
+
+        return GatheringDto.toDto(savedGathering);
+    }
+
+    public Long delete(Long gatheringId, String email) {
+
+        UserEntity user = findUserByEmail(email);
+
+        GatheringEntity savedGathering = findPostById(gatheringId);
+
+        checkUser(user, savedGathering.getUser());
+
+        gatheringRepository.delete(savedGathering);
+
+        return savedGathering.getId();
     }
 }
