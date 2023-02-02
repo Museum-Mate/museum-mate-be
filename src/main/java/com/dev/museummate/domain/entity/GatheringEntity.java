@@ -18,7 +18,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 @Entity
-@Table(name = "Gathering")
+@Table(name = "gathering")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE gathering SET deleted_at = current_timestamp where id = ?")

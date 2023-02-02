@@ -5,8 +5,10 @@ import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringPostResponse;
+import com.dev.museummate.domain.dto.gathering.ParticipantDto;
 import com.dev.museummate.service.GatheringService;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,13 +40,19 @@ public class GatheringController {
 
     @GetMapping("/{gatheringId}/enroll/list")
     public Response<List<GatheringResponse>> enrollList(@PathVariable Long gatheringId, Authentication authentication) {
-        List<GatheringResponse> enrollList = gatheringService.enrollList(gatheringId, authentication.getName());
-        return Response.success(enrollList);
+        List<ParticipantDto> participantDtos = gatheringService.enrollList(gatheringId, authentication.getName());
+        List<GatheringResponse> GatheringResponses = participantDtos.stream()
+                                                                    .map(ParticipantDto::toResponse)
+                                                                    .collect(Collectors.toList());
+        return Response.success(GatheringResponses);
     }
 
     @GetMapping("/{gatheringId}/approve/list")
     public Response<List<GatheringResponse>> approveList(@PathVariable Long gatheringId) {
-        List<GatheringResponse> approveList = gatheringService.approveList(gatheringId);
-        return Response.success(approveList);
+        List<ParticipantDto> participantDtos = gatheringService.approveList(gatheringId);
+        List<GatheringResponse> approveResponses = participantDtos.stream()
+                                                                  .map(ParticipantDto::toResponse)
+                                                                  .collect(Collectors.toList());
+        return Response.success(approveResponses);
     }
 }
