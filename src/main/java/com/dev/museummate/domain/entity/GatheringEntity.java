@@ -76,4 +76,12 @@ public class GatheringEntity extends BaseEntity {
                            .createdBy(this.getCreatedBy())
                            .build();
     }
+
+    public void editGathering(String meetDateTime, String meetLocation, Integer maxPeople, String title, String content) {
+        this.meetDateTime = meetDateTime;
+        this.meetLocation = meetLocation;
+        this.maxPeople = maxPeople;
+        this.title = title;
+        this.content = content;
+    }
 }
