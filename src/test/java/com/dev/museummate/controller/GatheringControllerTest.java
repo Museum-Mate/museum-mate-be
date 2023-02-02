@@ -107,4 +107,69 @@ class GatheringControllerTest {
         //then
     }
 
+    @Test
+    @DisplayName("참가 신청 - 성공")
+    @WithMockUser
+    void enroll_success() throws Exception {
+
+        given(gatheringService.enroll(any(), any()))
+            .willReturn("신청이 완료 되었습니다.");
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gathering/1/enroll")
+                                              .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isOk());
+        //then
+    }
+
+    @Test
+    @DisplayName("참가 신청 - 실패#1 이메일 조회 불가")
+    @WithMockUser
+    void enroll_fail_1() throws Exception {
+
+        given(gatheringService.enroll(any(), any()))
+            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gathering/1/enroll")
+                                              .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isNotFound());
+        //then
+    }
+
+    @Test
+    @DisplayName("참가 신청 - 실패#2 모집 글 조회 불가")
+    @WithMockUser
+    void enroll_fail_2() throws Exception {
+
+        given(gatheringService.enroll(any(), any()))
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, ""));
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gathering/1/enroll")
+                                              .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isNotFound());
+        //then
+    }
+
+    @Test
+    @DisplayName("참가 신청 - 실패#3 이미 신청한 회원이 중복 신청할 경우")
+    @WithMockUser
+    void enroll_fail_3() throws Exception {
+
+        given(gatheringService.enroll(any(), any()))
+            .willThrow(new AppException(ErrorCode.DUPLICATED_ENROLL, "중복된 신청입니다."));
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gathering/1/enroll")
+                                              .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isConflict());
+        //then
+    }
+
+
 }

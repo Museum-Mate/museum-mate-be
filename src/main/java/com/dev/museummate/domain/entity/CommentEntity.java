@@ -29,7 +29,7 @@ public class CommentEntity extends BaseEntity {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "gathering")
+    @JoinColumn(name = "gathering_id")
     private GatheringEntity gathering;
 
     @Builder

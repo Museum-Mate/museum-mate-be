@@ -37,11 +37,26 @@ public class GatheringService {
 
         GatheringDto gatheringDto = gatheringPostRequest.toDto();
         GatheringEntity gatheringEntity = gatheringDto.toEntity(findUser, findExhibition);
-        GatheringEntity savedEntity = gatheringRepository.save(gatheringEntity);
-        GatheringDto savedDto = savedEntity.of();
+        GatheringEntity savedGathering = gatheringRepository.save(gatheringEntity);
+        GatheringDto savedDto = savedGathering.of();
 
-        participantRepository.save(new ParticipantEntity(findUser, savedEntity, Boolean.TRUE,Boolean.TRUE));
+        participantRepository.save(ParticipantEntity.of(findUser, savedGathering, Boolean.TRUE, Boolean.TRUE));
 
         return savedDto;
+    }
+
+    public String enroll(Long gatheringId, String email) {
+        UserEntity findUser = findUserByEmail(email);
+        GatheringEntity findGatheringPost = gatheringRepository.findById(gatheringId)
+                                                               .orElseThrow(() -> new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,
+                                                                                                   "존재하지 않는 모집 글 입니다."));
+
+        participantRepository.findByUserIdAndGatheringId(findUser.getId(), findGatheringPost.getId())
+                             .ifPresent(p -> {
+                                 throw new AppException(ErrorCode.DUPLICATED_ENROLL, "이미 신청 되었습니다.");
+                             });
+
+        participantRepository.save(ParticipantEntity.of(findUser, findGatheringPost, Boolean.FALSE, Boolean.FALSE));
+        return "신청이 완료 되었습니다.";
     }
 }

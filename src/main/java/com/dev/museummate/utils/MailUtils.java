@@ -18,12 +18,12 @@ public class MailUtils {
 
     private static String password;   // gmail 패스워드
 
-    @Value("${mail.sender.id}")
+    @Value("${mail.username}")
     public void setId(String id){
         this.id = id;
     }
 
-    @Value("${mail.sender.password}")
+    @Value("${mail.password}")
     public void setPassword(String password){
         this.password = password;
     }
