@@ -55,4 +55,16 @@ public class ReviewService {
 
         return savedReviewDto;
     }
+
+    // 리뷰 상세 조회
+    public ReviewDto getReview(Long reviewId) {
+
+        ReviewEntity review = reviewRepository.findById(reviewId)
+                                              .orElseThrow(() -> new AppException(ErrorCode.REVIEW_NOT_FOUND, String.format("ReviewId #%d Not found", reviewId)));
+
+        ReviewDto reviewDto = ReviewDto.toDto(review);
+
+        return reviewDto;
+
+    }
 }

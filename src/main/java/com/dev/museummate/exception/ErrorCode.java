@@ -25,6 +25,7 @@ public enum ErrorCode {
     CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "Review Contents not Found"),
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Database Error"),
     INVALID_MAIL(HttpStatus.UNAUTHORIZED, "invalid email"),
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "Review is Not Found")
     ;
     private HttpStatus httpStatus;
     private String message;
