@@ -23,7 +23,6 @@ public class EditReviewResponse {
     private String createdBy; // 최소 생성 사용자 userName
     private String lastModifiedBy; // 최종 수정 사용자 userName
 
-    @Builder
     public static EditReviewResponse fromDtoToResponse(ReviewDto reviewDto) {
         return new EditReviewResponse(
             reviewDto.getId(),
