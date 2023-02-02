@@ -6,11 +6,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @Entity
 @Table(name = "review")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE review SET is_deleted = TRUE WHERE id = ?")
+@Where(clause = "is_deleted = FALSE") // NOT to select deleted review
 public class ReviewEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,6 +35,7 @@ public class ReviewEntity extends BaseEntity{
     @NotNull
     private ExhibitionEntity exhibition;
     private String visitedDate;
+    private boolean isDeleted = Boolean.FALSE; // Soft Delete 컬럼, 삭제 여부 기본값(FALSE) 셋팅
 
     /*
     builder 생성자 추가
@@ -38,7 +43,7 @@ public class ReviewEntity extends BaseEntity{
     @Builder
     public ReviewEntity(Long id, String title, String content,
         Integer star, UserEntity user,
-        ExhibitionEntity exhibition, String visitedDate){
+        ExhibitionEntity exhibition, String visitedDate, Boolean isDeleted){
         this.id = id;
         this.title = title;
         this.content = content;
@@ -46,6 +51,7 @@ public class ReviewEntity extends BaseEntity{
         this.user = user;
         this.exhibition = exhibition;
         this.visitedDate = visitedDate;
+        this.isDeleted = isDeleted;
 
     }
 
