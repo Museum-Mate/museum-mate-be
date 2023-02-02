@@ -5,6 +5,7 @@ import static org.mockito.Mockito.RETURNS_MOCKS;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -12,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dev.museummate.domain.dto.review.EditReviewRequest;
+import com.dev.museummate.domain.dto.review.GetReviewResponse;
 import com.dev.museummate.domain.dto.review.ReviewDto;
 import com.dev.museummate.domain.dto.review.WriteReviewRequest;
 import com.dev.museummate.domain.dto.review.WriteReviewResponse;
@@ -301,5 +303,59 @@ class ReviewControllerTest {
                             .content(objectMapper.writeValueAsBytes(editReviewRequest)))
                .andExpect(status().isInternalServerError())
                .andDo(print());
+
+    /* 조회 테스트 로직
+        1. 행동 가정 (reviewService.getReview~)
+        2. mockMvc.perform 수행 시 예측 결과가 나오는지 확인
+         */
+
+    @Test
+    @DisplayName("리뷰 상세 조회 성공 - 인증된 사용자")
+    @WithMockUser
+    void get_review_success() throws Exception {
+
+        ReviewEntity testReview = ReviewEntity.builder()
+            .id(1L)
+            .title("조회 테스트용 review title")
+            .content("조회 테스트용 review content")
+            .star(3)
+            .user(UserEntityFixture.getUser("test@mail.com", "password"))
+            .exhibition(exhibitionEntity)
+            .visitedDate("2023-02-17")
+                                              .build();
+
+        ReviewDto testDto = ReviewDto.toDto(testReview);
+
+        GetReviewResponse getReviewResponse = GetReviewResponse.toResponse(testDto);
+
+        when(reviewService.getReview(any()))
+            .thenReturn(testDto);
+
+        // 검증
+        mockMvc.perform(get("/api/v1/reviews/1/details")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(getReviewResponse)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+            .andExpect(jsonPath("$.result.id").exists())
+            .andExpect(jsonPath("$.result.title").exists())
+            .andExpect(jsonPath("$.result.content").exists())
+            .andExpect(jsonPath("$.result.star").exists())
+            .andDo(print());
+    }
+
+    @Test
+    @WithMockUser
+    @DisplayName("리뷰 상세 조회 실패 - 조회하려는 리뷰 없음")
+    void get_review_fail1() throws Exception {
+
+        when(reviewService.getReview(any()))
+            .thenThrow(new AppException(ErrorCode.REVIEW_NOT_FOUND, ""));
+
+        mockMvc.perform(get("/api/v1/reviews/1/details")
+                            .with(csrf()))
+                            .andExpect(status().isNotFound())
+            .andDo(print());
     }
 }

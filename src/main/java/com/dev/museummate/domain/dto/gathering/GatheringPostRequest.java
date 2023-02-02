@@ -26,7 +26,7 @@ public class GatheringPostRequest {
                            .maxPeople(this.maxPeople)
                            .title(this.title)
                            .content(this.content)
-                           .close(Boolean.TRUE)
+                           .close(Boolean.FALSE)
                            .build();
     }
 }
