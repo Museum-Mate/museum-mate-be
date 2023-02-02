@@ -48,14 +48,15 @@ public class ParticipantEntity extends BaseTimeEntity {
         this.approve = approve;
     }
     
-    public static ParticipantEntity of(UserEntity findUser,GatheringEntity findGathering,Boolean hostFlag,Boolean approve) {
+    public static ParticipantEntity of(UserEntity findUser, GatheringEntity findGathering, Boolean hostFlag, Boolean approve) {
         return ParticipantEntity.builder()
                                 .user(findUser)
                                 .gathering(findGathering)
                                 .hostFlag(hostFlag)
                                 .approve(approve)
                                 .build();
-      
+    }
+
     public ParticipantDto toDto() {
         return ParticipantDto.builder()
                              .id(this.id)
@@ -69,6 +70,6 @@ public class ParticipantEntity extends BaseTimeEntity {
 
     public void approveUser() {
         this.approve = Boolean.TRUE;
-    }         
-      
+    }
+    
 }
