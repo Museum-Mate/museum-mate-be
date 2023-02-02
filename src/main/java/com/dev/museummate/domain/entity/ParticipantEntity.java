@@ -1,6 +1,7 @@
 package com.dev.museummate.domain.entity;
 
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
+import com.dev.museummate.domain.dto.gathering.ParticipantDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -54,19 +55,20 @@ public class ParticipantEntity extends BaseTimeEntity {
                                 .hostFlag(hostFlag)
                                 .approve(approve)
                                 .build();
-    }
-    public GatheringResponse toEnrollResponse() {
-        return GatheringResponse.builder()
-                                .participantId(this.id)
-                                .userName(this.user.getUserName())
-                                .creatAt(this.getCreatedAt())
-                                .approve(this.approve)
-                                .build();
-
+      
+    public ParticipantDto toDto() {
+        return ParticipantDto.builder()
+                             .id(this.id)
+                             .user(this.user)
+                             .gathering(this.gathering)
+                             .hostFlag(this.hostFlag)
+                             .approve(this.approve)
+                             .createdAt(this.getCreatedAt())
+                             .build();
     }
 
     public void approveUser() {
         this.approve = Boolean.TRUE;
-    }                         
-    
+    }         
+      
 }
