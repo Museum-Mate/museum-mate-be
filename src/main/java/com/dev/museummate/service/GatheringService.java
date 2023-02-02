@@ -57,34 +57,30 @@ public class GatheringService {
         return savedDto;
     }
 
-    public Page<GatheringResponse> findAllGatherings(Pageable pageable) {
+    public Page<GatheringDto> findAllGatherings(Pageable pageable) {
         Page<GatheringEntity> gatheringEntities = gatheringRepository.findAll(pageable);
 
-        List<GatheringResponse> gatheringResponseList = new ArrayList<>();
+        List<GatheringDto> gatheringList = new ArrayList<>();
 
         for(GatheringEntity gathering : gatheringEntities) {
 
-            GatheringDto selectedGatheringDto = GatheringDto.toDto(gathering);
-
             Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gathering.getId());
 
-            GatheringResponse gatheringResponse = GatheringResponse.createGetOne(selectedGatheringDto, currentPeople);
+            GatheringDto selectedGatheringDto = GatheringDto.toDto(gathering,currentPeople);
 
-            gatheringResponseList.add(gatheringResponse);
+            gatheringList.add(selectedGatheringDto);
         }
 
-        return new PageImpl<>(gatheringResponseList, pageable, gatheringEntities.getTotalElements());
+        return new PageImpl<>(gatheringList, pageable, gatheringEntities.getTotalElements());
     }
 
-    public GatheringResponse getOne(long gatheringId) {
+    public GatheringDto getOne(long gatheringId) {
         GatheringEntity gatheringEntity = findPostById(gatheringId);
 
         Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
 
-        GatheringDto selectedGatheringDto = GatheringDto.toDto(gatheringEntity);
+        GatheringDto selectedGatheringDto = GatheringDto.toDto(gatheringEntity,currentPeople);
 
-        GatheringResponse gatheringResponse = GatheringResponse.createGetOne(selectedGatheringDto, currentPeople);
-
-        return gatheringResponse;
+        return selectedGatheringDto;
     }
 }

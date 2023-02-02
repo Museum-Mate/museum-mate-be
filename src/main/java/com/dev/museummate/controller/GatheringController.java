@@ -6,8 +6,11 @@ import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringPostResponse;
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.service.GatheringService;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -35,29 +38,28 @@ public class GatheringController {
 
     @GetMapping()
     public Response<Page<GatheringResponse>> findAllGatherings(@PageableDefault(size = 20,
-            sort = "id", direction = Direction.DESC) Pageable pageable) {
-        Page<GatheringResponse> gatheringResponses = gatheringService.findAllGatherings(pageable);
-        return Response.success(gatheringResponses);
+                                                                                sort = "id", direction = Direction.DESC) Pageable pageable) {
+        Page<GatheringDto> gatheringDtos = gatheringService.findAllGatherings(pageable);
+
+        List<GatheringResponse> gatheringResponseList = new ArrayList<>();
+
+        for (GatheringDto gatheringDto : gatheringDtos) {
+
+            GatheringResponse gatheringResponse = GatheringResponse.createGetOne(gatheringDto);
+
+            gatheringResponseList.add(gatheringResponse);
+
+        }
+
+        return Response.success(new PageImpl<>(gatheringResponseList, pageable, gatheringDtos.getTotalElements()));
     }
 
     @GetMapping("/{gatheringId}")
     public Response getOne(@PathVariable Long gatheringId) {
 
-        GatheringResponse gatheringResponse = gatheringService.getOne(gatheringId);
-
-        return Response.success(GatheringResponse.builder()
-                                                 .id(gatheringResponse.getId())
-                                                 .meetDateTime(gatheringResponse.getMeetDateTime())
-                                                 .meetLocation(gatheringResponse.getMeetLocation())
-                                                 .currentPeople(gatheringResponse.getCurrentPeople())
-                                                 .maxPeople(gatheringResponse.getMaxPeople())
-                                                 .title(gatheringResponse.getTitle())
-                                                 .content(gatheringResponse.getContent())
-                                                 .close(gatheringResponse.getClose())
-                                                 .exhibitionName(gatheringResponse.getExhibitionName())
-                                                 .exhibitionMainUrl(gatheringResponse.getExhibitionMainUrl())
-                                                 .userName(gatheringResponse.getUserName())
-                                                 .createdAt(gatheringResponse.getCreatedAt())
-                                                 .build());
+        GatheringDto oneGatheringDto = gatheringService.getOne(gatheringId);
+        GatheringResponse gatheringResponse = GatheringResponse.createGetOne(oneGatheringDto);
+        return Response.success(gatheringResponse);
     }
+
 }

@@ -45,21 +45,21 @@ public class GatheringResponse {
             .build());
     }
 
-    public static GatheringResponse createGetOne(GatheringDto gatheringDto, Integer currentPeople) {
+    public static GatheringResponse createGetOne(GatheringDto gatheringDto) {
         return GatheringResponse.builder()
-            .id(gatheringDto.getId())
-            .meetDateTime(gatheringDto.getMeetDateTime())
-            .meetLocation(gatheringDto.getMeetLocation())
-            .currentPeople(currentPeople)
-            .maxPeople(gatheringDto.getMaxPeople())
-            .title(gatheringDto.getTitle())
-            .content(gatheringDto.getContent())
-            .close(gatheringDto.getClose())
-            .exhibitionName(gatheringDto.getExhibition().getName())
-            .exhibitionMainUrl(gatheringDto.getExhibition().getMainImgUrl())
-            .userName(gatheringDto.getUser().getUserName())
-            .createdAt(gatheringDto.getCreatedAt())
-            .build();
+                                .id(gatheringDto.getId())
+                                .meetDateTime(gatheringDto.getMeetDateTime())
+                                .meetLocation(gatheringDto.getMeetLocation())
+                                .currentPeople(gatheringDto.getCurrentPeople())
+                                .maxPeople(gatheringDto.getMaxPeople())
+                                .title(gatheringDto.getTitle())
+                                .content(gatheringDto.getContent())
+                                .close(gatheringDto.getClose())
+                                .exhibitionName(gatheringDto.getExhibition().getName())
+                                .exhibitionMainUrl(gatheringDto.getExhibition().getMainImgUrl())
+                                .userName(gatheringDto.getUser().getUserName())
+                                .createdAt(gatheringDto.getCreatedAt())
+                                .build();
     }
 
 }
