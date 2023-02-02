@@ -159,6 +159,7 @@ class GatheringControllerTest {
                                                     .id(gatheringId)
                                                     .meetDateTime("test")
                                                     .meetLocation("test")
+                                                    .currentPeople(3)
                                                     .maxPeople(5)
                                                     .title("title")
                                                     .content("content")
@@ -172,13 +173,12 @@ class GatheringControllerTest {
                                                     .lastModifiedBy("test")
                                                     .build();
 
-            Integer currentPeople = 2;
 
             GatheringResponse gatheringResponse = GatheringResponse.builder()
                                                                    .id(gatheringId)
                                                                    .meetDateTime(gatheringDto.getMeetDateTime())
                                                                    .meetLocation(gatheringDto.getMeetLocation())
-                                                                   .currentPeople(currentPeople)
+                                                                   .currentPeople(gatheringDto.getCurrentPeople())
                                                                    .maxPeople(gatheringDto.getMaxPeople())
                                                                    .title(gatheringDto.getTitle())
                                                                    .content(gatheringDto.getContent())
@@ -189,7 +189,7 @@ class GatheringControllerTest {
                                                                    .createdAt(gatheringDto.getCreatedAt())
                                                                    .build();
 
-            given(gatheringService.getOne(gatheringId)).willReturn(gatheringResponse);
+            given(gatheringService.getOne(gatheringId)).willReturn(gatheringDto);
 
             mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/gatherings/" + gatheringId)
                                                   .with(csrf())
