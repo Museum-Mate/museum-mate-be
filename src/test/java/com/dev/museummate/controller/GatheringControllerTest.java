@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
+import com.dev.museummate.domain.dto.gathering.ParticipantDto;
+import com.dev.museummate.domain.entity.ParticipantEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.service.GatheringService;
@@ -176,11 +178,9 @@ class GatheringControllerTest {
     @DisplayName("참가 신청 목록 조회 - 성공")
     @WithMockUser
     void enrollList_success() throws Exception {
-
-        List<GatheringResponse> lger = new ArrayList<>();
-        GatheringResponse ger = new GatheringResponse(1L,"username", Boolean.TRUE,LocalDateTime.now());
-        lger.add(ger);
-
+    
+        List<ParticipantDto> lger = new ArrayList<>();
+        
         given(gatheringService.enrollList(any(),any()))
             .willReturn(lger);
 

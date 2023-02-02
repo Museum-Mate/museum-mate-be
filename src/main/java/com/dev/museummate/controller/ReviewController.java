@@ -1,6 +1,8 @@
 package com.dev.museummate.controller;
 
 import com.dev.museummate.configuration.Response;
+import com.dev.museummate.domain.dto.review.EditReviewRequest;
+import com.dev.museummate.domain.dto.review.EditReviewResponse;
 import com.dev.museummate.domain.dto.review.GetReviewResponse;
 import com.dev.museummate.domain.dto.review.ReviewDto;
 import com.dev.museummate.domain.dto.review.WriteReviewRequest;
@@ -9,9 +11,11 @@ import com.dev.museummate.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +49,27 @@ public class ReviewController {
     return Response.success(writeReviewResponse);
   }
 
+  /*
+  [] 리뷰 수정
+   */
+  @PutMapping("/{reviewId}")
+  public Response<EditReviewResponse> editReview(@RequestBody EditReviewRequest editReviewRequest,
+                                                 @PathVariable Long reviewId,
+                                                 Authentication authentication) {
+
+    // authentication에서 name 추출
+    String email = authentication.getName();
+
+    // Service Layer로 전달하여 수정 로직 결과를 Dto로 받아온다.
+    ReviewDto editedReview = reviewService.editReview(email, editReviewRequest, reviewId);
+
+    // Convert Dto to Response
+    EditReviewResponse editReviewResponse = EditReviewResponse.fromDtoToResponse(editedReview);
+
+    return Response.success(editReviewResponse);
+
+  }
+  
   // [X] 리뷰 상세 조회
   @GetMapping("/{reviewId}/details")
   public Response<GetReviewResponse> getReview(@PathVariable Long reviewId) {
