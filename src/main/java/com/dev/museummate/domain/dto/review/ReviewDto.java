@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Page;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -73,5 +74,8 @@ public class ReviewDto {
 
     }
 
-
+    // entity Page to Dto Page
+    public static Page<ReviewDto> convertToDtoList(Page<ReviewEntity> reviewEntities) {
+        return reviewEntities.map(ReviewDto::toDto);
+    }
 }
