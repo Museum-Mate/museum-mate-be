@@ -70,7 +70,7 @@ public class ReviewDto {
                 reviewEntity.getCreatedAt(),
                 reviewEntity.getLastModifiedAt(),
                 reviewEntity.getDeletedAt(),
-                reviewEntity.isDeleted(), // (확인) 이름 이렇게밖에 안들어가나..?
+                reviewEntity.isDeleted(),
                 reviewEntity.getCreatedBy(),
                 reviewEntity.getLastModifiedBy()
         );
