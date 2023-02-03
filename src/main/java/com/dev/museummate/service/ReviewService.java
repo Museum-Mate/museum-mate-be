@@ -68,11 +68,11 @@ public class ReviewService {
                                 Long reviewId) {
         // 유저 검증
         UserEntity user = userRepository.findByEmail(authEmail)
-            .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "Username Not Found."));
+                                        .orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND, "Username Not Found."));
 
         // 리뷰 검증
         ReviewEntity reviewEntity = reviewRepository.findById(reviewId)
-            .orElseThrow(() -> new AppException(ErrorCode.CONTENT_NOT_FOUND, "Review Not Found."));
+                                                    .orElseThrow(() -> new AppException(ErrorCode.CONTENT_NOT_FOUND, "Review Not Found."));
 
         // 리뷰 작성자가 유저인지 검증
         if (!Objects.equals(reviewEntity.getUser().getEmail(), authEmail)) {
@@ -92,6 +92,7 @@ public class ReviewService {
 
         // 변경된 ReviewDto 반환
         return editedReviewDto;
+    }
 
     // 리뷰 상세 조회
     public ReviewDto getReview(Long reviewId) {

@@ -303,6 +303,7 @@ class ReviewControllerTest {
                             .content(objectMapper.writeValueAsBytes(editReviewRequest)))
                .andExpect(status().isInternalServerError())
                .andDo(print());
+    }
 
     /* 조회 테스트 로직
         1. 행동 가정 (reviewService.getReview~)

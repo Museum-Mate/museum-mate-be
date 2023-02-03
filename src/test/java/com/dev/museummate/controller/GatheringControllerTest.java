@@ -5,10 +5,12 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
+import com.dev.museummate.domain.dto.gathering.GatheringParticipantResponse;
 import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.gathering.ParticipantDto;
@@ -64,7 +66,7 @@ class GatheringControllerTest {
             .willReturn(gatheringDto);
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gathering/posts")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gatherings/posts")
                                               .with(csrf())
                                               .contentType(MediaType.APPLICATION_JSON)
                                               .content(objectMapper.writeValueAsBytes(gatheringPostRequest)))
@@ -87,7 +89,7 @@ class GatheringControllerTest {
             .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gathering/posts")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gatherings/posts")
                                               .with(csrf())
                                               .contentType(MediaType.APPLICATION_JSON)
                                               .content(objectMapper.writeValueAsBytes(gatheringPostRequest)))
@@ -110,7 +112,7 @@ class GatheringControllerTest {
             .willThrow(new AppException(ErrorCode.EXHIBITION_NOT_FOUND, ""));
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gathering/posts")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gatherings/posts")
                                               .with(csrf())
                                               .contentType(MediaType.APPLICATION_JSON)
                                               .content(objectMapper.writeValueAsBytes(gatheringPostRequest)))
@@ -128,7 +130,7 @@ class GatheringControllerTest {
             .willReturn("신청이 완료 되었습니다.");
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gathering/1/enroll")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gatherings/1/enroll")
                                               .with(csrf()))
                .andDo(print())
                .andExpect(status().isOk());
@@ -144,7 +146,7 @@ class GatheringControllerTest {
             .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gathering/1/enroll")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gatherings/1/enroll")
                                               .with(csrf()))
                .andDo(print())
                .andExpect(status().isNotFound());
@@ -160,7 +162,7 @@ class GatheringControllerTest {
             .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, ""));
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gathering/1/enroll")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gatherings/1/enroll")
                                               .with(csrf()))
                .andDo(print())
                .andExpect(status().isNotFound());
@@ -176,7 +178,7 @@ class GatheringControllerTest {
             .willThrow(new AppException(ErrorCode.DUPLICATED_ENROLL, "중복된 신청입니다."));
 
         //when
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gathering/1/enroll")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/gatherings/1/enroll")
                                               .with(csrf()))
                .andDo(print())
                .andExpect(status().isConflict());
@@ -194,7 +196,7 @@ class GatheringControllerTest {
             .willReturn(lger);
 
         //when
-        mockMvc.perform(get("/api/v1/gathering/1/enroll/list")
+        mockMvc.perform(get("/api/v1/gatherings/1/enroll/list")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isOk());
@@ -206,15 +208,18 @@ class GatheringControllerTest {
     @WithMockUser
     void enrollList_fail1() throws Exception {
 
-        List<GatheringResponse> lger = new ArrayList<>();
-        GatheringResponse ger = new GatheringResponse(1L,"username", Boolean.TRUE,LocalDateTime.now());
+        List<GatheringParticipantResponse> lger = new ArrayList<>();
+        GatheringParticipantResponse ger = new GatheringParticipantResponse(1L,
+                                                                            "username",
+                                                                            Boolean.TRUE,
+                                                                            LocalDateTime.now());
         lger.add(ger);
 
         given(gatheringService.enrollList(any(),any()))
             .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
 
         //when
-        mockMvc.perform(get("/api/v1/gathering/1/enroll/list")
+        mockMvc.perform(get("/api/v1/gatherings/1/enroll/list")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isNotFound());
@@ -226,15 +231,18 @@ class GatheringControllerTest {
     @WithMockUser
     void enrollList_fail2() throws Exception {
 
-        List<GatheringResponse> lger = new ArrayList<>();
-        GatheringResponse ger = new GatheringResponse(1L,"username", Boolean.TRUE,LocalDateTime.now());
+        List<GatheringParticipantResponse> lger = new ArrayList<>();
+        GatheringParticipantResponse ger = new GatheringParticipantResponse(1L,
+                                                                            "username",
+                                                                            Boolean.TRUE,
+                                                                            LocalDateTime.now());
         lger.add(ger);
 
         given(gatheringService.enrollList(any(),any()))
             .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,""));
 
         //when
-        mockMvc.perform(get("/api/v1/gathering/1/enroll/list")
+        mockMvc.perform(get("/api/v1/gatherings/1/enroll/list")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isNotFound());
@@ -249,7 +257,7 @@ class GatheringControllerTest {
         given(gatheringService.approve(any(), any(), any()))
             .willReturn("신청을 승인합니다.");
 
-        mockMvc.perform(get("/api/v1/gathering/1/enroll/1")
+        mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isOk());
@@ -263,7 +271,7 @@ class GatheringControllerTest {
         given(gatheringService.approve(any(), any(), any()))
             .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
 
-        mockMvc.perform(get("/api/v1/gathering/1/enroll/1")
+        mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isNotFound());
@@ -277,7 +285,7 @@ class GatheringControllerTest {
         given(gatheringService.approve(any(), any(), any()))
             .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,""));
 
-        mockMvc.perform(get("/api/v1/gathering/1/enroll/1")
+        mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isNotFound());
@@ -291,7 +299,7 @@ class GatheringControllerTest {
         given(gatheringService.approve(any(), any(), any()))
             .willThrow(new AppException(ErrorCode.INVALID_REQUEST,""));
 
-        mockMvc.perform(get("/api/v1/gathering/1/enroll/1")
+        mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isUnauthorized());
@@ -305,7 +313,7 @@ class GatheringControllerTest {
         given(gatheringService.approve(any(), any(), any()))
             .willThrow(new AppException(ErrorCode.PARTICIPANT_NOT_FOUND,""));
 
-        mockMvc.perform(get("/api/v1/gathering/1/enroll/1")
+        mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isNotFound());
@@ -319,7 +327,7 @@ class GatheringControllerTest {
         given(gatheringService.cancel(any(),any()))
             .willReturn("신청 취소 완료");
 
-        mockMvc.perform(delete("/api/v1/gathering/1/cancel")
+        mockMvc.perform(delete("/api/v1/gatherings/1/cancel")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isOk());
@@ -333,7 +341,7 @@ class GatheringControllerTest {
         given(gatheringService.cancel(any(), any()))
             .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
 
-        mockMvc.perform(delete("/api/v1/gathering/1/cancel")
+        mockMvc.perform(delete("/api/v1/gatherings/1/cancel")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isNotFound());
@@ -347,7 +355,7 @@ class GatheringControllerTest {
         given(gatheringService.cancel(any(), any()))
             .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, ""));
 
-        mockMvc.perform(delete("/api/v1/gathering/1/cancel")
+        mockMvc.perform(delete("/api/v1/gatherings/1/cancel")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isNotFound());
@@ -361,7 +369,7 @@ class GatheringControllerTest {
         given(gatheringService.cancel(any(), any()))
             .willThrow(new AppException(ErrorCode.PARTICIPANT_NOT_FOUND, ""));
 
-        mockMvc.perform(delete("/api/v1/gathering/1/cancel")
+        mockMvc.perform(delete("/api/v1/gatherings/1/cancel")
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isNotFound());

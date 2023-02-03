@@ -2,6 +2,7 @@ package com.dev.museummate.controller;
 
 import com.dev.museummate.configuration.Response;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
+import com.dev.museummate.domain.dto.gathering.GatheringParticipantResponse;
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringPostResponse;
@@ -52,21 +53,21 @@ public class GatheringController {
     }
 
     @GetMapping("/{gatheringId}/enroll/list")
-    public Response<List<GatheringResponse>> enrollList(@PathVariable Long gatheringId, Authentication authentication) {
+    public Response<List<GatheringParticipantResponse>> enrollList(@PathVariable Long gatheringId, Authentication authentication) {
         List<ParticipantDto> participantDtos = gatheringService.enrollList(gatheringId, authentication.getName());
-        List<GatheringResponse> GatheringResponses = participantDtos.stream()
-                                                                    .map(ParticipantDto::toResponse)
-                                                                    .collect(Collectors.toList());
-        return Response.success(GatheringResponses);
+        List<GatheringParticipantResponse> gatheringParticipantResponses = participantDtos.stream()
+                                                                               .map(ParticipantDto::toResponse)
+                                                                               .collect(Collectors.toList());
+        return Response.success(gatheringParticipantResponses);
     }
 
     @GetMapping("/{gatheringId}/approve/list")
-    public Response<List<GatheringResponse>> approveList(@PathVariable Long gatheringId) {
+    public Response<List<GatheringParticipantResponse>> approveList(@PathVariable Long gatheringId) {
         List<ParticipantDto> participantDtos = gatheringService.approveList(gatheringId);
-        List<GatheringResponse> approveResponses = participantDtos.stream()
+        List<GatheringParticipantResponse> gatheringParticipantResponses = participantDtos.stream()
                                                                   .map(ParticipantDto::toResponse)
                                                                   .collect(Collectors.toList());
-        return Response.success(approveResponses);
+        return Response.success(gatheringParticipantResponses);
     }
 
     @DeleteMapping("/{gatheringId}/cancel")
