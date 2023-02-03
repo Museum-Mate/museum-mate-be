@@ -270,7 +270,7 @@ class ExhibitionControllerTest {
             .build();
 
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
-            .id(1l).name("이집트미라전").startsAt("09:00").endsAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
+            .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
             .galleryLocation("서울").gallery(gallery).user(user).statMale("20%").statFemale("80%").statAge10("20%")
             .statAge20("20%").statAge30("20%").statAge40("20%").statAge50("20%").mainImgUrl("www")
             .noticeImgUrl("www").detailImgUrl("www")
@@ -286,8 +286,8 @@ class ExhibitionControllerTest {
             .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
             .andExpect(jsonPath("$.result.id").exists())
             .andExpect(jsonPath("$.result.name").exists())
-            .andExpect(jsonPath("$.result.startsAt").exists())
-            .andExpect(jsonPath("$.result.endsAt").exists())
+            .andExpect(jsonPath("$.result.startAt").exists())
+            .andExpect(jsonPath("$.result.endAt").exists())
             .andExpect(jsonPath("$.result.price").exists())
             .andExpect(jsonPath("$.result.ageLimit").exists())
             .andExpect(jsonPath("$.result.detailInfo").exists())
@@ -332,7 +332,7 @@ class ExhibitionControllerTest {
             .build();
 
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
-            .id(1l).name("이집트미라전").startsAt("09:00").endsAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
+            .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
             .galleryLocation("서울").gallery(gallery).user(user).statMale("20%").statFemale("80%").statAge10("20%")
             .statAge20("20%").statAge30("20%").statAge40("20%").statAge50("20%").mainImgUrl("www")
             .noticeImgUrl("www").detailImgUrl("www")
@@ -363,7 +363,7 @@ class ExhibitionControllerTest {
             .build();
 
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
-            .id(1l).name("이집트미라전").startsAt("09:00").endsAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
+            .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
             .galleryLocation("서울").gallery(gallery).user(user).statMale("20%").statFemale("80%").statAge10("20%")
             .statAge20("20%").statAge30("20%").statAge40("20%").statAge50("20%").mainImgUrl("www")
             .noticeImgUrl("www").detailImgUrl("www")

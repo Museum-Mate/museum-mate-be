@@ -35,7 +35,7 @@ public class AlarmScheduler {
 
     private void bookmarkAlarms(AlarmType alarmType) {
         String date = LocalDateTime.now().plusDays(alarmType.getLeftDate()).format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
-        List<BookmarkEntity> bookmarkEntityList = bookmarkRepository.findByExhibition_EndsAt(date);
+        List<BookmarkEntity> bookmarkEntityList = bookmarkRepository.findByExhibition_EndAt(date);
 
         for (BookmarkEntity bookmark: bookmarkEntityList) {
 

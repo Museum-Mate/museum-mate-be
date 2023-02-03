@@ -1,13 +1,9 @@
 package com.dev.museummate.controller;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.get;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.put;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -21,7 +17,6 @@ import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.gathering.ParticipantDto;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.GalleryEntity;
-import com.dev.museummate.domain.entity.ParticipantEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
@@ -31,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,11 +36,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import org.springframework.data.domain.Page;
 
 @WebMvcTest(GatheringController.class)
 class GatheringControllerTest {
@@ -205,6 +198,7 @@ class GatheringControllerTest {
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isOk());
+
         //then
     }
 
