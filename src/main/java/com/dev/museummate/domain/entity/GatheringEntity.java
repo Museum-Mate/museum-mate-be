@@ -18,7 +18,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 @Entity
-@Table(name = "Gathering")
+@Table(name = "gathering")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE gathering SET deleted_at = current_timestamp where id = ?")
@@ -75,6 +75,15 @@ public class GatheringEntity extends BaseEntity {
                            .lastModifiedBy(this.getLastModifiedBy())
                            .createdBy(this.getCreatedBy())
                            .build();
+    }
+
+
+    public void openPost() {
+        this.close = Boolean.FALSE;
+    }
+
+    public void closePost() {
+        this.close = Boolean.TRUE;
     }
 
     public void editGathering(String meetDateTime, String meetLocation, Integer maxPeople, String title, String content) {

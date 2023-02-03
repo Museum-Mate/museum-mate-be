@@ -3,6 +3,7 @@ package com.dev.museummate.controller;
 import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.dto.exhibition.BookmarkAddResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
+import com.dev.museummate.domain.dto.exhibition.ExhibitionEditRequest;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionWriteRequest;
 import com.dev.museummate.domain.entity.GalleryEntity;
@@ -58,7 +59,16 @@ class ExhibitionControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
-    Pageable pageable = PageRequest.of(0, 20, Sort.Direction.DESC, "name");
+    private ExhibitionDto exhibitionDto1;
+
+    @BeforeEach
+    void set() {
+        exhibitionDto1 = new ExhibitionDto(1l, "이집트미라전", "09:00", "18:00", "18000", "8세", "none",
+            "서울", new GalleryEntity(1l, "예술의전당", "서울시", "09:00", "19:00"),
+            new UserEntity(1l, "www@www.com", "1234", "moon", "112233", "010-0000-0000", "서울시", "서울시",UserRole.ROLE_USER),
+            "20%", "80%", "20%", "20%", "20%", "20%", "20%",
+            "www", "www", "www");
+    }
 
     @Nested
     @DisplayName("전시 상세 조회")
@@ -245,4 +255,127 @@ class ExhibitionControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("전시회 정보 수정 성공")
+    @WithMockUser
+    public void edit_success() throws Exception {
+
+        GalleryEntity gallery = GalleryEntity.builder()
+            .id(1l).name("예술의전당").address("서울시").openTime("09:00").closeTime("19:00")
+            .build();
+
+        UserEntity user = UserEntity.builder()
+            .id(1l).email("www@www.com").password("1234").userName("moon")
+            .birth("112233").phoneNumber("010-0000-0000").address("서울시").role(UserRole.ROLE_USER)
+            .build();
+
+        ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
+            .id(1l).name("이집트미라전").startsAt("09:00").endsAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
+            .galleryLocation("서울").gallery(gallery).user(user).statMale("20%").statFemale("80%").statAge10("20%")
+            .statAge20("20%").statAge30("20%").statAge40("20%").statAge50("20%").mainImgUrl("www")
+            .noticeImgUrl("www").detailImgUrl("www")
+            .build();
+
+        given(exhibitionService.edit(any(), any(), any())).willReturn(exhibitionDto1);
+
+        mockMvc.perform(put("/api/v1/exhibitions/1/edit")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+            .andExpect(jsonPath("$.result.id").exists())
+            .andExpect(jsonPath("$.result.name").exists())
+            .andExpect(jsonPath("$.result.startsAt").exists())
+            .andExpect(jsonPath("$.result.endsAt").exists())
+            .andExpect(jsonPath("$.result.price").exists())
+            .andExpect(jsonPath("$.result.ageLimit").exists())
+            .andExpect(jsonPath("$.result.detailInfo").exists())
+            .andExpect(jsonPath("$.result.gallery.id").exists())
+            .andExpect(jsonPath("$.result.gallery.name").exists())
+            .andExpect(jsonPath("$.result.gallery.address").exists())
+            .andExpect(jsonPath("$.result.gallery.openTime").exists())
+            .andExpect(jsonPath("$.result.gallery.closeTime").exists())
+            .andExpect(jsonPath("$.result.user.id").exists())
+            .andExpect(jsonPath("$.result.user.email").exists())
+            .andExpect(jsonPath("$.result.user.password").exists())
+            .andExpect(jsonPath("$.result.user.userName").exists())
+            .andExpect(jsonPath("$.result.user.birth").exists())
+            .andExpect(jsonPath("$.result.user.phoneNumber").exists())
+            .andExpect(jsonPath("$.result.user.address").exists())
+            .andExpect(jsonPath("$.result.user.role").exists())
+            .andExpect(jsonPath("$.result.statMale").exists())
+            .andExpect(jsonPath("$.result.statFemale").exists())
+            .andExpect(jsonPath("$.result.statAge10").exists())
+            .andExpect(jsonPath("$.result.statAge20").exists())
+            .andExpect(jsonPath("$.result.statAge30").exists())
+            .andExpect(jsonPath("$.result.statAge40").exists())
+            .andExpect(jsonPath("$.result.statAge50").exists())
+            .andExpect(jsonPath("$.result.mainImgUrl").exists())
+            .andExpect(jsonPath("$.result.noticeImgUrl").exists())
+            .andExpect(jsonPath("$.result.detailImgUrl").exists())
+            .andDo(print());
+    }
+
+    @Test
+    @DisplayName("전시회 수정 실패 - DB Error")
+    @WithMockUser
+    void edit_fail_DB() throws Exception {
+
+        GalleryEntity gallery = GalleryEntity.builder()
+            .id(1l).name("예술의전당").address("서울시").openTime("09:00").closeTime("19:00")
+            .build();
+
+        UserEntity user = UserEntity.builder()
+            .id(1l).email("www@www.com").password("1234").userName("moon")
+            .birth("112233").phoneNumber("010-0000-0000").address("서울시").role(UserRole.ROLE_USER)
+            .build();
+
+        ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
+            .id(1l).name("이집트미라전").startsAt("09:00").endsAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
+            .galleryLocation("서울").gallery(gallery).user(user).statMale("20%").statFemale("80%").statAge10("20%")
+            .statAge20("20%").statAge30("20%").statAge40("20%").statAge50("20%").mainImgUrl("www")
+            .noticeImgUrl("www").detailImgUrl("www")
+            .build();
+
+        given(exhibitionService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, "데이터베이스 에러"));
+
+        mockMvc.perform(put("/api/v1/exhibitions/1/edit")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))
+            .andExpect(status().isInternalServerError())
+            .andDo(print());
+    }
+
+    @Test
+    @DisplayName("전시회 수정 실패 - 작성자 불일치")
+    @WithMockUser
+    void edit_fail_userName() throws Exception {
+
+        GalleryEntity gallery = GalleryEntity.builder()
+            .id(1l).name("예술의전당").address("서울시").openTime("09:00").closeTime("19:00")
+            .build();
+
+        UserEntity user = UserEntity.builder()
+            .id(1l).email("www@www.com").password("1234").userName("moon")
+            .birth("112233").phoneNumber("010-0000-0000").address("서울시").role(UserRole.ROLE_USER)
+            .build();
+
+        ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
+            .id(1l).name("이집트미라전").startsAt("09:00").endsAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
+            .galleryLocation("서울").gallery(gallery).user(user).statMale("20%").statFemale("80%").statAge10("20%")
+            .statAge20("20%").statAge30("20%").statAge40("20%").statAge50("20%").mainImgUrl("www")
+            .noticeImgUrl("www").detailImgUrl("www")
+            .build();
+
+        given(exhibitionService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "작성자와 유저가 일치하지 않습니다."));
+
+        mockMvc.perform(put("/api/v1/exhibitions/1/edit")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))
+            .andExpect(status().isUnauthorized())
+            .andDo(print());
+    }
 }

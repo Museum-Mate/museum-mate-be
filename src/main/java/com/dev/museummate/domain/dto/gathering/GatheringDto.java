@@ -21,21 +21,13 @@ public class GatheringDto {
     private Long id;
     private String meetDateTime;
     private String meetLocation;
-
     private Integer currentPeople;
     private Integer maxPeople;
     private String title;
     private String content;
     private Boolean close;
-
-    @ManyToOne
-    @JoinColumn(name = "exhibition_id")
     private ExhibitionEntity exhibition;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
     private UserEntity user;
-
     private LocalDateTime createdAt;
     private LocalDateTime lastModifiedAt;
     private LocalDateTime deletedAt;
@@ -66,24 +58,24 @@ public class GatheringDto {
                               .build();
     }
 
-    public static GatheringDto toDto(GatheringEntity gatheringEntity) {
+    public static GatheringDto toDto(GatheringEntity gatheringEntity,Integer currentPeople) {
 
         return GatheringDto.builder()
-            .id(gatheringEntity.getId())
-            .meetDateTime(gatheringEntity.getMeetDateTime())
-            .meetLocation(gatheringEntity.getMeetLocation())
-            .currentPeople(null)
-            .maxPeople(gatheringEntity.getMaxPeople())
-            .title(gatheringEntity.getTitle())
-            .content(gatheringEntity.getContent())
-            .close(gatheringEntity.getClose())
-            .exhibition(gatheringEntity.getExhibition())
-            .user(gatheringEntity.getUser())
-            .createdAt(gatheringEntity.getCreatedAt())
-            .lastModifiedAt(gatheringEntity.getLastModifiedAt())
-            .deletedAt(gatheringEntity.getDeletedAt())
-            .createdBy(gatheringEntity.getCreatedBy())
-            .lastModifiedBy(gatheringEntity.getLastModifiedBy())
-            .build();
+                           .id(gatheringEntity.getId())
+                           .meetDateTime(gatheringEntity.getMeetDateTime())
+                           .meetLocation(gatheringEntity.getMeetLocation())
+                           .currentPeople(currentPeople)
+                           .maxPeople(gatheringEntity.getMaxPeople())
+                           .title(gatheringEntity.getTitle())
+                           .content(gatheringEntity.getContent())
+                           .close(gatheringEntity.getClose())
+                           .exhibition(gatheringEntity.getExhibition())
+                           .user(gatheringEntity.getUser())
+                           .createdAt(gatheringEntity.getCreatedAt())
+                           .lastModifiedAt(gatheringEntity.getLastModifiedAt())
+                           .deletedAt(gatheringEntity.getDeletedAt())
+                           .createdBy(gatheringEntity.getCreatedBy())
+                           .lastModifiedBy(gatheringEntity.getLastModifiedBy())
+                           .build();
     }
 }

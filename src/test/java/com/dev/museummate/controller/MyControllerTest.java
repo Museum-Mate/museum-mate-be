@@ -1,7 +1,10 @@
 package com.dev.museummate.controller;
 
+import com.dev.museummate.domain.dto.alarm.AlarmDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
+import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.GalleryEntity;
+import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.service.ExhibitionService;
@@ -13,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -36,6 +41,8 @@ public class MyControllerTest {
     MyService myService;
 
     private ExhibitionDto exhibitionDto;
+    private AlarmDto alarmDto;
+
 
     @BeforeEach
     void setUp(){
@@ -50,6 +57,11 @@ public class MyControllerTest {
                 .galleryLocation("test")
                 .gallery(new GalleryEntity(1l,"test","test","test","test")).build();
 
+        alarmDto = AlarmDto.builder()
+                .user(UserEntity.builder().userName("test").build())
+                .exhibition(ExhibitionEntity.builder().name("test").build())
+                .alarmMessage("")
+                .build();
     }
     @Test
     @DisplayName("마이 캘린더 조회 성공")
@@ -75,6 +87,34 @@ public class MyControllerTest {
         when(myService.getMyCalendar(any())).thenThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
 
         mockMvc.perform(get("/api/v1/my/calendars"))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("알람 조회 성공")
+    @WithMockUser
+    void getAlarmsSuccess() throws Exception {
+
+        Page<AlarmDto> dtoPage = new PageImpl<>(List.of(alarmDto));
+
+        when(myService.getAlarms(any(), any())).thenReturn(dtoPage);
+
+        mockMvc.perform(get("/api/v1/my/alarms"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content").exists())
+                .andExpect(jsonPath("$.result.pageable").exists())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("알람 조회 실패 - 유저가 존재하지 않는 경우")
+    @WithMockUser
+    void getAlarmsFail() throws Exception {
+
+        when(myService.getAlarms(any(), any())).thenThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+
+        mockMvc.perform(get("/api/v1/my/alarms"))
                 .andExpect(status().isNotFound())
                 .andDo(print());
     }

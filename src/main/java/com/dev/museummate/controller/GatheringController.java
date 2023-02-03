@@ -2,12 +2,18 @@ package com.dev.museummate.controller;
 
 import com.dev.museummate.configuration.Response;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
+import com.dev.museummate.domain.dto.gathering.GatheringParticipantResponse;
+import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringPostResponse;
-import com.dev.museummate.domain.dto.gathering.GatheringResponse;
+import com.dev.museummate.domain.dto.gathering.ParticipantDto;
 import com.dev.museummate.service.GatheringService;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
@@ -35,32 +41,66 @@ public class GatheringController {
         return Response.success(new GatheringPostResponse(gatheringDto.getId()));
     }
 
+    @PostMapping("/{gatheringId}/enroll")
+    public Response<String> enroll(@PathVariable Long gatheringId,Authentication authentication) {
+        String msg = gatheringService.enroll(gatheringId,authentication.getName());
+        return Response.success(msg);
+    }
+
+    @GetMapping("/{gatheringId}/enroll/{participantId}")
+    public Response<String> approve(@PathVariable Long gatheringId,@PathVariable Long participantId, Authentication authentication) {
+        String msg = gatheringService.approve(gatheringId,participantId,authentication.getName());
+        return Response.success(msg);
+    }
+
+    @GetMapping("/{gatheringId}/enroll/list")
+    public Response<List<GatheringParticipantResponse>> enrollList(@PathVariable Long gatheringId, Authentication authentication) {
+        List<ParticipantDto> participantDtos = gatheringService.enrollList(gatheringId, authentication.getName());
+        List<GatheringParticipantResponse> gatheringParticipantResponses = participantDtos.stream()
+                                                                                          .map(ParticipantDto::toResponse)
+                                                                                          .collect(Collectors.toList());
+        return Response.success(gatheringParticipantResponses);
+    }
+
+    @GetMapping("/{gatheringId}/approve/list")
+    public Response<List<GatheringParticipantResponse>> approveList(@PathVariable Long gatheringId) {
+        List<ParticipantDto> participantDtos = gatheringService.approveList(gatheringId);
+        List<GatheringParticipantResponse> gatheringParticipantResponses = participantDtos.stream()
+                                                                                          .map(ParticipantDto::toResponse)
+                                                                                          .collect(Collectors.toList());
+        return Response.success(gatheringParticipantResponses);
+    }
+
+    @DeleteMapping("/{gatheringId}/cancel")
+    public Response<String> cancel(@PathVariable Long gatheringId,Authentication authentication) {
+        String msg = gatheringService.cancel(gatheringId, authentication.getName());
+        return Response.success(msg);
+    }
+
     @GetMapping()
     public Response<Page<GatheringResponse>> findAllGatherings(@PageableDefault(size = 20,
-            sort = "id", direction = Direction.DESC) Pageable pageable) {
-        Page<GatheringResponse> gatheringResponses = gatheringService.findAllGatherings(pageable);
-        return Response.success(gatheringResponses);
+                                                                                sort = "id", direction = Direction.DESC) Pageable pageable) {
+        Page<GatheringDto> gatheringDtos = gatheringService.findAllGatherings(pageable);
+
+        List<GatheringResponse> gatheringResponseList = new ArrayList<>();
+
+        for (GatheringDto gatheringDto : gatheringDtos) {
+
+            GatheringResponse gatheringResponse = GatheringResponse.createGetOne(gatheringDto);
+
+            gatheringResponseList.add(gatheringResponse);
+
+        }
+
+        return Response.success(new PageImpl<>(gatheringResponseList, pageable, gatheringDtos.getTotalElements()));
     }
 
     @GetMapping("/{gatheringId}")
     public Response getOne(@PathVariable Long gatheringId) {
 
-        GatheringResponse gatheringResponse = gatheringService.getOne(gatheringId);
-
-        return Response.success(GatheringResponse.builder()
-                                                 .id(gatheringResponse.getId())
-                                                 .meetDateTime(gatheringResponse.getMeetDateTime())
-                                                 .meetLocation(gatheringResponse.getMeetLocation())
-                                                 .currentPeople(gatheringResponse.getCurrentPeople())
-                                                 .maxPeople(gatheringResponse.getMaxPeople())
-                                                 .title(gatheringResponse.getTitle())
-                                                 .content(gatheringResponse.getContent())
-                                                 .close(gatheringResponse.getClose())
-                                                 .exhibitionName(gatheringResponse.getExhibitionName())
-                                                 .exhibitionMainUrl(gatheringResponse.getExhibitionMainUrl())
-                                                 .userName(gatheringResponse.getUserName())
-                                                 .createdAt(gatheringResponse.getCreatedAt())
-                                                 .build());
+        GatheringDto oneGatheringDto = gatheringService.getOne(gatheringId);
+        GatheringResponse gatheringResponse = GatheringResponse.createGetOne(oneGatheringDto);
+        return Response.success(gatheringResponse);
     }
 
     @PutMapping("/{gatheringId}")
@@ -77,4 +117,5 @@ public class GatheringController {
         Long deletedId = gatheringService.delete(gatheringId, authentication.getName());
         return Response.success(new GatheringPostResponse(deletedId));
     }
+
 }

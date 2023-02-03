@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<div style="margin:100px;">
+    <h1> 안녕하세요.</h1>
+    <h1> 뮤지엄 메이트 입니다.</h1>
+    <br>
+    <p> 아래 링크에 접속 해서 회원가입을 완료 해 주세요.</p>
+    <br>
+
+    <div align="center" style="border:1px solid black; font-family:verdana;">
+        <h3 style="color:blue"> 회원가입 인증 링크 입니다. </h3>
+        <div style="font-size:130%" th:text="${code}"> </div>
+    </div>
+    <br/>
+</div>
+
+
+</body>
+</html>

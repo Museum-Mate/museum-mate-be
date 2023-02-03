@@ -3,6 +3,7 @@ package com.dev.museummate.controller;
 import com.dev.museummate.domain.dto.user.*;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
+import com.dev.museummate.service.MailService;
 import com.dev.museummate.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +39,9 @@ class UserControllerTest {
     @MockBean
     UserService userService;
 
+    @MockBean
+    MailService mailService;
+
     @Test
     @DisplayName("회원가입 - 성공")
     @WithMockUser
@@ -52,10 +56,12 @@ class UserControllerTest {
                 .phoneNumber("01057442067")
                 .birth("19981022")
                 .build();
-        UserDto userDto = UserDto.builder().userName(userJoinRequest.getUserName()).build();
 
         when(userService.join(any()))
-                .thenReturn(userDto);
+                .thenReturn("chlalswns200@naver.com");
+
+        when(mailService.sendEmail("chlalswns200@naver.com"))
+                .thenReturn("메일로 링크를 전송했습니다.");
 
         mockMvc.perform(post("/api/v1/users/join")
                         .with(csrf())
@@ -118,6 +124,35 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("회원가입 - 실패 #3 db등록 후 조회 실패")
+    @WithMockUser
+    void join_fail_3() throws Exception {
+
+        UserJoinRequest userJoinRequest = UserJoinRequest.builder()
+                .userName("chlalswns200")
+                .name("최민준")
+                .password("1q2w3e4r!")
+                .address("대한민국")
+                .email("chlalsnws200@naver.com")
+                .phoneNumber("01057442067")
+                .birth("19981022")
+                .build();
+
+        when(userService.join(any()))
+                .thenReturn("chlalswns200@naver.com");
+
+        when(mailService.sendEmail("chlalswns200@naver.com"))
+                .thenThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+
+        mockMvc.perform(post("/api/v1/users/join")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userJoinRequest)))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("로그인 - 성공")
     @WithMockUser
     void login_success() throws Exception {
@@ -164,6 +199,24 @@ class UserControllerTest {
 
         when(userService.login(any()))
                 .thenThrow(new AppException(ErrorCode.INVALID_PASSWORD,""));
+
+        mockMvc.perform(post("/api/v1/users/login")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(userLoginRequest)))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("로그인 - 실패 #3 인증 되지 않은 이메일 접근")
+    @WithMockUser
+    void login_fail_3() throws Exception {
+
+        UserLoginRequest userLoginRequest = new UserLoginRequest("chlalswns200@gmail.com", "1q2w3e4r!");
+
+        when(userService.login(any()))
+                .thenThrow(new AppException(ErrorCode.INVALID_MAIL,""));
 
         mockMvc.perform(post("/api/v1/users/login")
                         .with(csrf())
@@ -449,6 +502,39 @@ class UserControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    @DisplayName("유저 이메일 인증 - 성공")
+    @WithMockUser
+    void user_auth_success() throws Exception {
+
+        //given
+        given(userService.auth(any(),any()))
+                .willReturn("인증 완료");
+        //when
+        mockMvc.perform(get("/api/v1/users/auth")
+                        .param("authNum","1q2w3e4r!")
+                        .param("email","chlalswns200@naver.com")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("유저 이메일 인증 - 실패 - 유저 찾을 수 없음")
+    @WithMockUser
+    void user_auth_fail() throws Exception {
+        //given
+        given(userService.auth(any(), any()))
+                .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+
+        //when
+        mockMvc.perform(get("/api/v1/users/auth")
+                        .param("authNum","1q2w3e4r!")
+                        .param("email","chlalswns200@naver.com")
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isNotFound());
+    }
 
 
 }
