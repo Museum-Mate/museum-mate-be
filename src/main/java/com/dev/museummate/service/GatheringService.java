@@ -203,9 +203,15 @@ public class GatheringService {
                                      gatheringPostRequest.getContent()
         );
 
-        gatheringRepository.save(savedGathering);
+        GatheringEntity modifiedGathering = gatheringRepository.save(savedGathering);
 
-        return GatheringDto.toDto(savedGathering);
+        Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
+        if (!currentPeople.equals(modifiedGathering.getMaxPeople())) {
+            modifiedGathering.openPost();
+            gatheringRepository.save(modifiedGathering);
+        }
+
+        return GatheringDto.toDto(savedGathering,currentPeople);
     }
 
     public Long delete(Long gatheringId, String email) {
