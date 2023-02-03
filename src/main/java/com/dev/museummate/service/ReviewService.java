@@ -14,6 +14,8 @@ import com.dev.museummate.repository.UserRepository;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -92,6 +94,7 @@ public class ReviewService {
 
         // 변경된 ReviewDto 반환
         return editedReviewDto;
+    }
 
     // 리뷰 상세 조회
     public ReviewDto getReview(Long reviewId) {
@@ -102,5 +105,17 @@ public class ReviewService {
         ReviewDto reviewDto = ReviewDto.toDto(review);
 
         return reviewDto;
+    }
+
+    // 리뷰 리스트 조회
+    public Page<ReviewDto> getAllReviews(Long exhibitionId, Pageable pageable) {
+
+        // Entity 페이지 객체 생성
+        Page<ReviewEntity> reviewEntities = reviewRepository.findAllByExhibitionId(exhibitionId, pageable);
+
+        // Dto 페이지 객체로 변환
+        Page<ReviewDto> reviewDtos = ReviewDto.convertToDtoList(reviewEntities);
+
+        return reviewDtos;
     }
 }
