@@ -92,6 +92,7 @@ public class ReviewService {
 
         // 변경된 ReviewDto 반환
         return editedReviewDto;
+    }
 
     // 리뷰 상세 조회
     public ReviewDto getReview(Long reviewId) {
