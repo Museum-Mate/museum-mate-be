@@ -5,11 +5,14 @@ import com.dev.museummate.domain.dto.review.EditReviewRequest;
 import com.dev.museummate.domain.dto.review.EditReviewResponse;
 import com.dev.museummate.domain.dto.review.GetReviewResponse;
 import com.dev.museummate.domain.dto.review.ReviewDto;
+import com.dev.museummate.domain.dto.review.ReviewPageResponse;
 import com.dev.museummate.domain.dto.review.WriteReviewRequest;
 import com.dev.museummate.domain.dto.review.WriteReviewResponse;
 import com.dev.museummate.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,13 +86,18 @@ public class ReviewController {
     return Response.success(getReviewResponse);
   }
 
-//  // 전시별 리뷰 통합 조회
-//  @GetMapping("/{exhibitionId}/reviews")
-//  public Response<Page<ReviewDto>> getReviewList(Pageable pageable,
-//      @PathVariable Long exhibitionId) {
-//    // 리뷰 서비스를 통해 ReviewDto로 묶인 Page 객체 생성
-//    // 리뷰 리스트 리스판스 객체 생성
-//    // 반환
-//  }
+  // 리뷰 리스트 조회
+  @GetMapping("/{exhibitionId}/reviews")
+  public Response<ReviewPageResponse> getReviewList(Pageable pageable,
+                                                    @PathVariable Long exhibitionId) {
+    // 리뷰 서비스를 통해 ReviewDto로 묶인 Page 객체 생성
+    Page<ReviewDto> reviewDtos = reviewService.getAllReviews(exhibitionId, pageable);
+
+    // 리뷰 리스트 리스판스 객체 생성
+    ReviewPageResponse reviewPageResponse = new ReviewPageResponse(reviewDtos.getContent(), pageable);
+
+    // 반환
+    return Response.success(reviewPageResponse);
+  }
 
 }
