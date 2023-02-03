@@ -16,8 +16,8 @@ public class ExhibitionDto {
     private Long id;
 
     private String name;
-    private String startsAt;
-    private String endsAt;
+    private String startAt;
+    private String endAt;
     private String price;
     private String ageLimit;
     private String detailInfo;
@@ -43,12 +43,12 @@ public class ExhibitionDto {
     private String detailImgUrl;
 
     @Builder
-    public ExhibitionDto(Long id, String name, String startsAt, String endsAt, String price, String ageLimit, String detailInfo, String galleryLocation, GalleryEntity gallery, UserEntity user,
+    public ExhibitionDto(Long id, String name, String startAt, String endAt, String price, String ageLimit, String detailInfo, String galleryLocation, GalleryEntity gallery, UserEntity user,
                          String statMale, String statFemale, String statAge10, String statAge20, String statAge30, String statAge40, String statAge50, String mainImgUrl, String noticeImgUrl, String detailImgUrl) {
         this.id = id;
         this.name = name;
-        this.startsAt = startsAt;
-        this.endsAt = endsAt;
+        this.startAt = startAt;
+        this.endAt = endAt;
         this.price = price;
         this.ageLimit = ageLimit;
         this.detailInfo = detailInfo;
@@ -75,8 +75,8 @@ public class ExhibitionDto {
         return ExhibitionDto.builder()
                 .id(exhibitionEntity.getId())
                 .name(exhibitionEntity.getName())
-                .startsAt(exhibitionEntity.getStartsAt())
-                .endsAt(exhibitionEntity.getEndsAt())
+                .startAt(exhibitionEntity.getStartAt())
+                .endAt(exhibitionEntity.getEndAt())
                 .price(exhibitionEntity.getPrice())
                 .ageLimit(exhibitionEntity.getAgeLimit())
                 .detailInfo(exhibitionEntity.getDetailInfo())

@@ -18,9 +18,9 @@ public class ExhibitionEntity {
     @NotNull
     private String name;
     @NotNull
-    private String startsAt;
+    private String startAt;
     @NotNull
-    private String endsAt;
+    private String endAt;
     @NotNull
     private String price;
     private String ageLimit;
@@ -48,12 +48,12 @@ public class ExhibitionEntity {
     private GalleryEntity gallery;
 
     @Builder
-    public ExhibitionEntity(long id, String name, String startsAt, String endsAt, String price, String ageLimit, String detailInfo, String galleryLocation, GalleryEntity gallery, UserEntity user,
+    public ExhibitionEntity(long id, String name, String startAt, String endAt, String price, String ageLimit, String detailInfo, String galleryLocation, GalleryEntity gallery, UserEntity user,
                             String statMale, String statFemale, String statAge10, String statAge20, String statAge30, String statAge40, String statAge50, String mainImgUrl, String noticeImgUrl, String detailImgUrl) {
         this.id = id;
         this.name = name;
-        this.startsAt = startsAt;
-        this.endsAt = endsAt;
+        this.startAt = startAt;
+        this.endAt = endAt;
         this.price = price;
         this.ageLimit = ageLimit;
         this.detailInfo = detailInfo;
