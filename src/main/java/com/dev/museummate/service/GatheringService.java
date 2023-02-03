@@ -15,9 +15,13 @@ import com.dev.museummate.repository.GatheringRepository;
 import com.dev.museummate.repository.ParticipantRepository;
 import com.dev.museummate.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -67,7 +71,7 @@ public class GatheringService {
         participantRepository.save(new ParticipantEntity(findUser, findGatheringPost, Boolean.FALSE, Boolean.FALSE));
         return "신청이 완료 되었습니다.";
     }
-    
+
     public List<ParticipantDto> enrollList(Long gatheringId, String email) {
 
         UserEntity findUser = findUserByEmail(email);
@@ -145,5 +149,34 @@ public class GatheringService {
         }
         return "신청이 취소 되었습니다.";
 
+    }
+
+    public Page<GatheringDto> findAllGatherings(Pageable pageable) {
+        Page<GatheringEntity> gatheringEntities = gatheringRepository.findAll(pageable);
+
+        List<GatheringDto> gatheringList = new ArrayList<>();
+
+        for(GatheringEntity gathering : gatheringEntities) {
+
+            Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gathering.getId());
+
+            GatheringDto selectedGatheringDto = GatheringDto.toDto(gathering,currentPeople);
+
+            gatheringList.add(selectedGatheringDto);
+        }
+
+        return new PageImpl<>(gatheringList, pageable, gatheringEntities.getTotalElements());
+    }
+
+    public GatheringDto getOne(long gatheringId) {
+        GatheringEntity findGatheringPost = gatheringRepository.findById(gatheringId)
+                                                               .orElseThrow(() -> new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,
+                                                                                                   "존재하지 않는 모집 글 입니다."));
+
+        Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
+
+        GatheringDto selectedGatheringDto = GatheringDto.toDto(findGatheringPost, currentPeople);
+
+        return selectedGatheringDto;
     }
 }
