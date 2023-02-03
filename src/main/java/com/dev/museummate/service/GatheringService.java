@@ -169,11 +169,13 @@ public class GatheringService {
     }
 
     public GatheringDto getOne(long gatheringId) {
-        GatheringEntity gatheringEntity = findPostById(gatheringId);
+        GatheringEntity findGatheringPost = gatheringRepository.findById(gatheringId)
+                                                               .orElseThrow(() -> new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,
+                                                                                                   "존재하지 않는 모집 글 입니다."));
 
         Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
 
-        GatheringDto selectedGatheringDto = GatheringDto.toDto(gatheringEntity,currentPeople);
+        GatheringDto selectedGatheringDto = GatheringDto.toDto(findGatheringPost, currentPeople);
 
         return selectedGatheringDto;
     }
