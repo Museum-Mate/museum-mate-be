@@ -106,6 +106,8 @@ public class GatheringService {
                                      gatheringPostRequest.getContent()
         );
 
+        gatheringRepository.save(savedGathering);
+
         return GatheringDto.toDto(savedGathering);
     }
 
@@ -117,7 +119,7 @@ public class GatheringService {
 
         checkUser(user, savedGathering.getUser());
 
-        gatheringRepository.delete(savedGathering);
+        gatheringRepository.deleteById(savedGathering.getId());
 
         return savedGathering.getId();
     }
