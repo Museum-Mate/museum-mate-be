@@ -42,14 +42,16 @@ public class ExhibitionEntity {
     private String noticeImgUrl;
     private String detailImgUrl;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gallery_id")
     private GalleryEntity gallery;
 
     @Builder
-    public ExhibitionEntity(long id, String name, String startAt, String endAt, String price, String ageLimit, String detailInfo, String galleryLocation, GalleryEntity gallery, UserEntity user,
-                            String statMale, String statFemale, String statAge10, String statAge20, String statAge30, String statAge40, String statAge50, String mainImgUrl, String noticeImgUrl, String detailImgUrl) {
+    public ExhibitionEntity(Long id, String name, String startAt, String endAt, String price, String ageLimit, String detailInfo,
+                            String galleryLocation, UserEntity user, String statMale, String statFemale, String statAge10, String statAge20,
+                            String statAge30, String statAge40, String statAge50, String mainImgUrl, String noticeImgUrl,
+                            String detailImgUrl,
+                            GalleryEntity gallery) {
         this.id = id;
         this.name = name;
         this.startAt = startAt;
@@ -58,7 +60,6 @@ public class ExhibitionEntity {
         this.ageLimit = ageLimit;
         this.detailInfo = detailInfo;
         this.galleryLocation = galleryLocation;
-        this.gallery = gallery;
         this.user = user;
         this.statMale = statMale;
         this.statFemale = statFemale;
@@ -70,5 +71,6 @@ public class ExhibitionEntity {
         this.mainImgUrl = mainImgUrl;
         this.noticeImgUrl = noticeImgUrl;
         this.detailImgUrl = detailImgUrl;
+        this.gallery = gallery;
     }
 }
