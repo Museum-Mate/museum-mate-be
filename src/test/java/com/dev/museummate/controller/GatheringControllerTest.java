@@ -3,7 +3,6 @@ package com.dev.museummate.controller;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -16,7 +15,6 @@ import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.gathering.ParticipantDto;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
-import com.dev.museummate.domain.entity.GalleryEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
@@ -413,7 +411,7 @@ class GatheringControllerTest {
                                                            .ageLimit("전체관람가")
                                                            .detailInfo("temp")
                                                            .galleryLocation("seoul")
-                                                           .gallery(new GalleryEntity(1L, "name", "address", "9", "18"))
+                                                           .galleryName("test")
                                                            .user(user1)
                                                            .statMale("temp").
                                                            statFemale("temp")

@@ -3,7 +3,6 @@ package com.dev.museummate.controller;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
 
-import static org.mockito.Mockito.RETURNS_MOCKS;
 import static org.mockito.Mockito.verify;
 import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -18,8 +17,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.dev.museummate.domain.UserRole;
-import com.dev.museummate.domain.dto.review.DeleteReviewResponse;
 import com.dev.museummate.domain.dto.review.EditReviewRequest;
 import com.dev.museummate.domain.dto.review.GetReviewResponse;
 import com.dev.museummate.domain.dto.review.ReviewDto;
@@ -27,7 +24,6 @@ import com.dev.museummate.domain.dto.review.ReviewPageResponse;
 import com.dev.museummate.domain.dto.review.WriteReviewRequest;
 import com.dev.museummate.domain.dto.review.WriteReviewResponse;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
-import com.dev.museummate.domain.entity.GalleryEntity;
 import com.dev.museummate.domain.entity.ReviewEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
@@ -37,8 +33,6 @@ import com.dev.museummate.service.ReviewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.With;
-import org.hibernate.sql.Delete;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -93,14 +87,8 @@ class ReviewControllerTest {
                                            .ageLimit("30세")
                                            .price("무료")
                                            .detailInfo("test detail info")
-                                           .gallery(
-                                               new GalleryEntity(
-                                                   1L,
-                                                   "test gallery",
-                                                   "seoul ddandong",
-                                                   "00:00",
-                                                   "24:00")
-                                                   ).build();
+                                           .galleryName("test gallery")
+                                           .build();
     }
 
     @Test
