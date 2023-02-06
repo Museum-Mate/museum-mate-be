@@ -7,14 +7,13 @@ import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.repository.UserRepository;
 import com.dev.museummate.utils.JwtUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
-
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -23,7 +22,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final RedisDao redisDao;
-    private final RedisTemplate redisTemplate;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -37,14 +35,14 @@ public class UserService {
                 new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.",email)));
     }
 
-    public UserDto join(UserJoinRequest userJoinRequest) {
+    public String join(UserJoinRequest userJoinRequest) {
 
         userRepository.findByUserName(userJoinRequest.getUserName())
                 .ifPresent(user ->{
-                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 유저네임입니다.",userJoinRequest.getUserName()));
+                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 닉네임입니다.",userJoinRequest.getUserName()));
                 });
 
-        userRepository.findByEmail(userJoinRequest.getAddress())
+        userRepository.findByEmail(userJoinRequest.getEmail())
                 .ifPresent(user -> {
                     throw new AppException(ErrorCode.DUPLICATE_EMAIL,String.format("%s는 중복 된 이메일입니다.",userJoinRequest.getEmail()));
                 });
@@ -54,19 +52,21 @@ public class UserService {
 
         UserDto userDto = UserDto.toDto(savedUser);
 
-        return userDto;
+        return userDto.getEmail();
 
     }
 
     public UserLoginResponse login(UserLoginRequest userLoginRequest) {
 
-        UserEntity findUser = userRepository.findByEmail(userLoginRequest.getEmail())
-                .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND,
-                        String.format("%s는 없는 계정입니다.", userLoginRequest.getEmail())));
+        UserEntity findUser = findUserByEmail(userLoginRequest.getEmail());
 
         if(!encoder.matches(userLoginRequest.getPassword(), findUser.getPassword())){
             throw new AppException(ErrorCode.INVALID_PASSWORD,String.format("잘못된 비밀번호 입니다."));
         }
+        if (findUser.getAuth().equals(Boolean.FALSE)) {
+            throw new AppException(ErrorCode.INVALID_MAIL, String.format("인증 되지 않은 이메일 입니다."));
+        }
+
 
         String accessToken = JwtUtils.createAccessToken(userLoginRequest.getEmail(), secretKey, accessExpireTimeMs);
         String refreshToken = JwtUtils.createRefreshToken(userLoginRequest.getEmail(), secretKey, refreshExpireTimeMs);
@@ -123,5 +123,49 @@ public class UserService {
 
     }
 
+    public String userNameCheck(UserCheckRequest userCheckRequest) {
+        userRepository.findByUserName(userCheckRequest.getUserName())
+                .ifPresent(user ->{
+                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 닉네임입니다.",userCheckRequest.getUserName()));
+                });
+        return "사용 가능한 닉네임 입니다.";
+    }
 
+    @Transactional
+    public String modifyUser(UserModifyRequest userModifyRequest, String email) {
+
+        userRepository.findByUserName(userModifyRequest.getUserName())
+                .ifPresent(user ->{
+                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 닉네임입니다.",userModifyRequest.getUserName()));
+                });
+
+        UserEntity findUser = findUserByEmail(email);
+
+        findUser.updateInfo(userModifyRequest);
+
+        userRepository.save(findUser);
+
+        return "수정이 완료 되었습니다.";
+    }
+
+    public String deleteUser(String email) {
+
+        UserEntity findUser = findUserByEmail(email);
+
+        userRepository.delete(findUser);
+
+        return "탈퇴가 완료 되었습니다.";
+    }
+
+    @Transactional
+    public String auth(String authNum, String email) {
+        UserEntity findUser = findUserByEmail(email);
+
+        if (findUser.getAuthNum().equals(authNum)) {
+            findUser.updateAuth();
+            userRepository.save(findUser);
+            return "인증이 완료 되었습니다.";
+        }
+        return "인증에 실패 했습니다.";
+    }
 }

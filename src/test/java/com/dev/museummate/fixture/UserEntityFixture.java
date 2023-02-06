@@ -9,6 +9,7 @@ public class UserEntityFixture {
         UserEntity user = UserEntity.builder()
                 .id(1L)
                 .email(email)
+                .userName("userName")
                 .password(password)
                 .role(UserRole.ROLE_USER)
                 .build();
