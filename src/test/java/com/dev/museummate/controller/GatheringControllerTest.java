@@ -417,11 +417,11 @@ class GatheringControllerTest {
                                                            .user(user1)
                                                            .statMale("temp").
                                                            statFemale("temp")
-                                                           .statAge10("temp")
-                                                           .statAge20("temp")
-                                                           .statAge30("temp")
-                                                           .statAge40("temp")
-                                                           .statAge50("temp").
+                                                           .statAge_10("temp")
+                                                           .statAge_20("temp")
+                                                           .statAge_30("temp")
+                                                           .statAge_40("temp")
+                                                           .statAge_50("temp").
                                                            mainImgUrl("temp").
                                                            noticeImgUrl("temp")
                                                            .detailImgUrl("temp").build();

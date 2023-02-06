@@ -33,11 +33,11 @@ public class ExhibitionEntity {
 
     private String statMale;
     private String statFemale;
-    private String statAge10;
-    private String statAge20;
-    private String statAge30;
-    private String statAge40;
-    private String statAge50;
+    private String statAge_10;
+    private String statAge_20;
+    private String statAge_30;
+    private String statAge_40;
+    private String statAge_50;
     private String mainImgUrl;
     private String noticeImgUrl;
     private String detailImgUrl;
@@ -48,8 +48,8 @@ public class ExhibitionEntity {
 
     @Builder
     public ExhibitionEntity(Long id, String name, String startAt, String endAt, String price, String ageLimit, String detailInfo,
-                            String galleryLocation, UserEntity user, String statMale, String statFemale, String statAge10, String statAge20,
-                            String statAge30, String statAge40, String statAge50, String mainImgUrl, String noticeImgUrl,
+                            String galleryLocation, UserEntity user, String statMale, String statFemale, String statAge_10, String statAge_20,
+                            String statAge_30, String statAge_40, String statAge_50, String mainImgUrl, String noticeImgUrl,
                             String detailImgUrl,
                             GalleryEntity gallery) {
         this.id = id;
@@ -63,11 +63,11 @@ public class ExhibitionEntity {
         this.user = user;
         this.statMale = statMale;
         this.statFemale = statFemale;
-        this.statAge10 = statAge10;
-        this.statAge20 = statAge20;
-        this.statAge30 = statAge30;
-        this.statAge40 = statAge40;
-        this.statAge50 = statAge50;
+        this.statAge_10 = statAge_10;
+        this.statAge_20 = statAge_20;
+        this.statAge_30 = statAge_30;
+        this.statAge_40 = statAge_40;
+        this.statAge_50 = statAge_50;
         this.mainImgUrl = mainImgUrl;
         this.noticeImgUrl = noticeImgUrl;
         this.detailImgUrl = detailImgUrl;
