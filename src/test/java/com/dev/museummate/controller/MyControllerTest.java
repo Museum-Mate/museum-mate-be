@@ -3,13 +3,10 @@ package com.dev.museummate.controller;
 import com.dev.museummate.domain.dto.alarm.AlarmDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
-import com.dev.museummate.domain.entity.GalleryEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
-import com.dev.museummate.service.ExhibitionService;
 import com.dev.museummate.service.MyService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,15 +44,16 @@ public class MyControllerTest {
     @BeforeEach
     void setUp(){
         exhibitionDto = ExhibitionDto.builder()
-                .id(1l)
-                .name("test")
-                .startAt("test")
-                .endAt("test")
-                .ageLimit("test")
-                .price("100원")
-                .detailInfo("test")
-                .galleryLocation("test")
-                .gallery(new GalleryEntity(1l,"test","test","test","test")).build();
+                                     .id(1l)
+                                     .name("test")
+                                     .startAt("test")
+                                     .endAt("test")
+                                     .ageLimit("test")
+                                     .price("100원")
+                                     .detailInfo("test")
+                                     .galleryLocation("test")
+                                     .galleryName("test")
+                                     .build();
 
         alarmDto = AlarmDto.builder()
                 .user(UserEntity.builder().userName("test").build())

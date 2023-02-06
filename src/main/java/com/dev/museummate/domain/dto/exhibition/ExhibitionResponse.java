@@ -21,7 +21,7 @@ public class ExhibitionResponse {
     private String ageLimit;
     private String detailInfo;
     private String galleryLocation;
-    private Long galleryId;
+    private String galleryName;
     private String statMale;
     private String statFemale;
     private String statAge10;
@@ -43,7 +43,7 @@ public class ExhibitionResponse {
                 .ageLimit(exhibition.getAgeLimit())
                 .detailInfo(exhibition.getDetailInfo())
                 .galleryLocation(exhibition.getGalleryLocation())
-                .galleryId(exhibition.getGallery().getId())
+                .galleryName(exhibition.getGalleryName())
                 .statMale(exhibition.getStatMale())
                 .statFemale(exhibition.getStatFemale())
                 .statAge10(exhibition.getStatAge10())
@@ -67,7 +67,7 @@ public class ExhibitionResponse {
                 .ageLimit(exhibition.getAgeLimit())
                 .detailInfo(exhibition.getDetailInfo())
                 .galleryLocation(exhibition.getGalleryLocation())
-                .galleryId(exhibition.getId())
+                .galleryName(exhibition.getGalleryName())
                 .statMale(exhibition.getStatMale())
                 .statFemale(exhibition.getStatFemale())
                 .statFemale(exhibition.getStatAge10())
