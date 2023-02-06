@@ -2,10 +2,15 @@ package com.dev.museummate.controller;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
+
 import static org.mockito.Mockito.RETURNS_MOCKS;
 import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -13,6 +18,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.dev.museummate.domain.UserRole;
+import com.dev.museummate.domain.dto.review.DeleteReviewResponse;
 import com.dev.museummate.domain.dto.review.EditReviewRequest;
 import com.dev.museummate.domain.dto.review.GetReviewResponse;
 import com.dev.museummate.domain.dto.review.ReviewDto;
@@ -30,6 +37,8 @@ import com.dev.museummate.service.ReviewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.With;
+import org.hibernate.sql.Delete;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -77,21 +86,21 @@ class ReviewControllerTest {
     void setUp() {
 
         exhibitionEntity = ExhibitionEntity.builder()
-                .id(1L)
-                .name("test exhibition")
-                .startsAt("2023-01-01")
-                .endsAt("2023-02-28")
-                .ageLimit("30세")
-                .price("무료")
-                .detailInfo("test detail info")
-                .gallery(
-                        new GalleryEntity(
-                                1L,
-                                "test gallery",
-                                "seoul ddandong",
-                                "00:00",
-                                "24:00" )
-                        ).build();
+                                           .id(1L)
+                                           .name("test exhibition")
+                                           .startAt("2023-01-01")
+                                           .endAt("2023-02-28")
+                                           .ageLimit("30세")
+                                           .price("무료")
+                                           .detailInfo("test detail info")
+                                           .gallery(
+                                               new GalleryEntity(
+                                                   1L,
+                                                   "test gallery",
+                                                   "seoul ddandong",
+                                                   "00:00",
+                                                   "24:00")
+                                                   ).build();
     }
 
     @Test
@@ -108,39 +117,40 @@ class ReviewControllerTest {
          */
 
         WriteReviewRequest writeReviewRequest = WriteReviewRequest.builder()
-                .title("test review title")
-                .content("test review content")
-                .star(3)
-                .visitedDate("2023-02-17")
-                .build();
+                                                                  .title("test review title")
+                                                                  .content("test review content")
+                                                                  .star(3)
+                                                                  .visitedDate("2023-02-17")
+                                                                  .build();
 
         UserEntity testUser = UserEntityFixture.getUser("test@mail.com", "password");
 
         ReviewEntity testReview = ReviewEntity.builder()
-                .id(1L)
-                .title(writeReviewRequest.getTitle())
-                .content(writeReviewRequest.getContent())
-                .star(writeReviewRequest.getStar())
-                .user(testUser)
-                .exhibition(exhibitionEntity)
-                .visitedDate(writeReviewRequest.getVisitedDate())
-                .build();
+                                              .id(1L)
+                                              .title(writeReviewRequest.getTitle())
+                                              .content(writeReviewRequest.getContent())
+                                              .star(writeReviewRequest.getStar())
+                                              .user(testUser)
+                                              .exhibition(exhibitionEntity)
+                                              .visitedDate(writeReviewRequest.getVisitedDate())
+                                              .isDeleted(false)
+                                              .build();
 
         ReviewDto reviewDto = ReviewDto.toDto(testReview);
 
         WriteReviewResponse writeReviewResponse = WriteReviewResponse.fromDtoToResponse(reviewDto);
 
         when(reviewService.writeReview(any(), any(), any()))
-                .thenReturn(reviewDto);
+            .thenReturn(reviewDto);
 
         mockMvc.perform(post("/api/v1/reviews/1")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(writeReviewRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
-                .andExpect(jsonPath("$.result.id").exists())
-                .andDo(print());
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(writeReviewRequest)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+               .andExpect(jsonPath("$.result.id").exists())
+               .andDo(print());
     }
 
     @Test
@@ -149,21 +159,21 @@ class ReviewControllerTest {
     void writeReview_fail_1() throws Exception {
 
         WriteReviewRequest writeReviewRequest = WriteReviewRequest.builder()
-                .title("test review title")
-                .content("test review content")
-                .star(3)
-                .visitedDate("2023-02-17")
-                .build();
+                                                                  .title("test review title")
+                                                                  .content("test review content")
+                                                                  .star(3)
+                                                                  .visitedDate("2023-02-17")
+                                                                  .build();
 
         when(reviewService.writeReview(any(), any(), any()))
-                .thenThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
+            .thenThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
 
         mockMvc.perform(post("/api/v1/reviews/1")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(writeReviewRequest)))
-                .andExpect(status().isUnauthorized())
-                .andDo(print());
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(writeReviewRequest)))
+               .andExpect(status().isUnauthorized())
+               .andDo(print());
 
     }
 
@@ -172,34 +182,137 @@ class ReviewControllerTest {
     @WithMockUser
     void writeReview_fail_2() throws Exception {
         WriteReviewRequest writeReviewRequest = WriteReviewRequest.builder()
-                .title("test review title")
+                                                                  .title("test review title")
 
-                .star(3)
-                .visitedDate("2023-02-17")
-                .build();
+                                                                  .star(3)
+                                                                  .visitedDate("2023-02-17")
+                                                                  .build();
 
         UserEntity testUser = UserEntityFixture.getUser("test@mail.com", "password");
 
         when(reviewService.writeReview(any(), any(), any()))
-                .thenThrow(new AppException(ErrorCode.CONTENT_NOT_FOUND, ""));
+            .thenThrow(new AppException(ErrorCode.CONTENT_NOT_FOUND, ""));
 
         mockMvc.perform(post("/api/v1/reviews/1")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(writeReviewRequest)))
-                .andExpect(status().isNotFound())
-                .andDo(print());
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(writeReviewRequest)))
+               .andExpect(status().isNotFound())
+               .andDo(print());
+    }
+
+    @Nested
+    @DisplayName("리뷰 삭제")
+    @WithMockUser
+    class deleteTest {
+
+        @Test
+        @DisplayName("리뷰 삭제 성공")
+        void deleteReview_success() throws Exception {
+            /*
+            테스트 로직
+            1.
+            2.
+            3. 행동 가정 (reviewService.deleteReview~)
+            4. mockMvc.perform 수행 시 예측 결과가 나오는지 확인
+            */
+            UserEntity testUser = UserEntityFixture.getUser("test@mail.com", "password");
+
+            ReviewEntity reviewEntity = ReviewEntity.builder()
+                                                    .id(2L)
+                                                    .title("삭제 테스트용 제목")
+                                                    .content("삭제 테스트용 내용")
+                                                    .star(3)
+                                                    .user(testUser)
+                                                    .exhibition(exhibitionEntity)
+                                                    .visitedDate("1901-01-01")
+                                                    .isDeleted(Boolean.FALSE)
+                                                    .build();
+
+            ReviewDto deletedReviewDto = ReviewDto.toDto(reviewEntity);
+
+//            DeleteReviewResponse deleteReviewResponse = DeleteReviewResponse.builder()
+//                .reviewId(2L)
+//                .message("리뷰 삭제")
+//                                                                            .build();
+
+            when(reviewService.deleteReview(anyLong(), anyString(), anyCollection())).thenReturn(deletedReviewDto);
+
+            mockMvc.perform(delete("/api/v1/reviews/2")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON))
+                   .andExpect(status().isOk())
+                   .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+                   .andExpect(jsonPath("$.result.reviewId").value(2))
+                   .andDo(print());
+        }
+
+        @Test
+        @DisplayName("리뷰 삭제 실패 - 행위자와 리뷰작성자 불일치 ")
+        void deleteReview_fail1() throws Exception {
+
+            UserEntity testUser = UserEntityFixture.getUser("test@mail.com", "password");
+
+            ReviewEntity reviewEntity = ReviewEntity.builder()
+                                                    .id(2L)
+                                                    .title("삭제 테스트용 제목")
+                                                    .content("삭제 테스트용 내용")
+                                                    .star(3)
+                                                    .user(testUser)
+                                                    .exhibition(exhibitionEntity)
+                                                    .visitedDate("1901-01-01")
+                                                    .isDeleted(Boolean.FALSE)
+                                                    .build();
+
+            when(reviewService.deleteReview(anyLong(), anyString(), anyCollection())).thenThrow(
+                new AppException(ErrorCode.INVALID_PERMISSION, "작성자 불일치"));
+
+            mockMvc.perform(delete("/api/v1/reviews/2")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON))
+                   .andExpect(status().isUnauthorized())
+                   .andDo(print());
+        }
+
+        @Test
+        @DisplayName("리뷰 삭제 실패 - DB Error ")
+        void deleteReview_fail2() throws Exception {
+
+            UserEntity testUser = UserEntityFixture.getUser("test@mail.com", "password");
+
+            ReviewEntity reviewEntity = ReviewEntity.builder()
+                                                    .id(2L)
+                                                    .title("삭제 테스트용 제목")
+                                                    .content("삭제 테스트용 내용")
+                                                    .star(3)
+                                                    .user(testUser)
+                                                    .exhibition(exhibitionEntity)
+                                                    .visitedDate("1901-01-01")
+                                                    .isDeleted(Boolean.FALSE)
+                                                    .build();
+
+            when(reviewService.deleteReview(anyLong(), anyString(), anyCollection())).thenThrow(
+                new AppException(ErrorCode.DATABASE_ERROR, "예상치 못한 에러가 발생했습니다."));
+
+            mockMvc.perform(delete("/api/v1/reviews/2")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON))
+                   .andExpect(status().isInternalServerError())
+                   .andDo(print());
+        }
+
+
     }
 
     /*
-    리뷰 수정 컨트롤러 테스트 로직
-    1. 준비 작업
-        - 엔티티 생성 (User, Exhibition, Review)
-        - EditReviewRequest 객체 생성
-        - ReviewDto 생성
-    2. 행동 가정 (reviewService.editReview~)
-    3. mockMvc.perform 수행 시 예측 결과가 나오는지 확인
-     */
+리뷰 수정 컨트롤러 테스트 로직
+1. 준비 작업
+- 엔티티 생성 (User, Exhibition, Review)
+- EditReviewRequest 객체 생성
+- ReviewDto 생성
+2. 행동 가정 (reviewService.editReview~)
+3. mockMvc.perform 수행 시 예측 결과가 나오는지 확인
+*/
     @Test
     @WithMockUser
     @DisplayName("리뷰 수정 성공")
@@ -207,24 +320,26 @@ class ReviewControllerTest {
         //테스트용 유저
         UserEntity testUser = UserEntityFixture.getUser("test@mail.com", "password");
         // 테스트용 리뷰
-        ReviewEntity testReview =  ReviewEntity.builder()
-            .id(1L)
-            .title("기존 리뷰")
-            .content("기존 리뷰 내용")
-            .star(5)
-            .user(testUser)
-            .exhibition(exhibitionEntity)
-            .visitedDate("2020-05-05")
-                                               .build();
+        ReviewEntity testReview = ReviewEntity.builder()
+                                              .id(1L)
+                                              .title("기존 리뷰")
+                                              .content("기존 리뷰 내용")
+                                              .star(5)
+                                              .user(testUser)
+                                              .exhibition(exhibitionEntity)
+                                              .visitedDate("2020-05-05")
+                                              .isDeleted(false)
+                                              .build();
 
         ReviewEntity editReviewEntity = ReviewEntity.builder()
-            .id(testReview.getId())
-            .title(editReviewRequest.getNewTitle())
-            .content(editReviewRequest.getNewContent())
-            .star(editReviewRequest.getNewStar())
-            .user(testReview.getUser())
-            .exhibition(testReview.getExhibition())
-            .visitedDate(editReviewRequest.getNewVisitedDate())
+                                                    .id(testReview.getId())
+                                                    .title(editReviewRequest.getNewTitle())
+                                                    .content(editReviewRequest.getNewContent())
+                                                    .star(editReviewRequest.getNewStar())
+                                                    .user(testReview.getUser())
+                                                    .exhibition(testReview.getExhibition())
+                                                    .visitedDate(editReviewRequest.getNewVisitedDate())
+                                                    .isDeleted(false)
                                                     .build();
 
         ReviewDto editedReviewDto = ReviewDto.toDto(editReviewEntity);
@@ -235,16 +350,16 @@ class ReviewControllerTest {
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsBytes(editReviewRequest)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
-            .andExpect(jsonPath("$.result.id").exists())
-            .andExpect(jsonPath("$.result.title").exists())
-            .andExpect(jsonPath("$.result.content").exists())
-            .andExpect(jsonPath("$.result.star").exists())
-            .andExpect(jsonPath("$.result.userName").exists())
-            .andExpect(jsonPath("$.result.exhibitionName").exists())
-            .andExpect(jsonPath("$.result.visitedDate").exists())
-            .andDo(print());
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+               .andExpect(jsonPath("$.result.id").exists())
+               .andExpect(jsonPath("$.result.title").exists())
+               .andExpect(jsonPath("$.result.content").exists())
+               .andExpect(jsonPath("$.result.star").exists())
+               .andExpect(jsonPath("$.result.userName").exists())
+               .andExpect(jsonPath("$.result.exhibitionName").exists())
+               .andExpect(jsonPath("$.result.visitedDate").exists())
+               .andDo(print());
 
         // verify(reviewService).editReview(testUser.getEmail(), editReviewRequest, testReview.getId());
     }
@@ -259,15 +374,16 @@ class ReviewControllerTest {
         UserEntity testUser = UserEntityFixture.getUser("testUser@withmuma.com", "password");
 
         // 테스트용 리뷰
-        ReviewEntity testReview =  ReviewEntity.builder()
-                                               .id(1L)
-                                               .title("기존 리뷰")
-                                               .content("기존 리뷰 내용")
-                                               .star(5)
-                                               .user(reviewer)
-                                               .exhibition(exhibitionEntity)
-                                               .visitedDate("2020-05-05")
-                                               .build();
+        ReviewEntity testReview = ReviewEntity.builder()
+                                              .id(1L)
+                                              .title("기존 리뷰")
+                                              .content("기존 리뷰 내용")
+                                              .star(5)
+                                              .user(reviewer)
+                                              .exhibition(exhibitionEntity)
+                                              .visitedDate("2020-05-05")
+                                              .isDeleted(false)
+                                              .build();
 
         // 리뷰 수정 request
         EditReviewRequest editReviewRequest = EditReviewRequest.builder()
@@ -285,6 +401,7 @@ class ReviewControllerTest {
                                                     .user(testUser) //testUser
                                                     .exhibition(testReview.getExhibition())
                                                     .visitedDate(editReviewRequest.getNewVisitedDate())
+                                                    .isDeleted(false)
                                                     .build();
 
         when(reviewService.editReview(any(), any(), any()))
@@ -326,13 +443,14 @@ class ReviewControllerTest {
     void get_review_success() throws Exception {
 
         ReviewEntity testReview = ReviewEntity.builder()
-            .id(1L)
-            .title("조회 테스트용 review title")
-            .content("조회 테스트용 review content")
-            .star(3)
-            .user(UserEntityFixture.getUser("test@mail.com", "password"))
-            .exhibition(exhibitionEntity)
-            .visitedDate("2023-02-17")
+                                              .id(1L)
+                                              .title("조회 테스트용 review title")
+                                              .content("조회 테스트용 review content")
+                                              .star(3)
+                                              .user(UserEntityFixture.getUser("test@mail.com", "password"))
+                                              .exhibition(exhibitionEntity)
+                                              .isDeleted(false)
+                                              .visitedDate("2023-02-17")
                                               .build();
 
         ReviewDto testDto = ReviewDto.toDto(testReview);
@@ -347,13 +465,13 @@ class ReviewControllerTest {
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsBytes(getReviewResponse)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
-            .andExpect(jsonPath("$.result.id").exists())
-            .andExpect(jsonPath("$.result.title").exists())
-            .andExpect(jsonPath("$.result.content").exists())
-            .andExpect(jsonPath("$.result.star").exists())
-            .andDo(print());
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+               .andExpect(jsonPath("$.result.id").exists())
+               .andExpect(jsonPath("$.result.title").exists())
+               .andExpect(jsonPath("$.result.content").exists())
+               .andExpect(jsonPath("$.result.star").exists())
+               .andDo(print());
     }
 
     @Test
@@ -366,8 +484,8 @@ class ReviewControllerTest {
 
         mockMvc.perform(get("/api/v1/reviews/1/details")
                             .with(csrf()))
-                            .andExpect(status().isNotFound())
-            .andDo(print());
+               .andExpect(status().isNotFound())
+               .andDo(print());
     }
 
     @Nested

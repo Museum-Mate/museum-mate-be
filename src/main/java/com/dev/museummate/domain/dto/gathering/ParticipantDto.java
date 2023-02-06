@@ -20,13 +20,13 @@ public class ParticipantDto {
     private Boolean approve;
     private LocalDateTime createdAt;
 
-    public GatheringResponse toResponse() {
-        return GatheringResponse.builder()
-                                .participantId(this.id)
-                                .userName(this.user.getUserName())
-                                .creatAt(this.getCreatedAt())
-                                .approve(this.approve)
-                                .build();
+    public GatheringParticipantResponse toResponse() {
+        return GatheringParticipantResponse.builder()
+                                           .participantId(this.id)
+                                           .userName(this.user.getUserName())
+                                           .approve(this.approve)
+                                           .createdAt(this.createdAt)
+                                           .build();
 
     }
 

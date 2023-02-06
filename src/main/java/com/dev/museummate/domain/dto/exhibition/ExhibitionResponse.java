@@ -15,8 +15,8 @@ public class ExhibitionResponse {
 
     private Long id;
     private String name;
-    private String startsAt;
-    private String endsAt;
+    private String startAt;
+    private String endAt;
     private String price;
     private String ageLimit;
     private String detailInfo;
@@ -37,8 +37,8 @@ public class ExhibitionResponse {
         return exhibitions.map(exhibition -> ExhibitionResponse.builder()
                 .id(exhibition.getId())
                 .name(exhibition.getName())
-                .startsAt(exhibition.getStartsAt())
-                .endsAt(exhibition.getEndsAt())
+                .startAt(exhibition.getStartAt())
+                .endAt(exhibition.getEndAt())
                 .price(exhibition.getPrice())
                 .ageLimit(exhibition.getAgeLimit())
                 .detailInfo(exhibition.getDetailInfo())
@@ -61,8 +61,8 @@ public class ExhibitionResponse {
         return ExhibitionResponse.builder()
                 .id(exhibition.getId())
                 .name(exhibition.getName())
-                .startsAt(exhibition.getStartsAt())
-                .endsAt(exhibition.getEndsAt())
+                .startAt(exhibition.getStartAt())
+                .endAt(exhibition.getEndAt())
                 .price(exhibition.getPrice())
                 .ageLimit(exhibition.getAgeLimit())
                 .detailInfo(exhibition.getDetailInfo())

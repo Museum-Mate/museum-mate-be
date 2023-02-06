@@ -23,6 +23,7 @@ public class ReviewDto {
     private LocalDateTime createdAt; // 최초 생성 일시
     private LocalDateTime lastModifiedAt; // 최종 수정 일시
     private LocalDateTime deletedAt; // 삭제 일시
+    private Boolean isDeleted;
     private String createdBy; // 최소 생성 사용자 userName
     private String lastModifiedBy; // 최종 수정 사용자 userName
 
@@ -34,6 +35,7 @@ public class ReviewDto {
                      LocalDateTime createdAt,
                      LocalDateTime lastModifiedAt,
                      LocalDateTime deletedAt,
+                     Boolean isDeleted,
                      String createdBy,
                      String lastModifiedBy) {
         // title, content, star, visitedDate..
@@ -47,6 +49,7 @@ public class ReviewDto {
         this.createdAt = createdAt;
         this.lastModifiedAt = lastModifiedAt;
         this.deletedAt = deletedAt;
+        this.isDeleted = isDeleted;
         this.createdBy = createdBy;
         this.lastModifiedBy = lastModifiedBy;
     }
@@ -68,6 +71,7 @@ public class ReviewDto {
                 reviewEntity.getCreatedAt(),
                 reviewEntity.getLastModifiedAt(),
                 reviewEntity.getDeletedAt(),
+                reviewEntity.isDeleted(),
                 reviewEntity.getCreatedBy(),
                 reviewEntity.getLastModifiedBy()
         );

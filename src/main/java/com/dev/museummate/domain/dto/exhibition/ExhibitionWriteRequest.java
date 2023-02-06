@@ -10,8 +10,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public class ExhibitionWriteRequest {
     private String name;
-    private String startsAt;
-    private String endsAt;
+    private String startAt;
+    private String endAt;
     private String price;
     private String ageLimit;
     private String detailInfo;
@@ -25,8 +25,8 @@ public class ExhibitionWriteRequest {
 
         return ExhibitionEntity.builder()
                 .name(this.name)
-                .startsAt(this.startsAt)
-                .endsAt(this.endsAt)
+                .startAt(this.startAt)
+                .endAt(this.endAt)
                 .price(this.price)
                 .ageLimit(this.ageLimit)
                 .detailInfo(this.detailInfo)

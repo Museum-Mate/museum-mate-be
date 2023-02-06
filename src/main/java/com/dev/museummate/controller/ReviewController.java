@@ -1,6 +1,7 @@
 package com.dev.museummate.controller;
 
 import com.dev.museummate.configuration.Response;
+import com.dev.museummate.domain.dto.review.DeleteReviewResponse;
 import com.dev.museummate.domain.dto.review.EditReviewRequest;
 import com.dev.museummate.domain.dto.review.EditReviewResponse;
 import com.dev.museummate.domain.dto.review.GetReviewResponse;
@@ -14,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,6 +55,19 @@ public class ReviewController {
     return Response.success(writeReviewResponse);
   }
 
+  @DeleteMapping("/{reviewId}")
+  public Response deleteReview(@PathVariable Long reviewId, Authentication authentication) {
+
+    ReviewDto deletedReviewDto = reviewService.deleteReview(reviewId,
+                                                            authentication.getName(),
+                                                            authentication.getAuthorities()); // 서비스에서 삭제 후 반환한 dto
+
+    DeleteReviewResponse deleteReviewResponse = DeleteReviewResponse.toResponse(deletedReviewDto); // DTO -> Response
+
+    return Response.success(deleteReviewResponse);
+
+  }
+	
   /*
   [] 리뷰 수정
    */
