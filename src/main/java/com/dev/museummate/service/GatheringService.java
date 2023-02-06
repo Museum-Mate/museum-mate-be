@@ -37,6 +37,15 @@ public class GatheringService {
                                                                  new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.", email)));
     }
 
+    public GatheringEntity findPostById(long id) {
+        return gatheringRepository.findById(id).orElseThrow(() ->
+                                                                new AppException(ErrorCode.NOT_FOUND_POST, "존재하지 않는 게시물입니다."));
+    }
+
+    public void checkUser(UserEntity authenticatedUser, UserEntity writer) {
+        if(!authenticatedUser.getId().equals(writer.getId())) throw new AppException(ErrorCode.FORBIDDEN_ACCESS, "접근할 수 없습니다.");
+    }
+
     public GatheringDto posts(GatheringPostRequest gatheringPostRequest, String email) {
 
         UserEntity findUser = findUserByEmail(email);
@@ -178,5 +187,43 @@ public class GatheringService {
         GatheringDto selectedGatheringDto = GatheringDto.toDto(findGatheringPost, currentPeople);
 
         return selectedGatheringDto;
+    }
+
+    public GatheringDto edit(Long gatheringId, GatheringPostRequest gatheringPostRequest, String email) {
+        UserEntity user = findUserByEmail(email);
+
+        GatheringEntity savedGathering = findPostById(gatheringId);
+
+        checkUser(user, savedGathering.getUser());
+
+        savedGathering.editGathering(gatheringPostRequest.getMeetDateTime(),
+                                     gatheringPostRequest.getMeetLocation(),
+                                     gatheringPostRequest.getMaxPeople(),
+                                     gatheringPostRequest.getTitle(),
+                                     gatheringPostRequest.getContent()
+        );
+
+        GatheringEntity modifiedGathering = gatheringRepository.save(savedGathering);
+
+        Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
+        if (!currentPeople.equals(modifiedGathering.getMaxPeople())) {
+            modifiedGathering.openPost();
+            gatheringRepository.save(modifiedGathering);
+        }
+
+        return GatheringDto.toDto(savedGathering,currentPeople);
+    }
+
+    public Long delete(Long gatheringId, String email) {
+
+        UserEntity user = findUserByEmail(email);
+
+        GatheringEntity savedGathering = findPostById(gatheringId);
+
+        checkUser(user, savedGathering.getUser());
+
+        gatheringRepository.deleteById(savedGathering.getId());
+
+        return savedGathering.getId();
     }
 }
