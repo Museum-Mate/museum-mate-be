@@ -1,5 +1,6 @@
 package com.dev.museummate.controller;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
 
 import static org.mockito.Mockito.RETURNS_MOCKS;
@@ -22,6 +23,7 @@ import com.dev.museummate.domain.dto.review.DeleteReviewResponse;
 import com.dev.museummate.domain.dto.review.EditReviewRequest;
 import com.dev.museummate.domain.dto.review.GetReviewResponse;
 import com.dev.museummate.domain.dto.review.ReviewDto;
+import com.dev.museummate.domain.dto.review.ReviewPageResponse;
 import com.dev.museummate.domain.dto.review.WriteReviewRequest;
 import com.dev.museummate.domain.dto.review.WriteReviewResponse;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
@@ -33,6 +35,8 @@ import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.fixture.UserEntityFixture;
 import com.dev.museummate.service.ReviewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.With;
 import org.hibernate.sql.Delete;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +46,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -423,8 +432,6 @@ class ReviewControllerTest {
                .andDo(print());
     }
 
-
-
     /* 조회 테스트 로직
         1. 행동 가정 (reviewService.getReview~)
         2. mockMvc.perform 수행 시 예측 결과가 나오는지 확인
@@ -479,5 +486,87 @@ class ReviewControllerTest {
                             .with(csrf()))
                .andExpect(status().isNotFound())
                .andDo(print());
+    }
+
+    @Nested
+    @DisplayName("리뷰 목록 조회")
+    class GetAllReviews {
+        @Test
+        @WithMockUser
+        @DisplayName("목록 조회 성공 - 여러 건 있는 경우 ")
+        void get_review_list_success() throws Exception {
+
+            Long review1 = 1L;
+            Long review2 = 2L;
+            Long review3 = 3L;
+
+            ReviewEntity testReview = ReviewEntity.builder()
+                                                  .id(review1)
+                                                  .title("조회 테스트용 review title")
+                                                  .content("조회 테스트용 review content")
+                                                  .star(3)
+                                                  .user(UserEntityFixture.getUser("test@mail.com", "password"))
+                                                  .exhibition(exhibitionEntity)
+                                                  .visitedDate("2023-02-17")
+                                                  .build();
+            ReviewEntity testReview2 = ReviewEntity.builder()
+                                                  .id(review2)
+                                                  .title("조회 테스트용 review title")
+                                                  .content("조회 테스트용 review content")
+                                                  .star(3)
+                                                  .user(UserEntityFixture.getUser("test@mail.com", "password"))
+                                                  .exhibition(exhibitionEntity)
+                                                  .visitedDate("2023-02-17")
+                                                  .build();
+            ReviewEntity testReview3 = ReviewEntity.builder()
+                                                  .id(review3)
+                                                  .title("조회 테스트용 review title")
+                                                  .content("조회 테스트용 review content")
+                                                  .star(3)
+                                                  .user(UserEntityFixture.getUser("test@mail.com", "password"))
+                                                  .exhibition(exhibitionEntity)
+                                                  .visitedDate("2023-02-17")
+                                                  .build();
+
+            Pageable pageable = PageRequest.of(0, 10, Direction.DESC, "createdAt");
+
+            List<ReviewDto> testReviews = new ArrayList<>();
+
+            ReviewDto testReviewDto = ReviewDto.toDto(testReview);
+            ReviewDto testReviewDto2 = ReviewDto.toDto(testReview2);
+            ReviewDto testReviewDto3 = ReviewDto.toDto(testReview3);
+
+            testReviews.add(testReviewDto);
+            testReviews.add(testReviewDto2);
+            testReviews.add(testReviewDto3);
+
+            Page<ReviewDto> reviewDtoPage = new PageImpl<>(testReviews);
+
+            ReviewPageResponse reviewPageResponse = new ReviewPageResponse(reviewDtoPage.getContent(), pageable);
+            given(reviewService.getAllReviews(any(), any())).willReturn(reviewDtoPage);
+
+            mockMvc.perform(get("/api/v1/reviews/"+exhibitionEntity.getId()+"/reviews")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsBytes(reviewPageResponse)))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        }
+
+        @Test
+        @WithMockUser
+        @DisplayName("목록 조회 성공 - 리뷰 없는 경우")
+        void get_review_list_success2() throws Exception {
+
+            given(reviewService.getAllReviews(any(), any())).willReturn(Page.empty());
+
+            mockMvc.perform(get("/api/v1/reviews/"+exhibitionEntity.getId()+"/reviews")
+                                .with(csrf())
+                                .contentType(MediaType.APPLICATION_JSON))
+                   //.content(objectMapper.writeValueAsBytes(reviewPageResponse)))
+                   .andExpect(status().isOk())
+                   .andDo(print());
+        }
     }
 }
