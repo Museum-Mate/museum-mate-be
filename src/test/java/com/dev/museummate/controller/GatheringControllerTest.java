@@ -9,6 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dev.museummate.domain.UserRole;
+import com.dev.museummate.domain.dto.gathering.CommentDto;
+import com.dev.museummate.domain.dto.gathering.CommentRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.gathering.GatheringParticipantResponse;
 import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
@@ -494,5 +496,379 @@ class GatheringControllerTest {
                    .andDo(print());
         }
     }
+
+
+    @Test
+    @DisplayName("댓글 작성 성공 - 성공")
+    @WithMockUser
+    void write_comment_success() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("comment-test-1");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.")
+                                          .build();
+
+        //given
+        given(gatheringService.writeComment(any(), any(), any()))
+            .willReturn(commentDto);
+
+        //when
+        mockMvc.perform(post("/api/v1/gatherings/1/comments")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(commentRequest))
+               )
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.result.gatheringId").exists())
+               .andExpect(jsonPath("$.result.content").exists());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 작성 성공 - 실패#1 모임 글 조회 실패")
+    @WithMockUser
+    void write_comment_fail_1() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("comment-test-1");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.")
+                                          .build();
+
+        //given
+        given(gatheringService.writeComment(any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,"조회 실패"));
+
+        //when
+        mockMvc.perform(post("/api/v1/gatherings/1/comments")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(commentRequest))
+               )
+               .andDo(print())
+               .andExpect(status().isNotFound());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 작성 성공 - 실패#2 이메일 인증 실패")
+    @WithMockUser
+    void write_comment_fail_2() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("comment-test-1");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.")
+                                          .build();
+
+        //given
+        given(gatheringService.writeComment(any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,"유저를 찾을 수 없습니다."));
+
+        //when
+        mockMvc.perform(post("/api/v1/gatherings/1/comments")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(commentRequest))
+               )
+               .andDo(print())
+               .andExpect(status().isNotFound());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 조회 - 성공")
+    @WithMockUser
+    void comment_list_success() throws Exception {
+
+        //given
+        given(gatheringService.getComments(any(), any()))
+            .willReturn(Page.empty());
+
+        //when
+        mockMvc.perform(get("/api/v1/gatherings/1/comments")
+                            .with(csrf())
+               )
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+               .andExpect(jsonPath("$.result.content").exists())
+               .andExpect(jsonPath("$.result.pageable").exists());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 조회 - 실패#1 모집 글 조회 실패")
+    @WithMockUser
+    void comment_list_fail_1() throws Exception {
+
+        //given
+        given(gatheringService.getComments(any(), any()))
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, "모집 글 조회 실패"));
+
+        //when
+        mockMvc.perform(get("/api/v1/gatherings/1/comments")
+                            .with(csrf())
+               )
+               .andDo(print())
+               .andExpect(status().isNotFound());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 수정 - 성공")
+    @WithMockUser
+    void comment_modify_success() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("댓글입니다.- 수정");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.- 수정")
+                                          .build();
+
+        //given
+        given(gatheringService.modifyComment(any(), any(),any(),any()))
+            .willReturn(commentDto);
+
+        //when
+        mockMvc.perform(put("/api/v1/gatherings/1/comments/1")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(commentRequest))
+               )
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.result.gatheringId").exists())
+               .andExpect(jsonPath("$.result.content").exists());
+
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 수정 - 실패#1 모집 글 조회 실패")
+    @WithMockUser
+    void comment_modify_fail_1() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("댓글입니다.- 수정");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.- 수정")
+                                          .build();
+
+        //given
+        given(gatheringService.modifyComment(any(), any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, "모집 글 조회 실패"));
+
+        //when
+        mockMvc.perform(put("/api/v1/gatherings/1/comments/1")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(commentRequest))
+               )
+               .andDo(print())
+               .andExpect(status().isNotFound());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 수정 - 실패#2 이메일 조회 실패")
+    @WithMockUser
+    void comment_modify_fail_2() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("댓글입니다.- 수정");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.- 수정")
+                                          .build();
+
+        //given
+        given(gatheringService.modifyComment(any(), any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, "이메일 조회 실패"));
+
+        //when
+        mockMvc.perform(put("/api/v1/gatherings/1/comments/1")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(commentRequest))
+               )
+               .andDo(print())
+               .andExpect(status().isNotFound());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 수정 - 실패#3 작성 유저 - 접근 유저 불일치")
+    @WithMockUser
+    void comment_modify_fail_3() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("댓글입니다.- 수정");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.- 수정")
+                                          .build();
+
+        //given
+        given(gatheringService.modifyComment(any(), any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "작성자만 접근 가능합니다."));
+
+        //when
+        mockMvc.perform(put("/api/v1/gatherings/1/comments/1")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(commentRequest))
+               )
+               .andDo(print())
+               .andExpect(status().isUnauthorized());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 수정 - 실패#4 댓글 조회 실패")
+    @WithMockUser
+    void comment_modify_fail_4() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("댓글입니다.- 수정");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.- 수정")
+                                          .build();
+
+        //given
+        given(gatheringService.modifyComment(any(), any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.CONTENT_NOT_FOUND, "댓글을 조회할 수 없습니다."));
+
+        //when
+        mockMvc.perform(put("/api/v1/gatherings/1/comments/1")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(commentRequest))
+               )
+               .andDo(print())
+               .andExpect(status().isNotFound());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 - 성공")
+    @WithMockUser
+    void comment_delete_success() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("댓글입니다.- 수정");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.- 수정")
+                                          .build();
+
+        //given
+        given(gatheringService.deleteComment(any(), any(), any()))
+            .willReturn("댓글 삭제 완료");
+
+        //when
+        mockMvc.perform(delete("/api/v1/gatherings/1/comments/1")
+                            .with(csrf())
+               )
+               .andDo(print())
+               .andExpect(status().isOk());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 - 실패#1 이메일 조회 실패")
+    @WithMockUser
+    void comment_delete_fail1() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("댓글입니다.- 수정");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.- 수정")
+                                          .build();
+
+        //given
+        given(gatheringService.deleteComment(any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, "이메일 조회 실패"));
+
+        //when
+        mockMvc.perform(delete("/api/v1/gatherings/1/comments/1")
+                            .with(csrf())
+               )
+               .andDo(print())
+               .andExpect(status().isNotFound());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 - 실패#2 모집 글 조회 실패")
+    @WithMockUser
+    void comment_delete_fail2() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("댓글입니다.- 수정");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.- 수정")
+                                          .build();
+
+        //given
+        given(gatheringService.deleteComment(any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, "이메일 조회 실패"));
+
+        //when
+        mockMvc.perform(delete("/api/v1/gatherings/1/comments/1")
+                            .with(csrf())
+               )
+               .andDo(print())
+               .andExpect(status().isNotFound());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 - 실패#3 작성 유저 - 접근 유저 불일치")
+    @WithMockUser
+    void comment_delete_fail3() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("댓글입니다.- 수정");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.- 수정")
+                                          .build();
+
+        //given
+        given(gatheringService.deleteComment(any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "작성자만 접근 가능합니다."));
+
+        //when
+        mockMvc.perform(delete("/api/v1/gatherings/1/comments/1")
+                            .with(csrf())
+               )
+               .andDo(print())
+               .andExpect(status().isUnauthorized());
+        //then
+    }
+
+    @Test
+    @DisplayName("댓글 삭제 - 실패#4 작성 유저 - 댓글 조회 불가")
+    @WithMockUser
+    void comment_delete_fail4() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("댓글입니다.- 수정");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .content("댓글입니다.- 수정")
+                                          .build();
+
+        //given
+        given(gatheringService.deleteComment(any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.CONTENT_NOT_FOUND, "댓글을 찾을 수 없습니다."));
+
+        //when
+        mockMvc.perform(delete("/api/v1/gatherings/1/comments/1")
+                            .with(csrf())
+               )
+               .andDo(print())
+               .andExpect(status().isNotFound());
+        //then
+    }
+
 
 }
