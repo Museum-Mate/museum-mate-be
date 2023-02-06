@@ -190,7 +190,7 @@ class GatheringControllerTest {
 
         List<ParticipantDto> lger = new ArrayList<>();
 
-        given(gatheringService.enrollList(any(),any()))
+        given(gatheringService.enrollList(any(), any()))
             .willReturn(lger);
 
         //when
@@ -214,8 +214,8 @@ class GatheringControllerTest {
                                                                             LocalDateTime.now());
         lger.add(ger);
 
-        given(gatheringService.enrollList(any(),any()))
-            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+        given(gatheringService.enrollList(any(), any()))
+            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
 
         //when
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/list")
@@ -237,8 +237,8 @@ class GatheringControllerTest {
                                                                             LocalDateTime.now());
         lger.add(ger);
 
-        given(gatheringService.enrollList(any(),any()))
-            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,""));
+        given(gatheringService.enrollList(any(), any()))
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, ""));
 
         //when
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/list")
@@ -268,7 +268,7 @@ class GatheringControllerTest {
     void approve_fail_1() throws Exception {
 
         given(gatheringService.approve(any(), any(), any()))
-            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
 
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
@@ -282,7 +282,7 @@ class GatheringControllerTest {
     void approve_fail_2() throws Exception {
 
         given(gatheringService.approve(any(), any(), any()))
-            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,""));
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, ""));
 
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
@@ -296,7 +296,7 @@ class GatheringControllerTest {
     void approve_fail_3() throws Exception {
 
         given(gatheringService.approve(any(), any(), any()))
-            .willThrow(new AppException(ErrorCode.INVALID_REQUEST,""));
+            .willThrow(new AppException(ErrorCode.INVALID_REQUEST, ""));
 
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
@@ -310,7 +310,7 @@ class GatheringControllerTest {
     void approve_fail_4() throws Exception {
 
         given(gatheringService.approve(any(), any(), any()))
-            .willThrow(new AppException(ErrorCode.PARTICIPANT_NOT_FOUND,""));
+            .willThrow(new AppException(ErrorCode.PARTICIPANT_NOT_FOUND, ""));
 
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
@@ -323,7 +323,7 @@ class GatheringControllerTest {
     @WithMockUser
     void enroll_cancel_success() throws Exception {
 
-        given(gatheringService.cancel(any(),any()))
+        given(gatheringService.cancel(any(), any()))
             .willReturn("신청 취소 완료");
 
         mockMvc.perform(delete("/api/v1/gatherings/1/cancel")
@@ -395,6 +395,7 @@ class GatheringControllerTest {
     @Nested
     @DisplayName("모집글 상세 조회")
     class GetGathering {
+
         @Test
         @WithMockUser
         @DisplayName("모집글 상세 조회 성공")
@@ -403,11 +404,27 @@ class GatheringControllerTest {
 
             UserEntity user1 = new UserEntity(1L, "test", "test", "test", "test", "test", "test", "test", UserRole.ROLE_USER);
 
-            ExhibitionEntity exhibition = new ExhibitionEntity(1l, "name", "10:00", "18:00", "20000", "전체관람가", "temp",
-                                                               "seoul",
-                                                               new GalleryEntity(1l, "name", "address", "9", "18"), user1,
-                                                               "temp", "temp", "temp", "temp", "temp", "temp",
-                                                               "temp", "url", "url", "url");
+            ExhibitionEntity exhibition = ExhibitionEntity.builder()
+                                                           .id(1L)
+                                                           .name("name")
+                                                           .startAt("10:00")
+                                                           .endAt("18:00")
+                                                           .price("20000")
+                                                           .ageLimit("전체관람가")
+                                                           .detailInfo("temp")
+                                                           .galleryLocation("seoul")
+                                                           .gallery(new GalleryEntity(1L, "name", "address", "9", "18"))
+                                                           .user(user1)
+                                                           .statMale("temp").
+                                                           statFemale("temp")
+                                                           .statAge10("temp")
+                                                           .statAge20("temp")
+                                                           .statAge30("temp")
+                                                           .statAge40("temp")
+                                                           .statAge50("temp").
+                                                           mainImgUrl("temp").
+                                                           noticeImgUrl("temp")
+                                                           .detailImgUrl("temp").build();
 
             GatheringDto gatheringDto = GatheringDto.builder()
                                                     .id(gatheringId)
@@ -426,7 +443,6 @@ class GatheringControllerTest {
                                                     .createdBy("test")
                                                     .lastModifiedBy("test")
                                                     .build();
-
 
             GatheringResponse gatheringResponse = GatheringResponse.builder()
                                                                    .id(gatheringId)
