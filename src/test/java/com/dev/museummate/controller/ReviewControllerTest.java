@@ -491,6 +491,7 @@ class ReviewControllerTest {
     @Nested
     @DisplayName("리뷰 목록 조회")
     class GetAllReviews {
+
         @Test
         @WithMockUser
         @DisplayName("목록 조회 성공 - 여러 건 있는 경우 ")
@@ -508,25 +509,27 @@ class ReviewControllerTest {
                                                   .user(UserEntityFixture.getUser("test@mail.com", "password"))
                                                   .exhibition(exhibitionEntity)
                                                   .visitedDate("2023-02-17")
+                                                  .isDeleted(false)
                                                   .build();
             ReviewEntity testReview2 = ReviewEntity.builder()
-                                                  .id(review2)
-                                                  .title("조회 테스트용 review title")
-                                                  .content("조회 테스트용 review content")
-                                                  .star(3)
-                                                  .user(UserEntityFixture.getUser("test@mail.com", "password"))
-                                                  .exhibition(exhibitionEntity)
-                                                  .visitedDate("2023-02-17")
-                                                  .build();
+                                                   .id(review2)
+                                                   .title("조회 테스트용 review title")
+                                                   .content("조회 테스트용 review content")
+                                                   .star(3)
+                                                   .user(UserEntityFixture.getUser("test@mail.com", "password"))
+                                                   .exhibition(exhibitionEntity)
+                                                   .visitedDate("2023-02-17").isDeleted(false)
+                                                   .build();
             ReviewEntity testReview3 = ReviewEntity.builder()
-                                                  .id(review3)
-                                                  .title("조회 테스트용 review title")
-                                                  .content("조회 테스트용 review content")
-                                                  .star(3)
-                                                  .user(UserEntityFixture.getUser("test@mail.com", "password"))
-                                                  .exhibition(exhibitionEntity)
-                                                  .visitedDate("2023-02-17")
-                                                  .build();
+                                                   .id(review3)
+                                                   .title("조회 테스트용 review title")
+                                                   .content("조회 테스트용 review content")
+                                                   .star(3)
+                                                   .user(UserEntityFixture.getUser("test@mail.com", "password"))
+                                                   .exhibition(exhibitionEntity)
+                                                   .visitedDate("2023-02-17")
+                                                   .isDeleted(false)
+                                                   .build();
 
             Pageable pageable = PageRequest.of(0, 10, Direction.DESC, "createdAt");
 
@@ -545,12 +548,12 @@ class ReviewControllerTest {
             ReviewPageResponse reviewPageResponse = new ReviewPageResponse(reviewDtoPage.getContent(), pageable);
             given(reviewService.getAllReviews(any(), any())).willReturn(reviewDtoPage);
 
-            mockMvc.perform(get("/api/v1/reviews/"+exhibitionEntity.getId()+"/reviews")
+            mockMvc.perform(get("/api/v1/reviews/" + exhibitionEntity.getId() + "/reviews")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsBytes(reviewPageResponse)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                   .andExpect(status().isOk())
+                   .andDo(print());
 
         }
 
@@ -561,7 +564,7 @@ class ReviewControllerTest {
 
             given(reviewService.getAllReviews(any(), any())).willReturn(Page.empty());
 
-            mockMvc.perform(get("/api/v1/reviews/"+exhibitionEntity.getId()+"/reviews")
+            mockMvc.perform(get("/api/v1/reviews/" + exhibitionEntity.getId() + "/reviews")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON))
                    //.content(objectMapper.writeValueAsBytes(reviewPageResponse)))
