@@ -1,13 +1,15 @@
 package com.dev.museummate.domain.dto.exhibition;
 
 import com.dev.museummate.domain.entity.ExhibitionEntity;
-import com.dev.museummate.domain.entity.GalleryEntity;
 import com.dev.museummate.domain.entity.UserEntity;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExhibitionWriteRequest {
     private String name;
     private String startAt;
@@ -16,10 +18,26 @@ public class ExhibitionWriteRequest {
     private String ageLimit;
     private String detailInfo;
     private String galleryLocation;
-    private GalleryEntity gallery;
+    private String galleryName;
     private String mainImgUrl;
     private String noticeImgUrl;
     private String detailImgUrl;
+
+    @Builder
+    public ExhibitionWriteRequest(String name, String startAt, String endAt, String price, String ageLimit, String detailInfo,
+                                  String galleryLocation, String galleryName, String mainImgUrl, String noticeImgUrl, String detailImgUrl) {
+        this.name = name;
+        this.startAt = startAt;
+        this.endAt = endAt;
+        this.price = price;
+        this.ageLimit = ageLimit;
+        this.detailInfo = detailInfo;
+        this.galleryLocation = galleryLocation;
+        this.galleryName = galleryName;
+        this.mainImgUrl = mainImgUrl;
+        this.noticeImgUrl = noticeImgUrl;
+        this.detailImgUrl = detailImgUrl;
+    }
 
     public ExhibitionEntity toEntity(UserEntity user) {
 
@@ -31,7 +49,7 @@ public class ExhibitionWriteRequest {
                 .ageLimit(this.ageLimit)
                 .detailInfo(this.detailInfo)
                 .galleryLocation(this.galleryLocation)
-                .gallery(this.gallery)
+                .galleryName(this.galleryName)
                 .user(user)
                 .statMale(null)
                 .statFemale(null)
