@@ -1,7 +1,6 @@
 package com.dev.museummate.domain.dto.exhibition;
 
 import com.dev.museummate.domain.entity.ExhibitionEntity;
-import com.dev.museummate.domain.entity.GalleryEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -23,9 +22,7 @@ public class ExhibitionDto {
     private String detailInfo;
     private String galleryLocation;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gallery_id")
-    private GalleryEntity gallery;
+    private String galleryName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -43,8 +40,10 @@ public class ExhibitionDto {
     private String detailImgUrl;
 
     @Builder
-    public ExhibitionDto(Long id, String name, String startAt, String endAt, String price, String ageLimit, String detailInfo, String galleryLocation, GalleryEntity gallery, UserEntity user,
-                         String statMale, String statFemale, String statAge10, String statAge20, String statAge30, String statAge40, String statAge50, String mainImgUrl, String noticeImgUrl, String detailImgUrl) {
+    public ExhibitionDto(Long id, String name, String startAt, String endAt, String price, String ageLimit, String detailInfo,
+                         String galleryLocation, String galleryName, UserEntity user, String statMale, String statFemale, String statAge10,
+                         String statAge20, String statAge30, String statAge40, String statAge50, String mainImgUrl, String noticeImgUrl,
+                         String detailImgUrl) {
         this.id = id;
         this.name = name;
         this.startAt = startAt;
@@ -53,7 +52,7 @@ public class ExhibitionDto {
         this.ageLimit = ageLimit;
         this.detailInfo = detailInfo;
         this.galleryLocation = galleryLocation;
-        this.gallery = gallery;
+        this.galleryName = galleryName;
         this.user = user;
         this.statMale = statMale;
         this.statFemale = statFemale;
@@ -81,15 +80,15 @@ public class ExhibitionDto {
                 .ageLimit(exhibitionEntity.getAgeLimit())
                 .detailInfo(exhibitionEntity.getDetailInfo())
                 .galleryLocation(exhibitionEntity.getGalleryLocation())
-                .gallery(exhibitionEntity.getGallery())
+                .galleryName(exhibitionEntity.getGalleryName())
                 .user(exhibitionEntity.getUser())
                 .statMale(exhibitionEntity.getStatMale())
                 .statFemale(exhibitionEntity.getStatFemale())
-                .statAge10(exhibitionEntity.getStatAge10())
-                .statAge20(exhibitionEntity.getStatAge20())
-                .statAge30(exhibitionEntity.getStatAge30())
-                .statAge40(exhibitionEntity.getStatAge40())
-                .statAge50(exhibitionEntity.getStatAge50())
+                .statAge10(exhibitionEntity.getStatAge_10())
+                .statAge20(exhibitionEntity.getStatAge_20())
+                .statAge30(exhibitionEntity.getStatAge_30())
+                .statAge40(exhibitionEntity.getStatAge_40())
+                .statAge50(exhibitionEntity.getStatAge_50())
                 .mainImgUrl(exhibitionEntity.getMainImgUrl())
                 .noticeImgUrl(exhibitionEntity.getNoticeImgUrl())
                 .detailImgUrl(exhibitionEntity.getDetailImgUrl())
