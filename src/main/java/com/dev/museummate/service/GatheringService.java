@@ -1,15 +1,19 @@
 package com.dev.museummate.service;
 
+import com.dev.museummate.domain.dto.gathering.CommentDto;
+import com.dev.museummate.domain.dto.gathering.CommentRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
 import com.dev.museummate.domain.dto.gathering.ParticipantDto;
+import com.dev.museummate.domain.entity.CommentEntity;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.GatheringEntity;
 import com.dev.museummate.domain.entity.ParticipantEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
+import com.dev.museummate.repository.CommentRepository;
 import com.dev.museummate.repository.ExhibitionRepository;
 import com.dev.museummate.repository.GatheringRepository;
 import com.dev.museummate.repository.ParticipantRepository;
@@ -32,6 +36,8 @@ public class GatheringService {
     private final UserRepository userRepository;
     private final ExhibitionRepository exhibitionRepository;
     private final ParticipantRepository participantRepository;
+
+    private final CommentRepository commentRepository;
     public UserEntity findUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() ->
                                                                  new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.", email)));
@@ -225,5 +231,45 @@ public class GatheringService {
         gatheringRepository.deleteById(savedGathering.getId());
 
         return savedGathering.getId();
+    }
+
+    public CommentDto writeComment(Long gatheringId, CommentRequest commentRequest, String email) {
+        UserEntity findUser = findUserByEmail(email);
+        GatheringEntity findGathering = findPostById(gatheringId);
+        CommentEntity comment = CommentEntity.of(commentRequest.getComment(), findGathering, findUser);
+        CommentEntity savedComment = commentRepository.save(comment);
+        CommentDto commentDto = savedComment.toDto();
+        return commentDto;
+    }
+
+    public Page<CommentDto> getComments(Pageable pageable, Long gatheringId) {
+        Page<CommentEntity> findComments = commentRepository.findAllByGatheringId(pageable, gatheringId);
+        Page<CommentDto> commentDtos = findComments.map(CommentEntity::toDto);
+        return commentDtos;
+    }
+
+    public CommentDto modifyComment(Long gatheringId, Long commentId, String email, CommentRequest commentRequest) {
+        UserEntity findUser = findUserByEmail(email);
+        GatheringEntity findGathering = findPostById(gatheringId);
+        CommentEntity findComment = commentRepository.findById(commentId)
+                                                 .orElseThrow(() -> new AppException(ErrorCode.CONTENT_NOT_FOUND, "댓글을 찾을 수 없습니다."));
+        if (!findUser.getUserName().equals(findComment.getUser().getUserName())) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION, "작성자만 접근 가능합니다.");
+        }
+        findComment.update(commentRequest.getComment());
+        CommentEntity savedComment = commentRepository.save(findComment);
+        return savedComment.toDto();
+    }
+
+    public String deleteComment(Long gatheringId, Long commentId, String email) {
+        UserEntity findUser = findUserByEmail(email);
+        GatheringEntity findGathering = findPostById(gatheringId);
+        CommentEntity findComment = commentRepository.findById(commentId)
+                                                     .orElseThrow(() -> new AppException(ErrorCode.CONTENT_NOT_FOUND, "댓글을 찾을 수 없습니다."));
+        if (!findUser.getUserName().equals(findComment.getUser().getUserName())) {
+            throw new AppException(ErrorCode.INVALID_PERMISSION, "작성자만 접근 가능합니다.");
+        }
+        commentRepository.delete(findComment);
+        return "삭제가 완료 되었습니다.";
     }
 }
