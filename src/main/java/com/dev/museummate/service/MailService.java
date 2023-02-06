@@ -8,6 +8,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.context.Context;
@@ -24,6 +25,8 @@ public class MailService {
     private final JavaMailSender emailSender;
     private final SpringTemplateEngine templateEngine;
     private final UserRepository userRepository;
+    @Value("${app.mail.url}")
+    private String mailURL;
 
     //랜덤 인증 코드 생성
     public String createCode() {
@@ -68,7 +71,7 @@ public class MailService {
         message.addRecipients(MimeMessage.RecipientType.TO, email); //보낼 이메일 설정
         message.setSubject(title); //제목 설정
         message.setFrom(setFrom); //보내는 이메일
-        message.setText(setContext("http://127.0.0.1:8080/api/v1/users/auth?authNum="+authNum+"&"+"email="+email), "utf-8", "html");
+        message.setText(setContext(mailURL+"/api/v1/users/auth?authNum="+authNum+"&"+"email="+email), "utf-8", "html");
 
         return message;
     }
