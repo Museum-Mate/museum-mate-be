@@ -2,6 +2,7 @@ package com.dev.museummate.domain.entity;
 
 import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.dto.user.UserModifyRequest;
+import com.dev.museummate.security.oauth.ProviderType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -49,9 +50,15 @@ public class UserEntity extends BaseTimeEntity{
     private UserRole role;
     private Boolean auth;
     private String authNum;
+    private String providerId;
+    @Enumerated(EnumType.STRING)
+    private ProviderType providerType;
+
 
     @Builder
-    public UserEntity(Long id, String email, String password, String name, String userName, String birth, String phoneNumber, String address, UserRole role) {
+    public UserEntity(Long id, String email, String password, String name, String userName, String birth, String phoneNumber,
+                      String address,
+                      UserRole role, String providerId, ProviderType providerType) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -63,6 +70,8 @@ public class UserEntity extends BaseTimeEntity{
         this.role = role;
         this.auth = false;
         this.authNum = "1234";
+        this.providerId = providerId;
+        this.providerType = providerType;
     }
 
     public void updateInfo(UserModifyRequest userModifyRequest) {

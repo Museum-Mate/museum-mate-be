@@ -5,10 +5,13 @@ import com.dev.museummate.domain.dto.user.*;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
+import com.dev.museummate.security.oauth.OAuth2Attribute;
+import com.dev.museummate.security.oauth.ProviderType;
 import com.dev.museummate.repository.UserRepository;
-import com.dev.museummate.utils.JwtUtils;
+import com.dev.museummate.utils.JwtProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,17 +20,18 @@ import org.springframework.util.StringUtils;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final RedisDao redisDao;
+    private final JwtProvider jwtProvider;
 
     @Value("${jwt.secret}")
     private String secretKey;
-
-    private static final long accessExpireTimeMs = 1000 * 60 * 5;
-    private static final long refreshExpireTimeMs = 1000 * 60 * 30;
+    @Value("${cookie.maxage}")
+    private Long maxAge;
 
 
     public UserEntity findUserByEmail(String email) {
@@ -35,7 +39,14 @@ public class UserService {
                 new AppException(ErrorCode.EMAIL_NOT_FOUND, String.format("%s님은 존재하지 않습니다.",email)));
     }
 
+    public UserEntity findUserByProviderTypeAndProviderId(ProviderType providerType, String providerId) {
+        return userRepository.findByProviderTypeAndProviderId(providerType, providerId)
+                             .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND,
+                                                                 String.format("%s 는 존재하지 않습니다.",providerType)));
+    }
+
     public String join(UserJoinRequest userJoinRequest) {
+        log.info("회원가입 요청 : {}",userJoinRequest);
 
         userRepository.findByUserName(userJoinRequest.getUserName())
                 .ifPresent(user ->{
@@ -68,10 +79,10 @@ public class UserService {
         }
 
 
-        String accessToken = JwtUtils.createAccessToken(userLoginRequest.getEmail(), secretKey, accessExpireTimeMs);
-        String refreshToken = JwtUtils.createRefreshToken(userLoginRequest.getEmail(), secretKey, refreshExpireTimeMs);
+        String accessToken = jwtProvider.createAccessToken(userLoginRequest.getEmail());
+        String refreshToken = jwtProvider.createRefreshToken(userLoginRequest.getEmail());
 
-        redisDao.setValues("RT:" + findUser.getEmail(), refreshToken,60*30,TimeUnit.SECONDS);
+        redisDao.setValues("RT:" + findUser.getEmail(), refreshToken, maxAge,TimeUnit.SECONDS);
 
         return new UserLoginResponse(accessToken,refreshToken);
     }
@@ -80,7 +91,7 @@ public class UserService {
 
         UserEntity findUser = findUserByEmail(email);
 
-        if (JwtUtils.isExpired(userReissueRequest.getRefreshToken(), secretKey)) {
+        if (jwtProvider.isExpired(userReissueRequest.getRefreshToken())) {
             throw new AppException(ErrorCode.INVALID_TOKEN,"만료된 토큰입니다.");
         }
 
@@ -94,7 +105,7 @@ public class UserService {
         }
 
         // 4. 새로운 토큰 생성
-        String accessToken = JwtUtils.createAccessToken(findUser.getEmail(), secretKey ,accessExpireTimeMs);
+        String accessToken = jwtProvider.createAccessToken(findUser.getEmail());
 
         // 5. RefreshToken Redis 업데이트
         redisDao.setValues("RT:" + findUser.getEmail(), refreshToken);
@@ -107,15 +118,15 @@ public class UserService {
 
         String str = (String)redisDao.getValues("RT:" + email);
 
-        System.out.println("str = " + str);
+        log.info("str = {}", str);
 
         if(!StringUtils.isEmpty(redisDao.getValues("RT:" + email))) {
             redisDao.deleteValues("RT:" + email);
         }
 
-        int expiration = JwtUtils.getExpiration(userLogoutRequest.getAccessToken(), secretKey).intValue()/1000;
+        int expiration = jwtProvider.getExpiration(userLogoutRequest.getAccessToken()).intValue()/1000;
 
-        System.out.println("expiration = " + expiration);
+        log.info("expiration = {}sec", expiration);
 
         redisDao.setValues(userLogoutRequest.getAccessToken(), "logout",expiration,TimeUnit.SECONDS);
 
@@ -167,5 +178,10 @@ public class UserService {
             return "인증이 완료 되었습니다.";
         }
         return "인증에 실패 했습니다.";
+    }
+
+    public UserEntity saveOAuth2User(OAuth2Attribute attributes, ProviderType providerType) {
+        UserEntity createdUser = attributes.toEntity(providerType, attributes.getOAuth2UserInfo());
+        return userRepository.save(createdUser);
     }
 }
