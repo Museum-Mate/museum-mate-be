@@ -5,18 +5,15 @@ import com.dev.museummate.controller.ExampleController;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.fixture.UserEntityFixture;
 import com.dev.museummate.service.UserService;
-import com.dev.museummate.utils.JwtUtils;
+import com.dev.museummate.utils.JwtProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(value = ExampleController.class)
-@ImportAutoConfiguration(classes = {SecurityConfiguration.class, JwtUtils.class})
+@ImportAutoConfiguration(classes = {SecurityConfiguration.class, JwtProvider.class})
 public class SecurityFilterTest {
 
     @Autowired
@@ -39,6 +36,9 @@ public class SecurityFilterTest {
     @MockBean
     RedisDao redisDao;
 
+    @MockBean
+    JwtProvider jwtProvider;
+
     @Value("${jwt.secret}")
     private String secretKey;
 
@@ -46,7 +46,7 @@ public class SecurityFilterTest {
     private UserEntity admin;
 
     private String createToken(UserEntity userEntity, long expiredMs){
-        return JwtUtils.createAccessToken(userEntity.getEmail(), secretKey, expiredMs);
+        return jwtProvider.createAccessToken(userEntity.getEmail());
     }
 
     @BeforeEach

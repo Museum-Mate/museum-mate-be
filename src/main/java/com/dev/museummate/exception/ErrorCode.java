@@ -26,7 +26,8 @@ public enum ErrorCode {
     DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Database Error"),
     INVALID_MAIL(HttpStatus.UNAUTHORIZED, "invalid email"),
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "Review is Not Found"),
-    PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "Participant not found")
+    PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "Participant not found"),
+    NOT_FOUND(HttpStatus.NOT_FOUND, "Role Not Found"),
     ;
     private HttpStatus httpStatus;
     private String message;
