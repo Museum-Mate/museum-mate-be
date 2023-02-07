@@ -1,7 +1,11 @@
 package com.dev.museummate.security;
 
 import com.dev.museummate.configuration.redis.RedisDao;
-import com.dev.museummate.utils.JwtUtils;
+import com.dev.museummate.security.oauth.CustomOAuth2UserService;
+import com.dev.museummate.security.oauth.handler.OAuth2LoginFailureHandler;
+import com.dev.museummate.security.oauth.handler.OAuth2LoginSuccessHandler;
+import com.dev.museummate.service.UserService;
+import com.dev.museummate.utils.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +22,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private final JwtUtils jwtUtils;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+
+    private final JwtProvider jwtProvider;
     private final RedisDao redisDao;
+    private final UserService userService;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -42,11 +51,19 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/gathering").authenticated()
                         .anyRequest().permitAll()   //고정
                 )
+                .oauth2Login()
+                .userInfoEndpoint().userService(customOAuth2UserService)
+                .and()
+                .successHandler(oAuth2LoginSuccessHandler)
+                .failureHandler(oAuth2LoginFailureHandler)
+                .and()
+
                 .exceptionHandling().accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
-                .addFilterBefore(new JwtFilter(jwtUtils, redisDao, secretKey), UsernamePasswordAuthenticationFilter.class)
+
+                .addFilterBefore(new JwtFilter(redisDao, jwtProvider, userService), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class)
                 .build();
     }
