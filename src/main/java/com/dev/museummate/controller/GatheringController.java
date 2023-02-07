@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,8 +57,8 @@ public class GatheringController {
     public Response<List<GatheringParticipantResponse>> enrollList(@PathVariable Long gatheringId, Authentication authentication) {
         List<ParticipantDto> participantDtos = gatheringService.enrollList(gatheringId, authentication.getName());
         List<GatheringParticipantResponse> gatheringParticipantResponses = participantDtos.stream()
-                                                                               .map(ParticipantDto::toResponse)
-                                                                               .collect(Collectors.toList());
+                                                                                          .map(ParticipantDto::toResponse)
+                                                                                          .collect(Collectors.toList());
         return Response.success(gatheringParticipantResponses);
     }
 
@@ -65,8 +66,8 @@ public class GatheringController {
     public Response<List<GatheringParticipantResponse>> approveList(@PathVariable Long gatheringId) {
         List<ParticipantDto> participantDtos = gatheringService.approveList(gatheringId);
         List<GatheringParticipantResponse> gatheringParticipantResponses = participantDtos.stream()
-                                                                  .map(ParticipantDto::toResponse)
-                                                                  .collect(Collectors.toList());
+                                                                                          .map(ParticipantDto::toResponse)
+                                                                                          .collect(Collectors.toList());
         return Response.success(gatheringParticipantResponses);
     }
 
@@ -100,6 +101,21 @@ public class GatheringController {
         GatheringDto oneGatheringDto = gatheringService.getOne(gatheringId);
         GatheringResponse gatheringResponse = GatheringResponse.createGetOne(oneGatheringDto);
         return Response.success(gatheringResponse);
+    }
+
+    @PutMapping("/{gatheringId}")
+    public Response edit(@PathVariable Long gatheringId, @RequestBody GatheringPostRequest gatheringPostRequest,
+                         Authentication authentication) {
+
+        GatheringDto gatheringDto = gatheringService.edit(gatheringId, gatheringPostRequest, authentication.getName());
+        return Response.success(new GatheringPostResponse(gatheringDto.getId()));
+    }
+
+    @DeleteMapping("/{gatheringId}")
+    public Response delete(@PathVariable Long gatheringId, Authentication authentication) {
+
+        Long deletedId = gatheringService.delete(gatheringId, authentication.getName());
+        return Response.success(new GatheringPostResponse(deletedId));
     }
 
 }

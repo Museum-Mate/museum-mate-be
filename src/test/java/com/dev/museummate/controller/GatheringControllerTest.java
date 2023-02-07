@@ -15,8 +15,6 @@ import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.gathering.ParticipantDto;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
-import com.dev.museummate.domain.entity.GalleryEntity;
-import com.dev.museummate.domain.entity.ParticipantEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
@@ -26,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,11 +34,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import org.springframework.data.domain.Page;
 
 @WebMvcTest(GatheringController.class)
 class GatheringControllerTest {
@@ -192,7 +188,7 @@ class GatheringControllerTest {
 
         List<ParticipantDto> lger = new ArrayList<>();
 
-        given(gatheringService.enrollList(any(),any()))
+        given(gatheringService.enrollList(any(), any()))
             .willReturn(lger);
 
         //when
@@ -200,6 +196,7 @@ class GatheringControllerTest {
                             .with(csrf()))
                .andDo(print())
                .andExpect(status().isOk());
+
         //then
     }
 
@@ -215,8 +212,8 @@ class GatheringControllerTest {
                                                                             LocalDateTime.now());
         lger.add(ger);
 
-        given(gatheringService.enrollList(any(),any()))
-            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+        given(gatheringService.enrollList(any(), any()))
+            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
 
         //when
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/list")
@@ -238,8 +235,8 @@ class GatheringControllerTest {
                                                                             LocalDateTime.now());
         lger.add(ger);
 
-        given(gatheringService.enrollList(any(),any()))
-            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,""));
+        given(gatheringService.enrollList(any(), any()))
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, ""));
 
         //when
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/list")
@@ -269,7 +266,7 @@ class GatheringControllerTest {
     void approve_fail_1() throws Exception {
 
         given(gatheringService.approve(any(), any(), any()))
-            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
 
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
@@ -283,7 +280,7 @@ class GatheringControllerTest {
     void approve_fail_2() throws Exception {
 
         given(gatheringService.approve(any(), any(), any()))
-            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND,""));
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, ""));
 
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
@@ -297,7 +294,7 @@ class GatheringControllerTest {
     void approve_fail_3() throws Exception {
 
         given(gatheringService.approve(any(), any(), any()))
-            .willThrow(new AppException(ErrorCode.INVALID_REQUEST,""));
+            .willThrow(new AppException(ErrorCode.INVALID_REQUEST, ""));
 
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
@@ -311,7 +308,7 @@ class GatheringControllerTest {
     void approve_fail_4() throws Exception {
 
         given(gatheringService.approve(any(), any(), any()))
-            .willThrow(new AppException(ErrorCode.PARTICIPANT_NOT_FOUND,""));
+            .willThrow(new AppException(ErrorCode.PARTICIPANT_NOT_FOUND, ""));
 
         mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
                             .with(csrf()))
@@ -324,7 +321,7 @@ class GatheringControllerTest {
     @WithMockUser
     void enroll_cancel_success() throws Exception {
 
-        given(gatheringService.cancel(any(),any()))
+        given(gatheringService.cancel(any(), any()))
             .willReturn("신청 취소 완료");
 
         mockMvc.perform(delete("/api/v1/gatherings/1/cancel")
@@ -396,6 +393,7 @@ class GatheringControllerTest {
     @Nested
     @DisplayName("모집글 상세 조회")
     class GetGathering {
+
         @Test
         @WithMockUser
         @DisplayName("모집글 상세 조회 성공")
@@ -404,11 +402,27 @@ class GatheringControllerTest {
 
             UserEntity user1 = new UserEntity(1L, "test", "test", "test", "test", "test", "test", "test", UserRole.ROLE_USER);
 
-            ExhibitionEntity exhibition = new ExhibitionEntity(1l, "name", "10:00", "18:00", "20000", "전체관람가", "temp",
-                                                               "seoul",
-                                                               new GalleryEntity(1l, "name", "address", "9", "18"), user1,
-                                                               "temp", "temp", "temp", "temp", "temp", "temp",
-                                                               "temp", "url", "url", "url");
+            ExhibitionEntity exhibition = ExhibitionEntity.builder()
+                                                           .id(1L)
+                                                           .name("name")
+                                                           .startAt("10:00")
+                                                           .endAt("18:00")
+                                                           .price("20000")
+                                                           .ageLimit("전체관람가")
+                                                           .detailInfo("temp")
+                                                           .galleryLocation("seoul")
+                                                           .galleryName("test")
+                                                           .user(user1)
+                                                           .statMale("temp").
+                                                           statFemale("temp")
+                                                           .statAge_10("temp")
+                                                           .statAge_20("temp")
+                                                           .statAge_30("temp")
+                                                           .statAge_40("temp")
+                                                           .statAge_50("temp").
+                                                           mainImgUrl("temp").
+                                                           noticeImgUrl("temp")
+                                                           .detailImgUrl("temp").build();
 
             GatheringDto gatheringDto = GatheringDto.builder()
                                                     .id(gatheringId)
@@ -427,7 +441,6 @@ class GatheringControllerTest {
                                                     .createdBy("test")
                                                     .lastModifiedBy("test")
                                                     .build();
-
 
             GatheringResponse gatheringResponse = GatheringResponse.builder()
                                                                    .id(gatheringId)

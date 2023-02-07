@@ -15,13 +15,13 @@ public class ExhibitionResponse {
 
     private Long id;
     private String name;
-    private String startsAt;
-    private String endsAt;
+    private String startAt;
+    private String endAt;
     private String price;
     private String ageLimit;
     private String detailInfo;
     private String galleryLocation;
-    private Long galleryId;
+    private String galleryName;
     private String statMale;
     private String statFemale;
     private String statAge10;
@@ -37,13 +37,13 @@ public class ExhibitionResponse {
         return exhibitions.map(exhibition -> ExhibitionResponse.builder()
                 .id(exhibition.getId())
                 .name(exhibition.getName())
-                .startsAt(exhibition.getStartAt())
-                .endsAt(exhibition.getEndAt())
+                .startAt(exhibition.getStartAt())
+                .endAt(exhibition.getEndAt())
                 .price(exhibition.getPrice())
                 .ageLimit(exhibition.getAgeLimit())
                 .detailInfo(exhibition.getDetailInfo())
                 .galleryLocation(exhibition.getGalleryLocation())
-                .galleryId(exhibition.getGallery().getId())
+                .galleryName(exhibition.getGalleryName())
                 .statMale(exhibition.getStatMale())
                 .statFemale(exhibition.getStatFemale())
                 .statAge10(exhibition.getStatAge10())
@@ -61,13 +61,13 @@ public class ExhibitionResponse {
         return ExhibitionResponse.builder()
                 .id(exhibition.getId())
                 .name(exhibition.getName())
-                .startsAt(exhibition.getStartAt())
-                .endsAt(exhibition.getEndAt())
+                .startAt(exhibition.getStartAt())
+                .endAt(exhibition.getEndAt())
                 .price(exhibition.getPrice())
                 .ageLimit(exhibition.getAgeLimit())
                 .detailInfo(exhibition.getDetailInfo())
                 .galleryLocation(exhibition.getGalleryLocation())
-                .galleryId(exhibition.getId())
+                .galleryName(exhibition.getGalleryName())
                 .statMale(exhibition.getStatMale())
                 .statFemale(exhibition.getStatFemale())
                 .statFemale(exhibition.getStatAge10())

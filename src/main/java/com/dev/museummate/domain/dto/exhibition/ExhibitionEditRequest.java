@@ -1,7 +1,6 @@
 package com.dev.museummate.domain.dto.exhibition;
 
 import com.dev.museummate.domain.entity.ExhibitionEntity;
-import com.dev.museummate.domain.entity.GalleryEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -23,10 +22,7 @@ public class ExhibitionEditRequest {
     private String ageLimit;
     private String detailInfo;
     private String galleryLocation;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gallery_id")
-    private GalleryEntity gallery;
+    private String galleryName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -34,11 +30,11 @@ public class ExhibitionEditRequest {
 
     private String statMale;
     private String statFemale;
-    private String statAge10;
-    private String statAge20;
-    private String statAge30;
-    private String statAge40;
-    private String statAge50;
+    private String statAge_10;
+    private String statAge_20;
+    private String statAge_30;
+    private String statAge_40;
+    private String statAge_50;
     private String mainImgUrl;
     private String noticeImgUrl;
     private String detailImgUrl;
@@ -53,15 +49,15 @@ public class ExhibitionEditRequest {
                 .ageLimit(this.ageLimit)
                 .detailInfo(this.detailInfo)
                 .galleryLocation(this.galleryLocation)
-                .gallery(this.gallery)
+                .galleryName(this.galleryName)
                 .user(user)
                 .statMale(null)
                 .statFemale(null)
-                .statAge10(null)
-                .statAge20(null)
-                .statAge30(null)
-                .statAge40(null)
-                .statAge50(null)
+                .statAge_10(null)
+                .statAge_20(null)
+                .statAge_30(null)
+                .statAge_40(null)
+                .statAge_50(null)
                 .mainImgUrl(this.mainImgUrl)
                 .noticeImgUrl(this.noticeImgUrl)
                 .detailImgUrl(this.detailImgUrl)

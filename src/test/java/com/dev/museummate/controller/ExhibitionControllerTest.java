@@ -4,31 +4,24 @@ import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.dto.exhibition.BookmarkAddResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionEditRequest;
-import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionWriteRequest;
-import com.dev.museummate.domain.entity.GalleryEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.service.ExhibitionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.Authenticator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -36,7 +29,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -64,7 +56,7 @@ class ExhibitionControllerTest {
     @BeforeEach
     void set() {
         exhibitionDto1 = new ExhibitionDto(1l, "이집트미라전", "09:00", "18:00", "18000", "8세", "none",
-            "서울", new GalleryEntity(1l, "예술의전당", "서울시", "09:00", "19:00"),
+            "서울", "testgallery",
             new UserEntity(1l, "www@www.com", "1234", "moon", "112233", "010-0000-0000", "서울시", "서울시",UserRole.ROLE_USER),
             "20%", "80%", "20%", "20%", "20%", "20%", "20%",
             "www", "www", "www");
@@ -83,13 +75,13 @@ class ExhibitionControllerTest {
                     ExhibitionDto.builder()
                             .id(exhibitionId)
                             .name("test")
-                            .startsAt("2022-12-01")
-                            .endsAt("2022-12-31")
+                            .startAt("2022-12-01")
+                            .endAt("2022-12-31")
                             .price("10000")
                             .ageLimit("10")
                             .detailInfo("test")
                             .galleryLocation("test")
-                            .gallery(new GalleryEntity(1l,"name","address","9","18"))
+                            .galleryName("test")
                             .build();
 
             given(exhibitionService.getOne(exhibitionId)).willReturn(exhibitionDto);
@@ -99,8 +91,8 @@ class ExhibitionControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
                     .andExpect(jsonPath("$.result.name").exists())
-                    .andExpect(jsonPath("$.result.startsAt").exists())
-                    .andExpect(jsonPath("$.result.endsAt").exists())
+                    .andExpect(jsonPath("$.result.startAt").exists())
+                    .andExpect(jsonPath("$.result.endAt").exists())
                     .andExpect(jsonPath("$.result.price").exists())
                     .andExpect(jsonPath("$.result.ageLimit").exists())
                     .andExpect(jsonPath("$.result.detailInfo").exists())
@@ -147,37 +139,45 @@ class ExhibitionControllerTest {
     @WithMockUser
     void writeSuccess() throws Exception {
 
-        GalleryEntity gallery = new GalleryEntity(1L, "name", "address", "9", "18");
-
         UserEntity user = new UserEntity(1L, "test", "test", "test", "test", "test", "test", "test", UserRole.ROLE_USER);
 
-        ExhibitionWriteRequest exhibitionWriteRequest = new ExhibitionWriteRequest(
-                "test", "test", "test", "test", "test", "test", "test",
-                new GalleryEntity(1L, "name", "address", "9", "18"), "test", "test", "test");
+        ExhibitionWriteRequest exhibitionWriteRequest = ExhibitionWriteRequest.builder()
+                                                                              .name("test")
+                                                                              .startAt("test")
+                                                                              .endAt("test")
+                                                                              .price("test")
+                                                                              .ageLimit("test")
+                                                                              .detailInfo("test")
+                                                                              .galleryLocation("test")
+                                                                              .galleryName("test")
+                                                                              .mainImgUrl("test")
+                                                                              .noticeImgUrl("test")
+                                                                              .detailImgUrl("test")
+                                                                              .build();
 
 
         ExhibitionDto exhibitionDto = ExhibitionDto.builder()
-                .id(1L)
-                .name("test")
-                .startsAt("test")
-                .endsAt("test")
-                .price("test")
-                .ageLimit("test")
-                .detailInfo("test")
-                .galleryLocation("test")
-                .gallery(gallery)
-                .user(user)
-                .statMale("test")
-                .statFemale("test")
-                .statAge10("test")
-                .statAge20("test")
-                .statAge30("test")
-                .statAge40("test")
-                .statAge50("test")
-                .mainImgUrl("test")
-                .noticeImgUrl("test")
-                .detailImgUrl("test")
-                .build();
+                                                   .id(1L)
+                                                   .name("test")
+                                                   .startAt("test")
+                                                   .endAt("test")
+                                                   .price("test")
+                                                   .ageLimit("test")
+                                                   .detailInfo("test")
+                                                   .galleryLocation("test")
+                                                   .galleryName("test")
+                                                   .user(user)
+                                                   .statMale("test")
+                                                   .statFemale("test")
+                                                   .statAge10("test")
+                                                   .statAge20("test")
+                                                   .statAge30("test")
+                                                   .statAge40("test")
+                                                   .statAge50("test")
+                                                   .mainImgUrl("test")
+                                                   .noticeImgUrl("test")
+                                                   .detailImgUrl("test")
+                                                   .build();
 
         given(exhibitionService.write(any(), anyString())).willReturn(exhibitionDto);
 
@@ -187,8 +187,8 @@ class ExhibitionControllerTest {
                         .content(objectMapper.writeValueAsBytes(exhibitionWriteRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.name").exists())
-                .andExpect(jsonPath("$.result.startsAt").exists())
-                .andExpect(jsonPath("$.result.endsAt").exists())
+                .andExpect(jsonPath("$.result.startAt").exists())
+                .andExpect(jsonPath("$.result.endAt").exists())
                 .andExpect(jsonPath("$.result.price").exists())
                 .andExpect(jsonPath("$.result.ageLimit").exists())
                 .andExpect(jsonPath("$.result.detailInfo").exists())
@@ -206,9 +206,19 @@ class ExhibitionControllerTest {
     @DisplayName("전시 등록 실패 - 인증 실패")
     void writeFailure() throws Exception {
 
-        ExhibitionWriteRequest exhibitionWriteRequest = new ExhibitionWriteRequest(
-                "test", "test", "test", "test", "test", "test", "test",
-                new GalleryEntity(1L, "name", "address", "9", "18"), "test", "test", "test");
+        ExhibitionWriteRequest exhibitionWriteRequest = ExhibitionWriteRequest.builder()
+                                                                              .name("test")
+                                                                              .startAt("test")
+                                                                              .endAt("test")
+                                                                              .price("test")
+                                                                              .ageLimit("test")
+                                                                              .detailInfo("test")
+                                                                              .galleryLocation("test")
+                                                                              .galleryName("test")
+                                                                              .mainImgUrl("test")
+                                                                              .noticeImgUrl("test")
+                                                                              .detailImgUrl("test")
+                                                                              .build();
 
         given(exhibitionService.write(any(), anyString())).willThrow(new AppException(ErrorCode.INVALID_TOKEN, ""));
 
@@ -260,19 +270,14 @@ class ExhibitionControllerTest {
     @WithMockUser
     public void edit_success() throws Exception {
 
-        GalleryEntity gallery = GalleryEntity.builder()
-            .id(1l).name("예술의전당").address("서울시").openTime("09:00").closeTime("19:00")
-            .build();
-
         UserEntity user = UserEntity.builder()
             .id(1l).email("www@www.com").password("1234").userName("moon")
             .birth("112233").phoneNumber("010-0000-0000").address("서울시").role(UserRole.ROLE_USER)
             .build();
 
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
-            .id(1l).name("이집트미라전").startsAt("09:00").endsAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
-            .galleryLocation("서울").gallery(gallery).user(user).statMale("20%").statFemale("80%").statAge10("20%")
-            .statAge20("20%").statAge30("20%").statAge40("20%").statAge50("20%").mainImgUrl("www")
+            .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
+            .galleryLocation("서울").galleryName("test").user(user).statMale("20%").statFemale("80%").mainImgUrl("www")
             .noticeImgUrl("www").detailImgUrl("www")
             .build();
 
@@ -286,16 +291,12 @@ class ExhibitionControllerTest {
             .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
             .andExpect(jsonPath("$.result.id").exists())
             .andExpect(jsonPath("$.result.name").exists())
-            .andExpect(jsonPath("$.result.startsAt").exists())
-            .andExpect(jsonPath("$.result.endsAt").exists())
+            .andExpect(jsonPath("$.result.startAt").exists())
+            .andExpect(jsonPath("$.result.endAt").exists())
             .andExpect(jsonPath("$.result.price").exists())
             .andExpect(jsonPath("$.result.ageLimit").exists())
             .andExpect(jsonPath("$.result.detailInfo").exists())
-            .andExpect(jsonPath("$.result.gallery.id").exists())
-            .andExpect(jsonPath("$.result.gallery.name").exists())
-            .andExpect(jsonPath("$.result.gallery.address").exists())
-            .andExpect(jsonPath("$.result.gallery.openTime").exists())
-            .andExpect(jsonPath("$.result.gallery.closeTime").exists())
+            .andExpect(jsonPath("$.result.galleryName").exists())
             .andExpect(jsonPath("$.result.user.id").exists())
             .andExpect(jsonPath("$.result.user.email").exists())
             .andExpect(jsonPath("$.result.user.password").exists())
@@ -322,19 +323,14 @@ class ExhibitionControllerTest {
     @WithMockUser
     void edit_fail_DB() throws Exception {
 
-        GalleryEntity gallery = GalleryEntity.builder()
-            .id(1l).name("예술의전당").address("서울시").openTime("09:00").closeTime("19:00")
-            .build();
-
         UserEntity user = UserEntity.builder()
             .id(1l).email("www@www.com").password("1234").userName("moon")
             .birth("112233").phoneNumber("010-0000-0000").address("서울시").role(UserRole.ROLE_USER)
             .build();
 
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
-            .id(1l).name("이집트미라전").startsAt("09:00").endsAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
-            .galleryLocation("서울").gallery(gallery).user(user).statMale("20%").statFemale("80%").statAge10("20%")
-            .statAge20("20%").statAge30("20%").statAge40("20%").statAge50("20%").mainImgUrl("www")
+            .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
+            .galleryLocation("서울").galleryName("test").user(user).statMale("20%").statFemale("80%").mainImgUrl("www")
             .noticeImgUrl("www").detailImgUrl("www")
             .build();
 
@@ -353,19 +349,14 @@ class ExhibitionControllerTest {
     @WithMockUser
     void edit_fail_userName() throws Exception {
 
-        GalleryEntity gallery = GalleryEntity.builder()
-            .id(1l).name("예술의전당").address("서울시").openTime("09:00").closeTime("19:00")
-            .build();
-
         UserEntity user = UserEntity.builder()
             .id(1l).email("www@www.com").password("1234").userName("moon")
             .birth("112233").phoneNumber("010-0000-0000").address("서울시").role(UserRole.ROLE_USER)
             .build();
 
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
-            .id(1l).name("이집트미라전").startsAt("09:00").endsAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
-            .galleryLocation("서울").gallery(gallery).user(user).statMale("20%").statFemale("80%").statAge10("20%")
-            .statAge20("20%").statAge30("20%").statAge40("20%").statAge50("20%").mainImgUrl("www")
+            .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
+            .galleryLocation("서울").galleryName("Test").user(user).statMale("20%").statFemale("80%").mainImgUrl("www")
             .noticeImgUrl("www").detailImgUrl("www")
             .build();
 

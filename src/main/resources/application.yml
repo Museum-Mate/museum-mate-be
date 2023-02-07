@@ -63,8 +63,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username:
-    password:
+    username: test
+    password: test
     properties:
       mail:
         smtp:
@@ -72,6 +72,9 @@ spring:
             enable: true
           auth: true
 
+app:
+  mail:
+    url: http://localhost:8080
 
 # JWT
 jwt:
@@ -85,6 +88,16 @@ jwt:
 
 cookie:
   maxage: 86400 # 24시간 (sec)
+
+# CORS
+cors:
+    allowed-origins: http://localhost:3000
+    allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+    allowed-headers: Content-Type,Authorization
+    allow-credentials: true
+    max-age: 3600
+
+
 
 
 
