@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <style>
+    .login {
+      width: 500px;
+      margin: 200px auto auto auto;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class = "login">
+  <h1 class = "title">로그인 페이지</h1>
+  <hr>
+  <p class = "id">ID: <input type="text" /></p>
+  <p class = "pw">PW: <input type="text" /></p>
+  <p class = "button"><a href="/api/v1/users/login" >로그인 하기</a></p>
+  <p class = "button"><a href="/api/v1/users/join">회원 가입</a></p>
+  <hr>
+</div>
+<div class = "login">
+  <h1 class = "title">소셜 로그인</h1>
+  <hr>
+  <p class = "button"><a href="/oauth2/authorization/google">Google Login</a></p>
+  <p class = "button"><a href="/oauth2/authorization/naver">Naver Login</a></p>
+  <hr>
+</div>
+</body>
+</html>
