@@ -55,9 +55,20 @@ class ExhibitionControllerTest {
 
     @BeforeEach
     void set() {
+        UserEntity user1 = UserEntity.builder()
+                                     .id(1L)
+                                     .email("test@test.com")
+                                     .password("test")
+                                     .name("김재근")
+                                     .userName("geun")
+                                     .birth("961210")
+                                     .phoneNumber("010-9864-1772")
+                                     .address("서울시 송파구")
+                                     .role(UserRole.ROLE_USER)
+                                     .build();
+
         exhibitionDto1 = new ExhibitionDto(1l, "이집트미라전", "09:00", "18:00", "18000", "8세", "none",
-            "서울", "testgallery",
-            new UserEntity(1l, "www@www.com", "1234", "moon", "112233", "010-0000-0000", "서울시", "서울시",UserRole.ROLE_USER),
+            "서울", "testgallery", user1,
             "20%", "80%", "20%", "20%", "20%", "20%", "20%",
             "www", "www", "www");
     }
@@ -139,7 +150,17 @@ class ExhibitionControllerTest {
     @WithMockUser
     void writeSuccess() throws Exception {
 
-        UserEntity user = new UserEntity(1L, "test", "test", "test", "test", "test", "test", "test", UserRole.ROLE_USER);
+        UserEntity user1 = UserEntity.builder()
+                                     .id(1L)
+                                     .email("test@test.com")
+                                     .password("test")
+                                     .name("김재근")
+                                     .userName("geun")
+                                     .birth("961210")
+                                     .phoneNumber("010-9864-1772")
+                                     .address("서울시 송파구")
+                                     .role(UserRole.ROLE_USER)
+                                     .build();
 
         ExhibitionWriteRequest exhibitionWriteRequest = ExhibitionWriteRequest.builder()
                                                                               .name("test")
@@ -166,7 +187,7 @@ class ExhibitionControllerTest {
                                                    .detailInfo("test")
                                                    .galleryLocation("test")
                                                    .galleryName("test")
-                                                   .user(user)
+                                                   .user(user1)
                                                    .statMale("test")
                                                    .statFemale("test")
                                                    .statAge10("test")
