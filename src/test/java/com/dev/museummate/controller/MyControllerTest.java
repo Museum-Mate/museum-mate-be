@@ -2,6 +2,8 @@ package com.dev.museummate.controller;
 
 import com.dev.museummate.domain.dto.alarm.AlarmDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
+import com.dev.museummate.domain.dto.gathering.GatheringDto;
+import com.dev.museummate.domain.dto.review.ReviewDto;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
@@ -39,7 +41,8 @@ public class MyControllerTest {
 
     private ExhibitionDto exhibitionDto;
     private AlarmDto alarmDto;
-
+    private ReviewDto reviewDto;
+    private GatheringDto gatheringDto;
 
     @BeforeEach
     void setUp(){
@@ -60,6 +63,14 @@ public class MyControllerTest {
                 .exhibition(ExhibitionEntity.builder().name("test").build())
                 .alarmMessage("")
                 .build();
+
+        reviewDto = ReviewDto.builder().id(1l).build();
+
+        gatheringDto = GatheringDto.builder()
+                .user(UserEntity.builder().userName("test").build())
+                .exhibition(ExhibitionEntity.builder().name("test").mainImgUrl("").build())
+                .build();
+
     }
     @Test
     @DisplayName("마이 캘린더 조회 성공")
@@ -116,4 +127,61 @@ public class MyControllerTest {
                 .andExpect(status().isNotFound())
                 .andDo(print());
     }
+
+    @Test
+    @DisplayName("리뷰 조회 성공")
+    @WithMockUser
+    void getReviewSuccess() throws Exception {
+
+        Page<ReviewDto> dtoPage = new PageImpl<>(List.of(reviewDto));
+
+        when(myService.getMyReviews(any(), any())).thenReturn(dtoPage);
+
+        mockMvc.perform(get("/api/v1/my/reviews"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content").exists())
+                .andExpect(jsonPath("$.result.pageable").exists())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("리뷰 조회 실패 - 유저가 존재하지 않는 경우")
+    @WithMockUser
+    void getReviewFail() throws Exception {
+
+        when(myService.getMyReviews(any(), any())).thenThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+
+        mockMvc.perform(get("/api/v1/my/reviews"))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("모집글 조회 성공")
+    @WithMockUser
+    void getGatheringsSuccess() throws Exception {
+
+        Page<GatheringDto> dtoPage = new PageImpl<>(List.of(gatheringDto));
+
+        when(myService.getMyGatherings(any(), any())).thenReturn(dtoPage);
+
+        mockMvc.perform(get("/api/v1/my/gatherings"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.content").exists())
+                .andExpect(jsonPath("$.result.pageable").exists())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("모집글 조회 실패 - 유저가 존재하지 않는 경우")
+    @WithMockUser
+    void getGatheringsFail() throws Exception {
+
+        when(myService.getMyGatherings(any(), any())).thenThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+
+        mockMvc.perform(get("/api/v1/my/gatherings"))
+                .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
 }
