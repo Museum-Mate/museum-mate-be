@@ -12,6 +12,6 @@ public enum UserRole {
     ROLE_SOCIAL_USER("ROLE_SOCIAL_USER", "소셜 사용자 권한"),
     ;
 
-    private final String role;
+    private final String roleCode;
     private final String roleDiscription;
 }

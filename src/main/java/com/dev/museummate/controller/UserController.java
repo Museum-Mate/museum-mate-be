@@ -52,19 +52,7 @@ public class UserController {
 
         if (userLoginResponse.getRefreshToken() != null) {
             log.info("쿠키에 저장된 토큰 : refreshToken {}", userLoginResponse.getRefreshToken());
-            ResponseCookie cookie = ResponseCookie.from("refeshToken", refreshToken)
-                                                  .httpOnly(true)
-                                                  .secure(true)
-                                                  .sameSite("Lax")
-                                                  .path("/")
-                                                  .maxAge(maxAge)
-                                                  .build();
-            log.debug("method: createCooke cookie: {}", cookie.toString());
-
-            // 헤더에 Set-Cookie 를 추가
-            response.addHeader("Set-Cookie", cookie.toString());
-
-//            CookieUtils.addCookie(response, "refreshToken", refreshToken, maxAge);
+            CookieUtils.addRefreshTokenAtCookie(response, refreshToken);
         }
 
         return Response.success(userLoginResponse);

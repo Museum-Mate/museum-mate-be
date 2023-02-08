@@ -2,7 +2,6 @@ package com.dev.museummate.domain.entity;
 
 import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.dto.user.UserModifyRequest;
-import com.dev.museummate.security.oauth.ProviderType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -33,32 +32,31 @@ public class UserEntity extends BaseTimeEntity{
     private Long id;
     @Column(unique = true)
     @NotNull
-    private String email;
+    private java.lang.String email;
     @NotNull
-    private String password;
+    private java.lang.String password;
     @NotNull
-    private String name;
+    private java.lang.String name;
     @NotNull
-    private String userName;
+    private java.lang.String userName;
     @NotNull
-    private String birth;
+    private java.lang.String birth;
     @NotNull
-    private String phoneNumber;
+    private java.lang.String phoneNumber;
     @NotNull
-    private String address;
+    private java.lang.String address;
     @Enumerated(EnumType.STRING)
     private UserRole role;
     private Boolean auth;
-    private String authNum;
-    private String providerId;
-    @Enumerated(EnumType.STRING)
-    private ProviderType providerType;
+    private java.lang.String authNum;
+    private java.lang.String providerId;
+    private String providerType;
 
 
     @Builder
-    public UserEntity(Long id, String email, String password, String name, String userName, String birth, String phoneNumber,
-                      String address,
-                      UserRole role, String providerId, ProviderType providerType) {
+    public UserEntity(Long id, java.lang.String email, java.lang.String password, java.lang.String name, java.lang.String userName, java.lang.String birth, java.lang.String phoneNumber,
+                      java.lang.String address,
+                      UserRole role, java.lang.String providerId, String providerType) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -85,7 +83,7 @@ public class UserEntity extends BaseTimeEntity{
             this.address = userModifyRequest.getAddress();
         }
     }
-    public void updateAuthNum(String authNum) {
+    public void updateAuthNum(java.lang.String authNum) {
         this.authNum = authNum;
     }
 
