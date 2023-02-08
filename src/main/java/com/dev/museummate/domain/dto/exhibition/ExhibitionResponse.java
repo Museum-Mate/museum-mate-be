@@ -22,6 +22,7 @@ public class ExhibitionResponse {
     private String detailInfo;
     private String galleryLocation;
     private String galleryName;
+    private String notice;
     private String statMale;
     private String statFemale;
     private String statAge10;
@@ -31,7 +32,7 @@ public class ExhibitionResponse {
     private String statAge50;
     private String mainImgUrl;
     private String noticeImgUrl;
-    private String detailImgUrl;
+    private String detailInfoImgUrl;
 
     public static Page<ExhibitionResponse> of(Page<ExhibitionDto> exhibitions) {
         return exhibitions.map(exhibition -> ExhibitionResponse.builder()
@@ -44,6 +45,7 @@ public class ExhibitionResponse {
                 .detailInfo(exhibition.getDetailInfo())
                 .galleryLocation(exhibition.getGalleryLocation())
                 .galleryName(exhibition.getGalleryName())
+                .notice(exhibition.getNotice())
                 .statMale(exhibition.getStatMale())
                 .statFemale(exhibition.getStatFemale())
                 .statAge10(exhibition.getStatAge10())
@@ -53,7 +55,7 @@ public class ExhibitionResponse {
                 .statAge50(exhibition.getStatAge50())
                 .mainImgUrl(exhibition.getMainImgUrl())
                 .noticeImgUrl(exhibition.getNoticeImgUrl())
-                .detailImgUrl(exhibition.getDetailImgUrl())
+                .detailInfoImgUrl(exhibition.getDetailInfoImgUrl())
                 .build());
     }
 
@@ -68,6 +70,7 @@ public class ExhibitionResponse {
                 .detailInfo(exhibition.getDetailInfo())
                 .galleryLocation(exhibition.getGalleryLocation())
                 .galleryName(exhibition.getGalleryName())
+                .notice(exhibition.getNotice())
                 .statMale(exhibition.getStatMale())
                 .statFemale(exhibition.getStatFemale())
                 .statFemale(exhibition.getStatAge10())
@@ -78,7 +81,7 @@ public class ExhibitionResponse {
                 .statAge50(exhibition.getStatAge50())
                 .mainImgUrl(exhibition.getMainImgUrl())
                 .noticeImgUrl(exhibition.getNoticeImgUrl())
-                .detailImgUrl(exhibition.getDetailImgUrl())
+                .detailInfoImgUrl(exhibition.getDetailInfoImgUrl())
                 .build();
     }
 }

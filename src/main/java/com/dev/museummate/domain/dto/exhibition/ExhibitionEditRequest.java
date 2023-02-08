@@ -37,7 +37,7 @@ public class ExhibitionEditRequest {
     private String statAge_50;
     private String mainImgUrl;
     private String noticeImgUrl;
-    private String detailImgUrl;
+    private String detailInfoImgUrl;
 
     public ExhibitionEntity toEntity(UserEntity user) {
 
@@ -60,7 +60,7 @@ public class ExhibitionEditRequest {
                 .statAge_50(null)
                 .mainImgUrl(this.mainImgUrl)
                 .noticeImgUrl(this.noticeImgUrl)
-                .detailImgUrl(this.detailImgUrl)
+                .detailInfoImgUrl(this.detailInfoImgUrl)
                 .build();
     }
 }
