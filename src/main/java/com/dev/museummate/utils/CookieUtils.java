@@ -6,11 +6,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
 @Slf4j
 public class CookieUtils {
+
+//    @Value("${cookie.maxAge}")
+    private final static int maxAge = 86400; // 24시간
+    private final static String REFRESH_TOKEN_HEADER = "Authorization-refresh";
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String key) {
 
@@ -29,6 +34,21 @@ public class CookieUtils {
     public static void addCookie(HttpServletResponse response, String key, String value, int maxAge) {
 
         ResponseCookie cookie = ResponseCookie.from(key, value)
+                                              .httpOnly(true)
+                                              .secure(true)
+                                              .sameSite("Lax")
+                                              .path("/")
+                                              .maxAge(maxAge)
+                                              .build();
+        log.debug("method: createCooke cookie: {}", cookie.toString());
+
+        // 헤더에 Set-Cookie 를 추가
+        response.setHeader("Set-Cookie", cookie.toString());
+    }
+
+    public static void addRefreshTokenAtCookie(HttpServletResponse response, String value) {
+
+        ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_HEADER, value)
                                               .httpOnly(true)
                                               .secure(true)
                                               .sameSite("Lax")

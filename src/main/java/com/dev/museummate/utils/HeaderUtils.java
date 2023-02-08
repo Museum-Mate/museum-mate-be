@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import lombok.Getter;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 
 @Getter
 public class HeaderUtils {
@@ -13,16 +13,16 @@ public class HeaderUtils {
     private final static String ACCESS_TOKEN_HEADER = "Authorization";
 //    private final static String REFRESH_TOKEN_HEADER = "Authorization-refresh";
 
-    public static void setAccessTokenHeader(HttpServletResponse response, String token) {
+    public static void addAccessTokenHeader(HttpServletResponse response, String token) {
         response.setStatus(HttpServletResponse.SC_OK);
-        response.setHeader(ACCESS_TOKEN_HEADER, BEARER + token);
+        response.addHeader(ACCESS_TOKEN_HEADER, BEARER + token);
     }
 
     public static Optional<String> extractAccessToken(HttpServletRequest request) {
 
-        String headerValue = request.getHeader(ACCESS_TOKEN_HEADER);
+        String headerValue = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        return Optional.ofNullable(request.getHeader(ACCESS_TOKEN_HEADER))
+        return Optional.ofNullable(headerValue)
                        .filter(accessToken -> accessToken.startsWith(BEARER))
                        .map(accessToken -> accessToken.replace(BEARER, ""));
     }
