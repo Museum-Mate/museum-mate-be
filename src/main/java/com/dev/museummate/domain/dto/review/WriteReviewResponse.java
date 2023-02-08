@@ -19,6 +19,7 @@ public class WriteReviewResponse {
     private String visitedDate;
     private LocalDateTime createdAt; // 최초 생성 일시
     private LocalDateTime lastModifiedAt; // 최종 수정 일시
+    private Boolean isDeleted;
     private String createdBy; // 최소 생성 사용자 userName
     private String lastModifiedBy; // 최종 수정 사용자 userName
     // private String message; // 리뷰 등록 성공
@@ -35,6 +36,7 @@ public class WriteReviewResponse {
             reviewDto.getVisitedDate(),
             reviewDto.getCreatedAt(),
             reviewDto.getLastModifiedAt(),
+            reviewDto.getIsDeleted(),
             reviewDto.getCreatedBy(),
             reviewDto.getLastModifiedBy()
         );

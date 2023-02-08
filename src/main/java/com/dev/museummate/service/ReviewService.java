@@ -54,6 +54,7 @@ public class ReviewService {
                 .visitedDate(writeReviewRequest.getVisitedDate())
                 .user(user)
                 .exhibition(exhibition)
+                .isDeleted(Boolean.FALSE)
                 .build();
 
         // db에 review를 저장
