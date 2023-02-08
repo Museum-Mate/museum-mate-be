@@ -39,6 +39,7 @@ public class ExhibitionController {
                                                   .detailInfo(exhibitionDto.getDetailInfo())
                                                   .galleryLocation(exhibitionDto.getGalleryLocation())
                                                   .galleryName(exhibitionDto.getGalleryName())
+                                                  .notice(exhibitionDto.getNotice())
                                                   .statMale(exhibitionDto.getStatMale())
                                                   .statFemale(exhibitionDto.getStatFemale())
                                                   .statAge10(exhibitionDto.getStatAge10())
@@ -48,7 +49,7 @@ public class ExhibitionController {
                                                   .statAge50(exhibitionDto.getStatAge50())
                                                   .mainImgUrl(exhibitionDto.getMainImgUrl())
                                                   .noticeImgUrl(exhibitionDto.getNoticeImgUrl())
-                                                  .detailImgUrl(exhibitionDto.getDetailImgUrl())
+                                                  .detailInfoImgUrl(exhibitionDto.getDetailInfoImgUrl())
                                                   .build());
     }
 
@@ -89,6 +90,7 @@ public class ExhibitionController {
                                                   .detailInfo(exhibitionDto.getDetailInfo())
                                                   .galleryLocation(exhibitionDto.getGalleryLocation())
                                                   .galleryName(exhibitionDto.getGalleryName())
+                                                  .notice(exhibitionDto.getNotice())
                                                   .statMale(exhibitionDto.getStatMale())
                                                   .statFemale(exhibitionDto.getStatFemale())
                                                   .statAge10(exhibitionDto.getStatAge10())
@@ -98,7 +100,7 @@ public class ExhibitionController {
                                                   .statAge50(exhibitionDto.getStatAge50())
                                                   .mainImgUrl(exhibitionDto.getMainImgUrl())
                                                   .noticeImgUrl(exhibitionDto.getNoticeImgUrl())
-                                                  .detailImgUrl(exhibitionDto.getDetailImgUrl())
+                                                  .detailInfoImgUrl(exhibitionDto.getDetailInfoImgUrl())
                                                   .build());
     }
 

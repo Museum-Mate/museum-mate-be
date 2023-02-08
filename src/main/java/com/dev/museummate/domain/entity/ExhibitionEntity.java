@@ -40,15 +40,16 @@ public class ExhibitionEntity {
     private String statAge_50;
     private String mainImgUrl;
     private String noticeImgUrl;
-    private String detailImgUrl;
+    private String detailInfoImgUrl;
     private String galleryName;
+    private String notice;
 
     @Builder
     public ExhibitionEntity(Long id, String name, String startAt, String endAt, String price, String ageLimit, String detailInfo,
                             String galleryLocation, UserEntity user, String statMale, String statFemale, String statAge_10,
                             String statAge_20,
                             String statAge_30, String statAge_40, String statAge_50, String mainImgUrl, String noticeImgUrl,
-                            String detailImgUrl, String galleryName) {
+                            String detailInfoImgUrl, String galleryName, String notice) {
         this.id = id;
         this.name = name;
         this.startAt = startAt;
@@ -67,7 +68,8 @@ public class ExhibitionEntity {
         this.statAge_50 = statAge_50;
         this.mainImgUrl = mainImgUrl;
         this.noticeImgUrl = noticeImgUrl;
-        this.detailImgUrl = detailImgUrl;
+        this.detailInfoImgUrl = detailInfoImgUrl;
         this.galleryName = galleryName;
+        this.notice = notice;
     }
 }
