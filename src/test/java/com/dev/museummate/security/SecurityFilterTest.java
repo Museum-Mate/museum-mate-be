@@ -5,7 +5,7 @@ import com.dev.museummate.controller.ExampleController;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.fixture.UserEntityFixture;
 import com.dev.museummate.service.UserService;
-import com.dev.museummate.utils.JwtProvider;
+import com.dev.museummate.utils.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(value = ExampleController.class)
-@ImportAutoConfiguration(classes = {SecurityConfiguration.class, JwtProvider.class})
+@ImportAutoConfiguration(classes = {SecurityConfiguration.class, JwtUtils.class})
 public class SecurityFilterTest {
 
     @Autowired
@@ -35,18 +35,14 @@ public class SecurityFilterTest {
 
     @MockBean
     RedisDao redisDao;
-
     @MockBean
-    JwtProvider jwtProvider;
-
-    @Value("${jwt.secret}")
-    private String secretKey;
+    JwtUtils jwtUtils;
 
     private UserEntity user;
     private UserEntity admin;
 
     private String createToken(UserEntity userEntity, long expiredMs){
-        return jwtProvider.createAccessToken(userEntity.getEmail());
+        return jwtUtils.createAccessToken(userEntity.getEmail());
     }
 
     @BeforeEach
