@@ -47,4 +47,22 @@ public class MyController {
                 .alarmMessage(alarmDto.getAlarmMessage()).build());
         return Response.success(alarmResponses);
     }
+
+    @GetMapping("/reviews")
+    public Response getReviews(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication){
+        Page<ReviewDto> reviewDtos = myService.getMyReviews(pageable, authentication.getName());
+
+        Page<GetReviewResponse> getReviewResponses = reviewDtos.map(reviewDto -> GetReviewResponse.toResponse(reviewDto));
+
+        return Response.success(getReviewResponses);
+    }
+
+    @GetMapping("/gatherings")
+    public Response getGatherings(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, Authentication authentication){
+        Page<GatheringDto> gatheringDtos = myService.getMyGatherings(pageable, authentication.getName());
+
+        Page<GatheringResponse> gatheringResponses = gatheringDtos.map(gatheringDto -> GatheringResponse.createGetOne(gatheringDto));
+
+        return Response.success(gatheringResponses);
+    }
 }
