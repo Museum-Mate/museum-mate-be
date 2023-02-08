@@ -1,6 +1,10 @@
 package com.dev.museummate.controller;
 
 import com.dev.museummate.configuration.Response;
+import com.dev.museummate.domain.dto.gathering.CommentDto;
+import com.dev.museummate.domain.dto.gathering.CommentPostResponse;
+import com.dev.museummate.domain.dto.gathering.CommentRequest;
+import com.dev.museummate.domain.dto.gathering.CommentResponse;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.gathering.GatheringParticipantResponse;
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
@@ -15,8 +19,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -116,6 +122,34 @@ public class GatheringController {
 
         Long deletedId = gatheringService.delete(gatheringId, authentication.getName());
         return Response.success(new GatheringPostResponse(deletedId));
+    }
+
+    @PostMapping("/{gatheringId}/comments")
+    public Response<CommentPostResponse> writeComment(@PathVariable Long gatheringId, @RequestBody CommentRequest commentRequest,
+                                                      Authentication authentication) {
+        CommentDto commentDto = gatheringService.writeComment(gatheringId, commentRequest, authentication.getName());
+        return Response.success(new CommentPostResponse(commentDto.getId(), commentDto.getContent()));
+    }
+
+    @GetMapping("/{gatheringId}/comments")
+    public Response<Page<CommentResponse>> getComments(@PageableDefault(size = 10)
+                                                       @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long gatheringId) {
+        Page<CommentDto> comments = gatheringService.getComments(pageable,gatheringId);
+        return Response.success(comments.map(CommentDto::toResponse));
+    }
+
+    @PutMapping("/{gatheringId}/comments/{commentId}")
+    public Response<CommentPostResponse> modifyComment(@PathVariable Long gatheringId, @RequestBody CommentRequest commentRequest,
+                                                       @PathVariable Long commentId, Authentication authentication) {
+        CommentDto commentDto = gatheringService.modifyComment(gatheringId, commentId, authentication.getName(),commentRequest);
+        return Response.success(new CommentPostResponse(commentDto.getId(), commentDto.getContent()));
+    }
+
+    @DeleteMapping("/{gatheringId}/comments/{commentId}")
+    public Response<String> deleteComment(@PathVariable Long gatheringId,
+                                          @PathVariable Long commentId, Authentication authentication) {
+        String msg = gatheringService.deleteComment(gatheringId, commentId, authentication.getName());
+        return Response.success(msg);
     }
 
 }

@@ -173,7 +173,7 @@ class ExhibitionControllerTest {
                                                                               .galleryName("test")
                                                                               .mainImgUrl("test")
                                                                               .noticeImgUrl("test")
-                                                                              .detailImgUrl("test")
+                                                                              .detailInfoImgUrl("test")
                                                                               .build();
 
 
@@ -197,7 +197,7 @@ class ExhibitionControllerTest {
                                                    .statAge50("test")
                                                    .mainImgUrl("test")
                                                    .noticeImgUrl("test")
-                                                   .detailImgUrl("test")
+                                                   .detailInfoImgUrl("test")
                                                    .build();
 
         given(exhibitionService.write(any(), anyString())).willReturn(exhibitionDto);
@@ -238,7 +238,7 @@ class ExhibitionControllerTest {
                                                                               .galleryName("test")
                                                                               .mainImgUrl("test")
                                                                               .noticeImgUrl("test")
-                                                                              .detailImgUrl("test")
+                                                                              .detailInfoImgUrl("test")
                                                                               .build();
 
         given(exhibitionService.write(any(), anyString())).willThrow(new AppException(ErrorCode.INVALID_TOKEN, ""));
@@ -299,7 +299,7 @@ class ExhibitionControllerTest {
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
             .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
             .galleryLocation("서울").galleryName("test").user(user).statMale("20%").statFemale("80%").mainImgUrl("www")
-            .noticeImgUrl("www").detailImgUrl("www")
+            .noticeImgUrl("www").detailInfoImgUrl("www")
             .build();
 
         given(exhibitionService.edit(any(), any(), any())).willReturn(exhibitionDto1);
@@ -335,7 +335,7 @@ class ExhibitionControllerTest {
             .andExpect(jsonPath("$.result.statAge50").exists())
             .andExpect(jsonPath("$.result.mainImgUrl").exists())
             .andExpect(jsonPath("$.result.noticeImgUrl").exists())
-            .andExpect(jsonPath("$.result.detailImgUrl").exists())
+            .andExpect(jsonPath("$.result.detailInfoImgUrl").exists())
             .andDo(print());
     }
 
@@ -352,7 +352,7 @@ class ExhibitionControllerTest {
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
             .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
             .galleryLocation("서울").galleryName("test").user(user).statMale("20%").statFemale("80%").mainImgUrl("www")
-            .noticeImgUrl("www").detailImgUrl("www")
+            .noticeImgUrl("www").detailInfoImgUrl("www")
             .build();
 
         given(exhibitionService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, "데이터베이스 에러"));
@@ -378,7 +378,7 @@ class ExhibitionControllerTest {
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
             .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
             .galleryLocation("서울").galleryName("Test").user(user).statMale("20%").statFemale("80%").mainImgUrl("www")
-            .noticeImgUrl("www").detailImgUrl("www")
+            .noticeImgUrl("www").detailInfoImgUrl("www")
             .build();
 
         given(exhibitionService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "작성자와 유저가 일치하지 않습니다."));

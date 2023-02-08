@@ -8,6 +8,7 @@ import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionWriteRequest;
 import com.dev.museummate.service.ExhibitionService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +39,7 @@ public class ExhibitionController {
                                                   .detailInfo(exhibitionDto.getDetailInfo())
                                                   .galleryLocation(exhibitionDto.getGalleryLocation())
                                                   .galleryName(exhibitionDto.getGalleryName())
+                                                  .notice(exhibitionDto.getNotice())
                                                   .statMale(exhibitionDto.getStatMale())
                                                   .statFemale(exhibitionDto.getStatFemale())
                                                   .statAge10(exhibitionDto.getStatAge10())
@@ -47,14 +49,27 @@ public class ExhibitionController {
                                                   .statAge50(exhibitionDto.getStatAge50())
                                                   .mainImgUrl(exhibitionDto.getMainImgUrl())
                                                   .noticeImgUrl(exhibitionDto.getNoticeImgUrl())
-                                                  .detailImgUrl(exhibitionDto.getDetailImgUrl())
+                                                  .detailInfoImgUrl(exhibitionDto.getDetailInfoImgUrl())
                                                   .build());
     }
 
     // 전시회 전체 조회
     @GetMapping
-    public Response<Page<ExhibitionResponse>> findAllExhibitions(@PageableDefault(size = 20,
-                                                                                  sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Response<Page<ExhibitionResponse>> findAllExhibitions(
+        @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+        @RequestParam("sort") String sort,
+        @RequestParam("price") Optional<String> price) {
+
+        String p = price.orElse("");
+
+        if (p.equals("무료")) {
+            Page<ExhibitionDto> exhibitionDtos = exhibitionService.findAllByPrice(pageable, p);
+            return Response.success(ExhibitionResponse.of(exhibitionDtos));
+
+        } else if (p.equals("유료")) {
+            Page<ExhibitionDto> exhibitionDtos = exhibitionService.findAllByPrice(pageable, p);
+            return Response.success(ExhibitionResponse.of(exhibitionDtos));
+        }
         Page<ExhibitionDto> exhibitionDtos = exhibitionService.findAllExhibitions(pageable);
         return Response.success(ExhibitionResponse.of(exhibitionDtos));
     }
@@ -75,6 +90,7 @@ public class ExhibitionController {
                                                   .detailInfo(exhibitionDto.getDetailInfo())
                                                   .galleryLocation(exhibitionDto.getGalleryLocation())
                                                   .galleryName(exhibitionDto.getGalleryName())
+                                                  .notice(exhibitionDto.getNotice())
                                                   .statMale(exhibitionDto.getStatMale())
                                                   .statFemale(exhibitionDto.getStatFemale())
                                                   .statAge10(exhibitionDto.getStatAge10())
@@ -84,7 +100,7 @@ public class ExhibitionController {
                                                   .statAge50(exhibitionDto.getStatAge50())
                                                   .mainImgUrl(exhibitionDto.getMainImgUrl())
                                                   .noticeImgUrl(exhibitionDto.getNoticeImgUrl())
-                                                  .detailImgUrl(exhibitionDto.getDetailImgUrl())
+                                                  .detailInfoImgUrl(exhibitionDto.getDetailInfoImgUrl())
                                                   .build());
     }
 
