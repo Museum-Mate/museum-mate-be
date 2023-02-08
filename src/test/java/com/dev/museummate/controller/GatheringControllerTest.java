@@ -422,7 +422,7 @@ class GatheringControllerTest {
                                                            .statAge_50("temp").
                                                            mainImgUrl("temp").
                                                            noticeImgUrl("temp")
-                                                           .detailImgUrl("temp").build();
+                                                           .detailInfoImgUrl("temp").build();
 
             GatheringDto gatheringDto = GatheringDto.builder()
                                                     .id(gatheringId)
