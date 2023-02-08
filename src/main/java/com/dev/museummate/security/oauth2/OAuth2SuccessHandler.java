@@ -49,7 +49,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Optional<UserEntity> checkUser =
             userRepository.findByEmailAndName(socialEmail, name);
 
-        if (checkUser.isPresent()) {
+        if (checkUser.get().getUserName() != null) {
+            log.info("이미 가입된 유저입니다.");
             String email = checkUser.get().getEmail();
             String accessToken = jwtUtils.createAccessToken(email);
             String refreshToken = jwtUtils.createRefreshToken(email);
@@ -62,6 +63,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //                                      + "&refreshToken=" + refreshToken
 //                                      + "&userId=" + checkUser.get().getId());
         } else {
+            log.info("가입되지 않은 유저입니다.");
+
             // 쿠키에 유저정보 저장 후 회원가입 페이지에서 꺼내서 활용 (이메일, 이름)
             String newEmail = oAuth2User.getAttribute("email");
             String newName = oAuth2User.getAttribute("name");
@@ -71,9 +74,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             // header 추가
             HeaderUtils.addAccessTokenHeader(response, accessToken);
             CookieUtils.addRefreshTokenAtCookie(response, refreshToken);
-
+            log.info("추가정보 기입을 위해서 회원가입 페이지로 리다이렉트 합니다.");
             // 추가정보 기입을 위해서 회원가입 페이지로 리다이렉트
-            response.sendRedirect("/join");
+            response.sendRedirect("/join/social");
         }
     }
 

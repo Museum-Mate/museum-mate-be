@@ -42,6 +42,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final String LOGIN_URI = "/api/v1/users/login";
     private final String GOOGLE_LOGIN_URI = "/oauth2/authorization/code/google";
     private final String NAVER_LOGIN_URI = "/oauth2/authorization/code/naver";
+    private final String JOIN_URI = "/join";
 
     @Value("${jwt.secret}")
     public String secretKey;
@@ -71,7 +72,8 @@ public class JwtFilter extends OncePerRequestFilter {
             ||request.getRequestURI().equals(LOGIN_URI)
             || request.getRequestURI().equals(GOOGLE_LOGIN_URI)
             || request.getRequestURI().equals(NAVER_LOGIN_URI)
-            || request.getRequestURI().equals(LOGIN)) {
+            || request.getRequestURI().equals(LOGIN)
+            || request.getRequestURI().equals(JOIN_URI)) {
             log.info("로그인 요청입니다.");
             log.info("request.getRequestURI() : {}", request.getRequestURI());
             log.info("request.getRequestURL() : {}", request.getRequestURL());
