@@ -1,0 +1,9 @@
+# JWT
+jwt:
+  secret: example
+  access:
+    expiration: 3600000 # 1시간 (ms)
+    header: Authorization
+  refresh:
+    expiration: 86400000 # 24시간 (ms)
+    header: Authorization-refresh
