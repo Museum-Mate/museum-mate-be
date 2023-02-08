@@ -17,7 +17,7 @@ public class TokenService {
     @Transactional(readOnly = true)
     public TokenEntity findByAccessToken(String accessToken) {
         return tokenRepository.findByAccessToken(accessToken)
-                              .orElseThrow(() -> new AppException(ErrorCode.TOKEN_NOT_FOUND));
+                              .orElseThrow(() -> new AppException(ErrorCode.TOKEN_NOT_FOUND, "토큰이 존재하지 않습니다."));
     }
 
     @Transactional
