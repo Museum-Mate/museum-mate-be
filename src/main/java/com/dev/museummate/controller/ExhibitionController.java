@@ -8,6 +8,7 @@ import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionWriteRequest;
 import com.dev.museummate.service.ExhibitionService;
 import io.swagger.v3.oas.annotations.Operation;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -53,8 +54,21 @@ public class ExhibitionController {
 
     // 전시회 전체 조회
     @GetMapping
-    public Response<Page<ExhibitionResponse>> findAllExhibitions(@PageableDefault(size = 20,
-                                                                                  sort = "name", direction = Sort.Direction.DESC) Pageable pageable) {
+    public Response<Page<ExhibitionResponse>> findAllExhibitions(
+        @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+        @RequestParam("sort") String sort,
+        @RequestParam("price") Optional<String> price) {
+
+        String p = price.orElse("");
+
+        if (p.equals("무료")) {
+            Page<ExhibitionDto> exhibitionDtos = exhibitionService.findAllByPrice(pageable, p);
+            return Response.success(ExhibitionResponse.of(exhibitionDtos));
+
+        } else if (p.equals("유료")) {
+            Page<ExhibitionDto> exhibitionDtos = exhibitionService.findAllByPrice(pageable, p);
+            return Response.success(ExhibitionResponse.of(exhibitionDtos));
+        }
         Page<ExhibitionDto> exhibitionDtos = exhibitionService.findAllExhibitions(pageable);
         return Response.success(ExhibitionResponse.of(exhibitionDtos));
     }
