@@ -870,5 +870,34 @@ class GatheringControllerTest {
         //then
     }
 
+    @Test
+    @DisplayName("대댓글 작성 성공 - 성공")
+    @WithMockUser
+    void write_reply_success() throws Exception {
+
+        CommentRequest commentRequest = new CommentRequest("comment-test-1");
+        CommentDto commentDto = CommentDto.builder()
+                                          .id(1L)
+                                          .parentId(2L)
+                                          .content("댓글입니다.")
+                                          .build();
+
+        //given
+        given(gatheringService.writeReply(any(), any(), any(),any()))
+            .willReturn(commentDto);
+
+        //when
+        mockMvc.perform(post("/api/v1/gatherings/1/comments/1/reply")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(commentRequest))
+               )
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.result.gatheringId").exists())
+               .andExpect(jsonPath("$.result.content").exists());
+        //then
+    }
+
 
 }
