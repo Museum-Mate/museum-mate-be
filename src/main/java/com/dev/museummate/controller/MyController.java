@@ -65,4 +65,14 @@ public class MyController {
 
         return Response.success(gatheringResponses);
     }
+
+    @GetMapping("/gatherings/enrolls")
+    public Response getEnrolls(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                         Authentication authentication){
+        Page<GatheringDto> enrollDtos = myService.getMyEnrolls(pageable, authentication.getName());
+
+        Page<GatheringResponse> gatheringResponses = enrollDtos.map(gatheringDto -> GatheringResponse.createGetOne(gatheringDto));
+
+        return Response.success(gatheringResponses);
+    }
 }

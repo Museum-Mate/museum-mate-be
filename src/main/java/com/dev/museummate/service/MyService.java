@@ -8,9 +8,12 @@ import com.dev.museummate.domain.entity.*;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.repository.*;
+import java.util.ArrayList;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -64,5 +67,20 @@ public class MyService {
         Page<GatheringDto> gatheringDtos = gatheringEntities.map(gathering -> GatheringDto.toDto(gathering, participantRepository.countByGatheringIdAndApproveTrue(gathering.getId())));
 
         return gatheringDtos;
+    }
+
+    public Page<GatheringDto> getMyEnrolls(Pageable pageable, String email) {
+        UserEntity user = findUserByEmail(email);
+        Page<ParticipantEntity> enrollGatheringList = participantRepository.findAllByUserIdAndHostFlag(user.getId(), Boolean.FALSE,
+                                                                                                          pageable);
+        List<GatheringDto> gatheringDtos = new ArrayList<>();
+        for (ParticipantEntity participant : enrollGatheringList) {
+            Optional<GatheringEntity> findGathering = gatheringRepository.findById(participant.getGathering().getId());
+            GatheringDto gatheringDto = GatheringDto.toDto(findGathering.get(), participantRepository.countByGatheringIdAndApproveTrue(
+                findGathering.get().getId()));
+            gatheringDtos.add(gatheringDto);
+        }
+
+        return new PageImpl<>(gatheringDtos,pageable,gatheringDtos.size());
     }
 }
