@@ -202,6 +202,11 @@ public class GatheringService {
 
         checkUser(user, savedGathering.getUser());
 
+        Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
+        if (currentPeople > gatheringPostRequest.getMaxPeople()) {
+            throw new AppException(ErrorCode.CONFLICT, "현재 승인 된 인원 보다 적게 설정할 수 없습니다.");
+        }
+
         savedGathering.editGathering(gatheringPostRequest.getMeetDateTime(),
                                      gatheringPostRequest.getMeetLocation(),
                                      gatheringPostRequest.getMaxPeople(),
@@ -211,7 +216,6 @@ public class GatheringService {
 
         GatheringEntity modifiedGathering = gatheringRepository.save(savedGathering);
 
-        Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
         if (!currentPeople.equals(modifiedGathering.getMaxPeople())) {
             modifiedGathering.openPost();
             gatheringRepository.save(modifiedGathering);
