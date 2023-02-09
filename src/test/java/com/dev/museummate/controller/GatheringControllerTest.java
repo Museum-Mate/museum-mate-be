@@ -120,6 +120,132 @@ class GatheringControllerTest {
     }
 
     @Test
+    @DisplayName("모집글 수정 성공")
+    @WithMockUser
+    void edit_Success() throws Exception {
+
+        Long gatheringId = 1L;
+
+        GatheringDto gatheringDto = new GatheringDto(1L, "test", "test", 5, "test", "test", false);
+
+        GatheringPostRequest request = new GatheringPostRequest(gatheringId, "test1", "test", 4, "test", "test");
+
+        given(gatheringService.edit(any(), any(), any())).willReturn(gatheringDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/gatherings/1")
+                                              .with(csrf())
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(objectMapper.writeValueAsBytes(request)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+               .andExpect(jsonPath("$.result.gatheringId").exists())
+               .andDo(print());
+    }
+
+    @Test
+    @DisplayName("모집글 수정 실패 - 작성자 불일치")
+    @WithMockUser
+    void edit_Fail1() throws Exception {
+
+        Long gatheringId = 1L;
+
+        GatheringPostRequest request = new GatheringPostRequest(gatheringId, "test1", "test", 4, "test", "test");
+
+        given(gatheringService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.FORBIDDEN_ACCESS, ""));
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/gatherings/1")
+                                              .with(csrf())
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(objectMapper.writeValueAsBytes(request)))
+               .andExpect(status().isForbidden())
+               .andDo(print());
+
+    }
+
+    @Test
+    @DisplayName("모집글 수정 실패 - 인증실패")
+    @WithMockUser
+    void edit_Fail2() throws Exception {
+
+        Long gatheringId = 1L;
+
+        GatheringPostRequest request = new GatheringPostRequest(gatheringId, "test1", "test", 4, "test", "test");
+
+        given(gatheringService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/gatherings/1")
+                                              .with(csrf())
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(objectMapper.writeValueAsBytes(request)))
+               .andExpect(status().isUnauthorized())
+               .andDo(print());
+    }
+
+    @Test
+    @DisplayName("모집글 삭제 성공")
+    @WithMockUser
+    void delete_Success() throws Exception {
+
+        Long gatheringId = 1L;
+
+        given(gatheringService.delete(any(), any())).willReturn(gatheringId);
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/gatherings/" + gatheringId)
+                                              .with(csrf()))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+               .andExpect(jsonPath("$.result.gatheringId").exists())
+               .andDo(print());
+    }
+
+    @Test
+    @DisplayName("모집글 삭제 실패 - 작성자 불일치")
+    @WithMockUser
+    void delete_Fail1() throws Exception {
+
+        given(gatheringService.delete(any(), any())).willThrow(new AppException(ErrorCode.FORBIDDEN_ACCESS, ""));
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/gatherings/1")
+                                              .with(csrf()))
+               .andExpect(status().isForbidden())
+               .andDo(print());
+    }
+
+    @Test
+    @DisplayName("모집글 삭제 실패 - 인증 실패")
+    @WithMockUser
+    void delete_Fail2() throws Exception {
+
+        given(gatheringService.delete(any(), any())).willThrow(new AppException(ErrorCode.INVALID_REQUEST, ""));
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/gatherings/1")
+                                              .with(csrf()))
+               .andExpect(status().isUnauthorized())
+               .andDo(print());
+    }
+
+    @Test
+    @DisplayName("모집 글 수정 - 실패#1 현재 승인 인원보다 적게 수정 시도 할 경우")
+    @WithMockUser
+    void edit_fail() throws Exception {
+
+        GatheringPostRequest gatheringPostRequest = new GatheringPostRequest(1L, "23/10/29", "한국", 3, "모집", "같이 갈 사람");
+        //given
+        given(gatheringService.edit(any(), any(),any()))
+            .willThrow(new AppException(ErrorCode.CONFLICT, "conflict 발생"));
+
+        //when
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/gatherings/1")
+                                              .with(csrf())
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(objectMapper.writeValueAsBytes(gatheringPostRequest)))
+               .andDo(print())
+               .andExpect(status().isConflict());
+        //then
+    }
+
+
+    @Test
     @DisplayName("참가 신청 - 성공")
     @WithMockUser
     void enroll_success() throws Exception {
