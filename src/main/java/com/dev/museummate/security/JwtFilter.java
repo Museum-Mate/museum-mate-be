@@ -43,6 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private final String GOOGLE_LOGIN_URI = "/oauth2/authorization/code/google";
     private final String NAVER_LOGIN_URI = "/oauth2/authorization/code/naver";
     private final String JOIN_URI = "/join";
+    private final String SOCIAL_JOIN = "/join/social";
 
     @Value("${jwt.secret}")
     public String secretKey;
@@ -67,14 +68,27 @@ public class JwtFilter extends OncePerRequestFilter {
         log.info("request.getRequestURI() : {}", request.getRequestURI());
         log.info("request.getRequestURL() : {}", request.getRequestURL());
 
+        if (request.getRequestURI().equals("/")) {
+            log.info("메인페이지 입니다.");
+            filterChain.doFilter(request, response);
+            return; // 필터가 더 이상 진행되지 않도록 리턴
+        }
+
         // Login 요청일 때 토큰 검증을 하지 않는다.
-        if (request.getRequestURI().equals("/")
-            ||request.getRequestURI().equals(LOGIN_URI)
-            || request.getRequestURI().equals(GOOGLE_LOGIN_URI)
-            || request.getRequestURI().equals(NAVER_LOGIN_URI)
+        if (request.getRequestURI().equals(LOGIN_URI)
             || request.getRequestURI().equals(LOGIN)
-            || request.getRequestURI().equals(JOIN_URI)) {
-            log.info("로그인 요청입니다.");
+            || request.getRequestURI().equals(JOIN_URI)
+            || request.getRequestURI().equals(SOCIAL_JOIN)) {
+            log.info("로그인 및 회원가입 요청입니다.");
+            log.info("request.getRequestURI() : {}", request.getRequestURI());
+            log.info("request.getRequestURL() : {}", request.getRequestURL());
+            filterChain.doFilter(request, response);
+            return; // 필터가 더 이상 진행되지 않도록 리턴
+        }
+
+        if (request.getRequestURI().equals(GOOGLE_LOGIN_URI)
+            || request.getRequestURI().equals(NAVER_LOGIN_URI)) {
+            log.info("소셜 로그인 요청입니다.");
             log.info("request.getRequestURI() : {}", request.getRequestURI());
             log.info("request.getRequestURL() : {}", request.getRequestURL());
             filterChain.doFilter(request, response);
