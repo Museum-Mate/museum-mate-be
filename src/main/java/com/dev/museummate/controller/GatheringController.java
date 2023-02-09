@@ -43,19 +43,19 @@ public class GatheringController {
     @PostMapping("/posts")
     public Response<GatheringPostResponse> posts(@RequestBody GatheringPostRequest gatheringPostRequest, Authentication authentication) {
 
-        GatheringDto gatheringDto = gatheringService.posts(gatheringPostRequest,authentication.getName());
+        GatheringDto gatheringDto = gatheringService.posts(gatheringPostRequest, authentication.getName());
         return Response.success(new GatheringPostResponse(gatheringDto.getId()));
     }
 
     @PostMapping("/{gatheringId}/enroll")
-    public Response<String> enroll(@PathVariable Long gatheringId,Authentication authentication) {
-        String msg = gatheringService.enroll(gatheringId,authentication.getName());
+    public Response<String> enroll(@PathVariable Long gatheringId, Authentication authentication) {
+        String msg = gatheringService.enroll(gatheringId, authentication.getName());
         return Response.success(msg);
     }
 
     @GetMapping("/{gatheringId}/enroll/{participantId}")
-    public Response<String> approve(@PathVariable Long gatheringId,@PathVariable Long participantId, Authentication authentication) {
-        String msg = gatheringService.approve(gatheringId,participantId,authentication.getName());
+    public Response<String> approve(@PathVariable Long gatheringId, @PathVariable Long participantId, Authentication authentication) {
+        String msg = gatheringService.approve(gatheringId, participantId, authentication.getName());
         return Response.success(msg);
     }
 
@@ -78,7 +78,7 @@ public class GatheringController {
     }
 
     @DeleteMapping("/{gatheringId}/cancel")
-    public Response<String> cancel(@PathVariable Long gatheringId,Authentication authentication) {
+    public Response<String> cancel(@PathVariable Long gatheringId, Authentication authentication) {
         String msg = gatheringService.cancel(gatheringId, authentication.getName());
         return Response.success(msg);
     }
@@ -133,15 +133,28 @@ public class GatheringController {
 
     @GetMapping("/{gatheringId}/comments")
     public Response<Page<CommentResponse>> getComments(@PageableDefault(size = 10)
-                                                       @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable, @PathVariable Long gatheringId) {
-        Page<CommentDto> comments = gatheringService.getComments(pageable,gatheringId);
-        return Response.success(comments.map(CommentDto::toResponse));
+                                                       @SortDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                                       @PathVariable Long gatheringId) {
+        Page<CommentDto> comments = gatheringService.getComments(pageable, gatheringId);
+        List<CommentResponse> commentResponses = new ArrayList<>();
+        for (CommentDto comment : comments) {
+            List<CommentResponse> replyResponses = new ArrayList<>();
+            List<CommentDto> replies = comment.getReplies();
+            for (CommentDto reply : replies) {
+                CommentResponse replyResponse = reply.toResponse();
+                replyResponses.add(replyResponse);
+            }
+            CommentResponse commentResponse = comment.toParentResponse(replyResponses);
+            commentResponses.add(commentResponse);
+
+        }
+        return Response.success(new PageImpl<>(commentResponses,pageable,commentResponses.size()));
     }
 
     @PutMapping("/{gatheringId}/comments/{commentId}")
     public Response<CommentPostResponse> modifyComment(@PathVariable Long gatheringId, @RequestBody CommentRequest commentRequest,
                                                        @PathVariable Long commentId, Authentication authentication) {
-        CommentDto commentDto = gatheringService.modifyComment(gatheringId, commentId, authentication.getName(),commentRequest);
+        CommentDto commentDto = gatheringService.modifyComment(gatheringId, commentId, authentication.getName(), commentRequest);
         return Response.success(new CommentPostResponse(commentDto.getId(), commentDto.getContent()));
     }
 
@@ -152,4 +165,11 @@ public class GatheringController {
         return Response.success(msg);
     }
 
+    @PostMapping("//{gatheringId}/comments/{commentId}/reply")
+    public Response<CommentPostResponse> postReply(@PathVariable Long gatheringId,
+                                                   @PathVariable Long commentId, Authentication authentication,
+                                                   @RequestBody CommentRequest commentRequest) {
+        CommentDto commentDto = gatheringService.writeReply(gatheringId, commentId, authentication.getName(), commentRequest);
+        return Response.success(new CommentPostResponse(commentDto.getId(), commentDto.getContent()));
+    }
 }
