@@ -184,4 +184,32 @@ public class MyControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("내가 참여한 모집글 조회 - 성공")
+    @WithMockUser
+    void getEnrollsSuccess() throws Exception {
+
+        Page<GatheringDto> dtoPage = new PageImpl<>(List.of(gatheringDto));
+
+        when(myService.getMyEnrolls(any(), any())).thenReturn(dtoPage);
+
+        mockMvc.perform(get("/api/v1/my/gatherings/enrolls"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.result.content").exists())
+               .andExpect(jsonPath("$.result.pageable").exists())
+               .andDo(print());
+    }
+
+    @Test
+    @DisplayName("내가 참여한 모집글 조회 - 실패 유저가 존재 하지 않는 경우")
+    @WithMockUser
+    void getEnrollsFail() throws Exception {
+
+        when(myService.getMyEnrolls(any(), any())).thenThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND,""));
+
+        mockMvc.perform(get("/api/v1/my/gatherings/enrolls"))
+               .andExpect(status().isNotFound())
+               .andDo(print());
+    }
+
 }
