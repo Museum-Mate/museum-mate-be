@@ -319,6 +319,20 @@ class GatheringControllerTest {
     }
 
     @Test
+    @DisplayName("참가 신청 승인 - 실패#5 최대 인원만큼 승인 한 뒤 또 승인 시도할 경우")
+    @WithMockUser
+    void approve_fail_5() throws Exception {
+
+        given(gatheringService.approve(any(), any(), any()))
+            .willThrow(new AppException(ErrorCode.FORBIDDEN_ACCESS, ""));
+
+        mockMvc.perform(get("/api/v1/gatherings/1/enroll/1")
+                            .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isForbidden());
+    }
+
+    @Test
     @DisplayName("참가 신청 취소 - 성공")
     @WithMockUser
     void enroll_cancel_success() throws Exception {
