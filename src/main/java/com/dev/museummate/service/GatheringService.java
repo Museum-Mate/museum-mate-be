@@ -134,6 +134,9 @@ public class GatheringService {
         ParticipantEntity participant = participantRepository.findById(participantId)
                                                              .orElseThrow(() -> new AppException(ErrorCode.PARTICIPANT_NOT_FOUND,
                                                                                                  "존재하지 않는 참여자 입니다."));
+        if (findGatheringPost.getClose().equals(Boolean.TRUE)) {
+            throw new AppException(ErrorCode.FORBIDDEN_ACCESS, "신청 인원이 전부 찼습니다.");
+        }
         participant.approveUser();
         participantRepository.save(participant);
 
