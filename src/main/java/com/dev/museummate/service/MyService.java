@@ -4,6 +4,7 @@ import com.dev.museummate.domain.dto.alarm.AlarmDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.review.ReviewDto;
+import com.dev.museummate.domain.dto.user.UserDto;
 import com.dev.museummate.domain.entity.*;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
@@ -82,5 +83,11 @@ public class MyService {
         }
 
         return new PageImpl<>(gatheringDtos,pageable,gatheringDtos.size());
+    }
+
+    public UserDto getMyInfo(String email) {
+        UserEntity user = findUserByEmail(email);
+        UserDto userDto = UserDto.toDto(user);
+        return userDto;
     }
 }
