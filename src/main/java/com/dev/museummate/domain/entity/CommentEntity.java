@@ -3,6 +3,7 @@ package com.dev.museummate.domain.entity;
 import com.dev.museummate.domain.dto.gathering.CommentDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -71,6 +72,19 @@ public class CommentEntity extends BaseEntity {
                          .createdAt(this.getCreatedAt())
                          .updatedAt(this.getLastModifiedAt())
                          .content(this.content)
+                         .gathering(this.gathering)
+                         .parentId(this.parentId)
+                         .build();
+    }
+
+    public CommentDto toParentDto(List<CommentDto> findReplies) {
+        return CommentDto.builder()
+                         .id(this.id)
+                         .user(this.user)
+                         .createdAt(this.getCreatedAt())
+                         .updatedAt(this.getLastModifiedAt())
+                         .content(this.content)
+                         .replies(findReplies)
                          .gathering(this.gathering)
                          .parentId(this.parentId)
                          .build();

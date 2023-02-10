@@ -28,6 +28,7 @@ public enum ErrorCode {
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "Review is Not Found"),
     PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "Participant not found"),
     NOT_FOUND(HttpStatus.NOT_FOUND, "Role Not Found"),
+    CONFLICT(HttpStatus.CONFLICT, "Request is Conflict"),
     ;
     private HttpStatus httpStatus;
     private String message;

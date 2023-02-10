@@ -3,7 +3,6 @@ package com.dev.museummate.service;
 import com.dev.museummate.domain.dto.gathering.CommentDto;
 import com.dev.museummate.domain.dto.gathering.CommentRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
-import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
 import com.dev.museummate.domain.dto.gathering.ParticipantDto;
 import com.dev.museummate.domain.entity.CommentEntity;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GatheringService {
 
     private final GatheringRepository gatheringRepository;
@@ -134,6 +135,9 @@ public class GatheringService {
         ParticipantEntity participant = participantRepository.findById(participantId)
                                                              .orElseThrow(() -> new AppException(ErrorCode.PARTICIPANT_NOT_FOUND,
                                                                                                  "존재하지 않는 참여자 입니다."));
+        if (findGatheringPost.getClose().equals(Boolean.TRUE)) {
+            throw new AppException(ErrorCode.FORBIDDEN_ACCESS, "신청 인원이 전부 찼습니다.");
+        }
         participant.approveUser();
         participantRepository.save(participant);
 
@@ -202,6 +206,11 @@ public class GatheringService {
 
         checkUser(user, savedGathering.getUser());
 
+        Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
+        if (currentPeople > gatheringPostRequest.getMaxPeople()) {
+            throw new AppException(ErrorCode.CONFLICT, "현재 승인 된 인원 보다 적게 설정할 수 없습니다.");
+        }
+
         savedGathering.editGathering(gatheringPostRequest.getMeetDateTime(),
                                      gatheringPostRequest.getMeetLocation(),
                                      gatheringPostRequest.getMaxPeople(),
@@ -211,7 +220,6 @@ public class GatheringService {
 
         GatheringEntity modifiedGathering = gatheringRepository.save(savedGathering);
 
-        Integer currentPeople = participantRepository.countByGatheringIdAndApproveTrue(gatheringId);
         if (!currentPeople.equals(modifiedGathering.getMaxPeople())) {
             modifiedGathering.openPost();
             gatheringRepository.save(modifiedGathering);
@@ -243,9 +251,17 @@ public class GatheringService {
     }
 
     public Page<CommentDto> getComments(Pageable pageable, Long gatheringId) {
-        Page<CommentEntity> findComments = commentRepository.findAllByGatheringId(pageable, gatheringId);
-        Page<CommentDto> commentDtos = findComments.map(CommentEntity::toDto);
-        return commentDtos;
+        Page<CommentEntity> findComments = commentRepository.findAllByGatheringIdAndParentId(pageable, gatheringId, 0L);
+        List<CommentDto> commentDtos = new ArrayList<>();
+        for (CommentEntity findComment : findComments) {
+            List<CommentEntity> findReplies = commentRepository.findAllByGatheringIdAndParentId(gatheringId,
+                                                                                                                findComment.getId());
+            List<CommentDto> replyDtos = findReplies.stream().map(CommentEntity::toDto).collect(Collectors.toList());
+            CommentDto commentDto = findComment.toParentDto(replyDtos);
+            commentDtos.add(commentDto);
+        }
+        Page<CommentDto> commentDtoPage = new PageImpl<>(commentDtos,pageable,commentDtos.size());
+        return commentDtoPage;
     }
 
     public CommentDto modifyComment(Long gatheringId, Long commentId, String email, CommentRequest commentRequest) {
@@ -269,7 +285,20 @@ public class GatheringService {
         if (!findUser.getUserName().equals(findComment.getUser().getUserName())) {
             throw new AppException(ErrorCode.INVALID_PERMISSION, "작성자만 접근 가능합니다.");
         }
+        List<CommentEntity> findChildComments = commentRepository.findAllByGatheringIdAndParentId(gatheringId, commentId);
+        for (CommentEntity findChildComment : findChildComments) {
+            commentRepository.delete(findChildComment);
+        }
         commentRepository.delete(findComment);
         return "삭제가 완료 되었습니다.";
+    }
+
+    public CommentDto writeReply(Long gatheringId, Long commentId, String email, CommentRequest commentRequest) {
+        UserEntity findUser = findUserByEmail(email);
+        GatheringEntity findGathering = findPostById(gatheringId);
+        CommentEntity comment = CommentEntity.ofReply(commentRequest.getComment(), findGathering, findUser,commentId);
+        CommentEntity savedComment = commentRepository.save(comment);
+        CommentDto commentDto = savedComment.toDto();
+        return commentDto;
     }
 }
