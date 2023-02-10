@@ -4,6 +4,7 @@ import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.dto.exhibition.BookmarkAddResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionEditRequest;
+import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionWriteRequest;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
@@ -85,6 +86,9 @@ class ExhibitionControllerTest {
                                       .detailInfo("test")
                                       .galleryLocation("test")
                                       .galleryName("test")
+                                      .detailInfoImgUrl("")
+                                      .mainImgUrl("")
+                                      .noticeImgUrl("")
                                       .build();
     }
 
@@ -307,16 +311,16 @@ class ExhibitionControllerTest {
     public void edit_success() throws Exception {
 
         UserEntity user = UserEntity.builder()
-                                     .id(1L)
-                                     .email("test@test.com")
-                                     .password("test")
-                                     .name("김재근")
-                                     .userName("geun")
-                                     .birth("961210")
-                                     .phoneNumber("010-9864-1772")
-                                     .address("서울시 송파구")
-                                     .role(UserRole.ROLE_USER)
-                                     .build();
+                                    .id(1L)
+                                    .email("test@test.com")
+                                    .password("test")
+                                    .name("김재근")
+                                    .userName("geun")
+                                    .birth("961210")
+                                    .phoneNumber("010-9864-1772")
+                                    .address("서울시 송파구")
+                                    .role(UserRole.ROLE_USER)
+                                    .build();
 
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
                                                                            .id(1l)
@@ -331,14 +335,14 @@ class ExhibitionControllerTest {
                                                                            .user(user)
                                                                            .statMale("20%")
                                                                            .statFemale("80%")
-                                                                           .mainImgUrl("www")
-                                                                           .noticeImgUrl("www")
-                                                                           .detailInfoImgUrl("www")
+                                                                           .mainImgUrl("test")
+                                                                           .noticeImgUrl("test")
+                                                                           .detailInfoImgUrl("test")
                                                                            .build();
 
         given(exhibitionService.edit(any(), any(), any())).willReturn(exhibitionDto1);
 
-        mockMvc.perform(put("/api/v1/exhibitions/1/edit")
+        mockMvc.perform(put("/api/v1/exhibitions/1")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))
@@ -352,14 +356,6 @@ class ExhibitionControllerTest {
                .andExpect(jsonPath("$.result.ageLimit").exists())
                .andExpect(jsonPath("$.result.detailInfo").exists())
                .andExpect(jsonPath("$.result.galleryName").exists())
-               .andExpect(jsonPath("$.result.user.id").exists())
-               .andExpect(jsonPath("$.result.user.email").exists())
-               .andExpect(jsonPath("$.result.user.password").exists())
-               .andExpect(jsonPath("$.result.user.userName").exists())
-               .andExpect(jsonPath("$.result.user.birth").exists())
-               .andExpect(jsonPath("$.result.user.phoneNumber").exists())
-               .andExpect(jsonPath("$.result.user.address").exists())
-               .andExpect(jsonPath("$.result.user.role").exists())
                .andExpect(jsonPath("$.result.statMale").exists())
                .andExpect(jsonPath("$.result.statFemale").exists())
                .andExpect(jsonPath("$.result.statAge10").exists())
@@ -393,7 +389,7 @@ class ExhibitionControllerTest {
 
         given(exhibitionService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, "데이터베이스 에러"));
 
-        mockMvc.perform(put("/api/v1/exhibitions/1/edit")
+        mockMvc.perform(put("/api/v1/exhibitions/1")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))
@@ -421,7 +417,7 @@ class ExhibitionControllerTest {
 
         given(exhibitionService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "작성자와 유저가 일치하지 않습니다."));
 
-        mockMvc.perform(put("/api/v1/exhibitions/1/edit")
+        mockMvc.perform(put("/api/v1/exhibitions/1")
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))

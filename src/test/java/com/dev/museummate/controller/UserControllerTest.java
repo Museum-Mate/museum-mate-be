@@ -442,7 +442,7 @@ class UserControllerTest {
                 .willReturn("수정이 완료 되었습니다.");
 
         //when
-        mockMvc.perform(put("/api/v1/users/modify")
+        mockMvc.perform(put("/api/v1/users")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userModifyRequest)))
@@ -482,7 +482,7 @@ class UserControllerTest {
         given(userService.deleteUser(any()))
                 .willReturn("삭제가 완료 되었습니다.");
         //when
-        mockMvc.perform(delete("/api/v1/users/delete")
+        mockMvc.perform(delete("/api/v1/users")
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk());
