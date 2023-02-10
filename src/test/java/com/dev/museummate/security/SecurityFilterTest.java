@@ -9,14 +9,11 @@ import com.dev.museummate.utils.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -38,15 +35,14 @@ public class SecurityFilterTest {
 
     @MockBean
     RedisDao redisDao;
-
-    @Value("${jwt.secret}")
-    private String secretKey;
+    @MockBean
+    JwtUtils jwtUtils;
 
     private UserEntity user;
     private UserEntity admin;
 
     private String createToken(UserEntity userEntity, long expiredMs){
-        return JwtUtils.createAccessToken(userEntity.getEmail(), secretKey, expiredMs);
+        return jwtUtils.createAccessToken(userEntity.getEmail());
     }
 
     @BeforeEach

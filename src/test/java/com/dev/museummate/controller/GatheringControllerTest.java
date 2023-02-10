@@ -541,8 +541,21 @@ class GatheringControllerTest {
         @DisplayName("모집글 상세 조회 성공")
         void getOne_Success() throws Exception {
             Long gatheringId = 1L;
+//            Long id, java.lang.String email, java.lang.String password, java.lang.String name, java.lang.String userName, java.lang.String birth, java.lang.String phoneNumber,
+//            java.lang.String address,
+//            UserRole role, java.lang.String providerId, String providerType
 
-            UserEntity user1 = new UserEntity(1L, "test", "test", "test", "test", "test", "test", "test", UserRole.ROLE_USER);
+            UserEntity user1 = UserEntity.builder()
+                                         .id(1L)
+                                         .email("test@test.com")
+                                         .password("test")
+                                         .name("김재근")
+                                         .userName("geun")
+                                         .birth("961210")
+                                         .phoneNumber("010-9864-1772")
+                                         .address("서울시 송파구")
+                                         .role(UserRole.ROLE_USER)
+                                         .build();
 
             ExhibitionEntity exhibition = ExhibitionEntity.builder()
                                                            .id(1L)

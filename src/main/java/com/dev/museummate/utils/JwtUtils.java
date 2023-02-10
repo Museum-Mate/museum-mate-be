@@ -1,79 +1,119 @@
 package com.dev.museummate.utils;
 
-import com.dev.museummate.domain.entity.UserEntity;
-import com.dev.museummate.service.UserService;
+import com.dev.museummate.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
-
 import java.util.Date;
-import java.util.List;
-
-import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 
 @Component
 @RequiredArgsConstructor
 public class JwtUtils {
-    private final UserService userService;
+    @Value("${jwt.secret}")
+    public String secretKey;
+    @Value("${jwt.access.expiration}")
+    public Long accessTokenExpiration;
+    @Value("${jwt.refresh.expiration}")
+    public Long refreshTokenExpiration;
 
-    private static Claims extractClaims(String token, String secretKey){
-        return Jwts.parser()
-                .setSigningKey(secretKey)
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-    public static String createAccessToken(String email, String secretKey,long expireTime){
+    public String createAccessToken(String email) {
         Claims claims = Jwts.claims();  //토큰의 내용에 값을 넣기 위해 Claims 객체 생성
         claims.put("email", email);
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expireTime))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+    }
+
+    public String createAccessToken(String email, String name) {
+        Claims claims = Jwts.claims();  //토큰의 내용에 값을 넣기 위해 Claims 객체 생성
+        claims.put("email", email);
+        claims.put("name", name);
+
+        return Jwts.builder()
+                   .setClaims(claims)
+                   .setIssuedAt(new Date(System.currentTimeMillis()))
+                   .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
+                   .signWith(SignatureAlgorithm.HS256, secretKey)
+                   .compact();
     }
     
-    public static String createRefreshToken(String email, String secretKey,long expireTime) {
+    public String createRefreshToken(String email) {
         Claims claims = Jwts.claims();  //토큰의 내용에 값을 넣기 위해 Claims 객체 생성
         claims.put("email", email);
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expireTime))
+                .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
-    public static boolean isExpired(String token, String secretKey) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token)
-                .getBody().getExpiration().before(new Date());
+    public String createRefreshToken(String email, String name) {
+        Claims claims = Jwts.claims();  //토큰의 내용에 값을 넣기 위해 Claims 객체 생성
+        claims.put("email", email);
+        claims.put("name", name);
+
+        return Jwts.builder()
+                   .setClaims(claims)
+                   .setIssuedAt(new Date(System.currentTimeMillis()))
+                   .setExpiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
+                   .signWith(SignatureAlgorithm.HS256, secretKey)
+                   .compact();
     }
 
-    public static Long getExpiration(String accessToken, String secretKey) {
-        // accessToken 남은 유효시간
-        Date expiration = Jwts.parser().setSigningKey(secretKey)
-                .parseClaimsJws(accessToken).getBody().getExpiration();
+    /**
+     * 토큰이 만료되었는지 확인
+     * @param token
+     * @return
+     */
+    public boolean isExpired(String token) {
+        return Jwts.parser()
+                   .setSigningKey(secretKey)
+                   .parseClaimsJws(token)
+                   .getBody()
+                   .getExpiration()
+                   .before(new Date());
+    }
+
+    public boolean isValid(String token) {
+        return !Jwts.parserBuilder()
+                    .setSigningKey(secretKey)
+                    .build()
+                    .isSigned(token);
+    }
+
+    public Long getExpiration(String token) {
+        // token 남은 유효시간
+        Date expiration = extractClaims(token).getExpiration();
         // 현재 시간
         Long now = new Date().getTime();
         return (expiration.getTime() - now);
     }
 
-    private UserEntity getUser(String token, String secretKey){
-        String email = extractClaims(token, secretKey).get("email").toString();
-        UserEntity userEntity = userService.findUserByEmail(email);
-        return userEntity;
+    public Claims extractClaims(String token){
+        return Jwts.parser()
+                   .setSigningKey(secretKey)
+                   .parseClaimsJws(token)
+                   .getBody();
     }
-    public UsernamePasswordAuthenticationToken getAuthentication(String token, String secretKey) {
-        UserEntity userEntity = getUser(token,secretKey);
-        return new UsernamePasswordAuthenticationToken(userEntity.getEmail(),
-                null, List.of(new SimpleGrantedAuthority(userEntity.getRole().name())));
+
+    public String getEmail(String token) {
+        return extractClaims(token).get("email")
+                                   .toString();
     }
+
+    public String getName(String token) {
+        return extractClaims(token).get("name")
+                                   .toString();
+    }
+
 }

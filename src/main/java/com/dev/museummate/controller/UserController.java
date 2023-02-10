@@ -4,20 +4,30 @@ import com.dev.museummate.configuration.Response;
 import com.dev.museummate.domain.dto.user.*;
 import com.dev.museummate.service.MailService;
 import com.dev.museummate.service.UserService;
+import com.dev.museummate.utils.CookieUtils;
 import jakarta.mail.MessagingException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import org.springframework.web.util.CookieGenerator;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private final MailService mailService;
+
+    @Value("${cookie.maxage}")
+    private int maxAge;
 
     @PostMapping("/join")
     public Response<String> join(@RequestBody UserJoinRequest userJoinRequest) throws MessagingException, UnsupportedEncodingException {
@@ -27,8 +37,24 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public Response<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest) {
+    public Response<UserLoginResponse> login(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request,
+                                             HttpServletResponse response) {
+
         UserLoginResponse userLoginResponse = userService.login(userLoginRequest);
+
+        String accessToken = userLoginResponse.getAccessToken();
+        String refreshToken = userLoginResponse.getRefreshToken();
+
+        if (userLoginResponse.getAccessToken() != null) {
+            log.info("헤더에 저장된 토큰 : Authorization {}", userLoginResponse.getAccessToken());
+            response.setHeader("Authorization", userLoginResponse.getAccessToken());
+        }
+
+        if (userLoginResponse.getRefreshToken() != null) {
+            log.info("쿠키에 저장된 토큰 : refreshToken {}", userLoginResponse.getRefreshToken());
+            CookieUtils.addRefreshTokenAtCookie(response, refreshToken);
+        }
+
         return Response.success(userLoginResponse);
     }
 
