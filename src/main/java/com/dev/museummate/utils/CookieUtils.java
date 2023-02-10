@@ -6,15 +6,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
 @Slf4j
 public class CookieUtils {
 
-//    @Value("${cookie.maxAge}")
-    private final static int maxAge = 86400; // 24시간
+    private final static int ACCESS_TOKEN_MAX_AGE = 60 * 60 * 3; // (seconds) -> 3시간
+    private final static int REFRESH_TOKEN_MAX_AGE = 60 * 60 * 24 * 14; // (seconds) -> 14일
+//    private final static String BEARER = "Bearer ";
+    private final static String ACCESS_TOKEN_HEADER = "Authorization";
     private final static String REFRESH_TOKEN_HEADER = "Authorization-refresh";
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String key) {
@@ -31,6 +32,11 @@ public class CookieUtils {
         return Optional.empty();
     }
 
+    public static Optional<Cookie> extractRefreshToken(HttpServletRequest request) {
+
+        return getCookie(request, REFRESH_TOKEN_HEADER);
+    }
+
     public static void addCookie(HttpServletResponse response, String key, String value, int maxAge) {
 
         ResponseCookie cookie = ResponseCookie.from(key, value)
@@ -40,25 +46,39 @@ public class CookieUtils {
                                               .path("/")
                                               .maxAge(maxAge)
                                               .build();
-        log.debug("method: createCooke cookie: {}", cookie.toString());
+        log.info("method: createCooke cookie: {}", cookie);
 
         // 헤더에 Set-Cookie 를 추가
-        response.setHeader("Set-Cookie", cookie.toString());
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    public static void addAccessTokenAtCookie(HttpServletResponse response, String value) {
+        ResponseCookie cookie = ResponseCookie.from(ACCESS_TOKEN_HEADER, value)
+                                              .httpOnly(false)
+                                              .secure(true)
+                                              .sameSite("Lax")
+                                              .path("/")
+                                              .maxAge(ACCESS_TOKEN_MAX_AGE)
+                                              .build();
+        log.info("method: createCooke cookie: {}", cookie);
+
+        // 헤더에 Set-Cookie 를 추가
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
     public static void addRefreshTokenAtCookie(HttpServletResponse response, String value) {
-
+        // Set-Cookie {KEY}={Value}; Path=/; Secure; HttpOnly; Expires=Sat, 11 Feb 2023 05:24:17 GMT;
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_HEADER, value)
                                               .httpOnly(true)
                                               .secure(true)
                                               .sameSite("Lax")
                                               .path("/")
-                                              .maxAge(maxAge)
+                                              .maxAge(REFRESH_TOKEN_MAX_AGE)
                                               .build();
-        log.debug("method: createCooke cookie: {}", cookie.toString());
+        log.info("method: createCooke cookie: {}", cookie.toString());
 
         // 헤더에 Set-Cookie 를 추가
-        response.setHeader("Set-Cookie", cookie.toString());
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 
     public static void setCookie(HttpServletResponse response, String key, String value, int maxAge) {
@@ -70,7 +90,7 @@ public class CookieUtils {
                                               .path("/")
                                               .maxAge(maxAge)
                                               .build();
-        log.debug("method: createCooke cookie: {}", cookie.toString());
+        log.info("method: createCooke cookie: {}", cookie.toString());
 
         // 헤더에 Set-Cookie 를 추가
         response.setHeader("Set-Cookie", cookie.toString());

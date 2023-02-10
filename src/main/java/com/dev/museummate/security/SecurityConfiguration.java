@@ -1,5 +1,6 @@
 package com.dev.museummate.security;
 
+import com.dev.museummate.configuration.redis.RedisDao;
 import com.dev.museummate.configuration.redis.service.TokenService;
 import com.dev.museummate.repository.UserRepository;
 import com.dev.museummate.security.oauth2.CustomOAuth2UserService;
@@ -26,10 +27,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
     private final UserRepository userRepository;
-    private final TokenService tokenService;
+    private final RedisDao redisDao;
     private final JwtUtils jwtUtils;
-    @Value("${cors.allowed-origins}")
-    private String allowedOrigins;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -48,7 +47,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/v1/users/reissue","/api/v1/users/logout","/api/v1/users/modify","/api/v1/users/delete").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/v1/my/calendars","/api/v1/my/**").authenticated()
                         .requestMatchers(HttpMethod.POST,"/api/v1/reviews/**").authenticated() // 추가
-                        .requestMatchers("/api/v1/gatherings").authenticated()
+                        .requestMatchers("/api/v1/gatherings/**").authenticated()
                         .anyRequest().permitAll()   //고정
                 )
                 .oauth2Login()
@@ -66,7 +65,7 @@ public class SecurityConfiguration {
                 .exceptionHandling().authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .and()
 
-                .addFilterBefore(new JwtFilter(userRepository, tokenService, jwtUtils), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(userRepository, redisDao, jwtUtils), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class)
                 .build();
     }

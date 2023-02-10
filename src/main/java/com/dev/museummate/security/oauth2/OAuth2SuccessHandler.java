@@ -51,41 +51,47 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         if (checkUser.get().getUserName() != null) {
             log.info("이미 가입된 유저입니다.");
+
             String email = checkUser.get().getEmail();
             String accessToken = jwtUtils.createAccessToken(email);
             String refreshToken = jwtUtils.createRefreshToken(email);
             log.info("accessToken: {}", accessToken);
             log.info("refreshToken: {}", refreshToken);
 
-            response.sendRedirect(getRedirectURI(accessToken, refreshToken, checkUser.get().getId()));
-//            response.sendRedirect("/login?"
-//                                      + "accessToken=" + accessToken
-//                                      + "&refreshToken=" + refreshToken
-//                                      + "&userId=" + checkUser.get().getId());
+            // 헤더, 쿠키에 토큰 저장
+            HeaderUtils.addAccessTokenAtHeader(response, accessToken);
+            CookieUtils.addRefreshTokenAtCookie(response, refreshToken);
+
+            response.sendRedirect(getDefaultTargetUrl());
+
         } else {
             log.info("가입되지 않은 유저입니다.");
 
-            // 쿠키에 유저정보 저장 후 회원가입 페이지에서 꺼내서 활용 (이메일, 이름)
+            // 쿠키에 유저정보 저장 후 회원가입 페이지에서 추가정보 입력 시 꺼내서 활용 (이메일, 이름)
             String newEmail = oAuth2User.getAttribute("email");
             String newName = oAuth2User.getAttribute("name");
             String accessToken = jwtUtils.createAccessToken(newEmail, newName);
             String refreshToken = jwtUtils.createRefreshToken(newEmail, newName);
+            log.info("accessToken: {}", accessToken);
+            log.info("refreshToken: {}", refreshToken);
 
-            // header 추가
-            HeaderUtils.addAccessTokenHeader(response, accessToken);
+            // 헤더, 쿠키에 토큰 저장
+            HeaderUtils.addAccessTokenAtHeader(response, accessToken);
             CookieUtils.addRefreshTokenAtCookie(response, refreshToken);
-            log.info("추가정보 기입을 위해서 회원가입 페이지로 리다이렉트 합니다.");
+
             // 추가정보 기입을 위해서 회원가입 페이지로 리다이렉트
+            log.info("추가정보 기입을 위해서 회원가입 페이지로 리다이렉트 합니다.");
             response.sendRedirect("/join/social");
         }
     }
 
     private String getRedirectURI(String accessToken, String refreshToken, Long userId) {
+        String targetUrl = getDefaultTargetUrl();
         return UriComponentsBuilder.fromUriString("http://localhost:8080/login")
-            .queryParam("accessToken", accessToken)
-            .queryParam("refreshToken", refreshToken)
-            .queryParam("userId", userId)
-            .build()
-            .toUriString();
+                                   .queryParam("accessToken", accessToken)
+                                   .queryParam("refreshToken", refreshToken)
+                                   .queryParam("userId", userId)
+                                   .build()
+                                   .toUriString();
     }
 }

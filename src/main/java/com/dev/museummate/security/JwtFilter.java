@@ -19,6 +19,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,22 +36,20 @@ import java.io.IOException;
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
-    private final TokenService tokenService;
+    private final RedisDao redisDao;
     private final JwtUtils jwtUtils;
 
     private final String LOGIN = "/login";
     private final String LOGIN_URI = "/api/v1/users/login";
-    private final String GOOGLE_LOGIN_URI = "/oauth2/authorization/code/google";
-    private final String NAVER_LOGIN_URI = "/oauth2/authorization/code/naver";
+//    private final String GOOGLE_LOGIN_URI = "/oauth2/authorization/code/google";
+//    private final String NAVER_LOGIN_URI = "/oauth2/authorization/code/naver";
     private final String JOIN_URI = "/join";
     private final String SOCIAL_JOIN = "/join/social";
 
-    @Value("${jwt.secret}")
-    public String secretKey;
-    @Value("${jwt.access.expiration}")
-    public Long accessTokenExpiration;
-    @Value("${jwt.refresh.expiration}")
-    public Long refreshTokenExpiration;
+    @Value("${access-token-maxage}")
+    public int accessTokenMaxAge;
+    @Value("${refresh-token-maxage}")
+    public int refreshTokenMaxAge;
 
     /**
      * Access Token 은 Header 에 담아서 보내고, Refresh Token 은 Cookie 에 담아서 보낸다.
@@ -68,8 +67,9 @@ public class JwtFilter extends OncePerRequestFilter {
         log.info("request.getRequestURI() : {}", request.getRequestURI());
         log.info("request.getRequestURL() : {}", request.getRequestURL());
 
+        // 메인페이지 요청일 때 토큰 검증을 하지 않는다.
         if (request.getRequestURI().equals("/")) {
-            log.info("메인페이지 입니다.");
+            log.info("메인페이지 요청입니다.");
             filterChain.doFilter(request, response);
             return; // 필터가 더 이상 진행되지 않도록 리턴
         }
@@ -80,38 +80,39 @@ public class JwtFilter extends OncePerRequestFilter {
             || request.getRequestURI().equals(JOIN_URI)
             || request.getRequestURI().equals(SOCIAL_JOIN)) {
             log.info("로그인 및 회원가입 요청입니다.");
-            log.info("request.getRequestURI() : {}", request.getRequestURI());
-            log.info("request.getRequestURL() : {}", request.getRequestURL());
             filterChain.doFilter(request, response);
             return; // 필터가 더 이상 진행되지 않도록 리턴
         }
 
-        if (request.getRequestURI().equals(GOOGLE_LOGIN_URI)
-            || request.getRequestURI().equals(NAVER_LOGIN_URI)) {
-            log.info("소셜 로그인 요청입니다.");
-            log.info("request.getRequestURI() : {}", request.getRequestURI());
-            log.info("request.getRequestURL() : {}", request.getRequestURL());
-            filterChain.doFilter(request, response);
-            return; // 필터가 더 이상 진행되지 않도록 리턴
-        }
+//        if (request.getRequestURI().equals(GOOGLE_LOGIN_URI)
+//            || request.getRequestURI().equals(NAVER_LOGIN_URI)) {
+//            log.info("소셜 로그인 요청입니다.");
+//            log.info("request.getRequestURI() : {}", request.getRequestURI());
+//            log.info("request.getRequestURL() : {}", request.getRequestURL());
+//            filterChain.doFilter(request, response);
+//            return; // 필터가 더 이상 진행되지 않도록 리턴
+//        }
 
-        Optional<String> tokenAtHeader = HeaderUtils.extractAccessToken(request);
-        Optional<Cookie> tokenAtCookie = CookieUtils.getCookie(request, "Authorization-refreshToken");
+//        Optional<Cookie> AccessTokenAtCookie = CookieUtils.getCookie(request, "Authorization");
+//        Optional<Cookie> RefreshTokenAtCookie = CookieUtils.getCookie(request, "Authorization-refreshToken");
+
+        Optional<String> accessTokenAtHeader = HeaderUtils.extractAccessToken(request);
+        Optional<Cookie> refreshTokenAtCookie = CookieUtils.extractRefreshToken(request);
 
         // 헤더에 토큰이 없고, 쿠키에 토큰이 없을 때
-        if (tokenAtHeader.isEmpty() && tokenAtCookie.isEmpty()) {
+        if (accessTokenAtHeader.isEmpty() && refreshTokenAtCookie.isEmpty()) {
             log.error("모든 토큰이 없습니다.");
             log.info("request.getRequestURI() : {}", request.getRequestURI());
-            log.info("tokenAtHeader : {}", tokenAtHeader);
-            log.info("tokenAtCookie : {}", tokenAtCookie);
+            log.info("[AccessTokenAtCookie] : {}", accessTokenAtHeader);
+            log.info("[RefreshTokenAtCookie] : {}", refreshTokenAtCookie);
             filterChain.doFilter(request, response);
             return; // 필터가 더 이상 진행되지 않도록 리턴
         }
 
-        String accessToken = String.valueOf(tokenAtHeader.get());
-//        String refreshToken = tokenAtCookie.get().getValue();
+        String accessToken = String.valueOf(accessTokenAtHeader.get());
+        String refreshToken = String.valueOf(refreshTokenAtCookie.get());
         log.info("accessToken : {}", accessToken);
-//        log.info("refreshToken : {}", refreshToken);
+        log.info("refreshToken : {}", refreshToken);
 
         UserEntity userEntity;
         try {
@@ -126,17 +127,14 @@ public class JwtFilter extends OncePerRequestFilter {
             String email = jwtUtils.getEmail(accessToken);
             userEntity =
                 userRepository.findByEmail(email)
-                              .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND, "유저 정보를 찾을 수 없습니다."));
+                              .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND));
 
         } catch (ExpiredJwtException e) {
             log.error("Access Token 만료");
             log.info("request.getRequestURI() : {}", request.getRequestURI());
             log.info("request.getRequestURL() : {}", request.getRequestURL());
 
-            TokenEntity tokenEntity = tokenService.findByAccessToken(accessToken);
-
-            String refreshToken = tokenEntity.getRefreshToken();
-
+            // access Token 만료된 경우 -> refresh Token 검증
             if (jwtUtils.isExpired(refreshToken)) {
                 // refresh Token 만료된 경우
                 log.error("Refresh Token 만료");
@@ -145,8 +143,6 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
             // refresh Token 유효한 경우 -> access Token / refresh Token 재발급
-            Long userId = Long.valueOf(tokenEntity.getId());
-            log.info("userId : {}", userId);
             String email = jwtUtils.getEmail(refreshToken);
             log.info("email : {}", email);
             String newAccessToken = jwtUtils.createAccessToken(email);
@@ -154,20 +150,24 @@ public class JwtFilter extends OncePerRequestFilter {
             String newRefreshToken = jwtUtils.createRefreshToken(email);
             log.info("newRefreshToken : {}", newRefreshToken);
 
+            // Redis에 재발급된 refresh Token 저장
+            redisDao.setValues("RT:" + email, newRefreshToken, refreshTokenMaxAge, TimeUnit.SECONDS);
+
             userEntity =
                 userRepository.findByEmail(email)
                               .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND, "유저 정보를 찾을 수 없습니다."));
 
-            // 발급된 accessToken을 Redis 에 저장
-            tokenService.saveToken(userId, newRefreshToken, newAccessToken);
+            // 발급된 accessToken을 response cookie 에 저장
+//            CookieUtils.addAccessTokenAtCookie(response, newAccessToken);
 
             // 발급된 accessToken을 response header 에 저장
-            HeaderUtils.addAccessTokenHeader(response, newAccessToken);
+            HeaderUtils.addAccessTokenAtHeader(response, newAccessToken);
             // 발급된 refreshToken을 response cookie 에 저장
             CookieUtils.addRefreshTokenAtCookie(response, newRefreshToken);
         }
 
-        // 유효성 검증 통과
+        // 유효성 검증 통과한 경우
+        log.info("유효성 검증 통과! \n SecurityContextHolder 에 Authentication 객체를 저장합니다!");
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(userEntity.getEmail(),
                                                     null,
