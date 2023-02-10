@@ -14,11 +14,11 @@ spring:
             client-id:
             client-secret:
             client-name: Naver
-            client-authentication-method: POST
+#            client-authentication-method: POST
             scope:
               - name
               - email
-            redirect-uri: http://localhost:8080/login/oauth2/code/naver
+            redirect-uri: "{baseUrl}/{action}/oauth2/code/{registrationId}"
             authorization-grant-type: authorization_code
         provider:
           naver:

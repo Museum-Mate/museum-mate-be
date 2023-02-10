@@ -42,8 +42,8 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
 
     // Swagger (springdoc)
-    implementation 'org.springdoc:springdoc-openapi-starter-common:2.0.2'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // Jwt
     implementation 'io.jsonwebtoken:jjwt-root:0.11.5'
