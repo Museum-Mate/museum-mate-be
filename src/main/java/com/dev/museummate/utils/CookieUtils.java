@@ -32,9 +32,14 @@ public class CookieUtils {
         return Optional.empty();
     }
 
-    public static Optional<Cookie> extractRefreshToken(HttpServletRequest request) {
+    public static Optional<String> extractAccessToken(HttpServletRequest request) {
 
-        return getCookie(request, REFRESH_TOKEN_HEADER);
+        return getCookie(request, ACCESS_TOKEN_HEADER).map(Cookie::getValue);
+    }
+
+    public static Optional<String> extractRefreshToken(HttpServletRequest request) {
+
+        return getCookie(request, REFRESH_TOKEN_HEADER).map(Cookie::getValue);
     }
 
     public static void addCookie(HttpServletResponse response, String key, String value, int maxAge) {
@@ -55,7 +60,7 @@ public class CookieUtils {
     public static void addAccessTokenAtCookie(HttpServletResponse response, String value) {
         ResponseCookie cookie = ResponseCookie.from(ACCESS_TOKEN_HEADER, value)
                                               .httpOnly(false)
-                                              .secure(true)
+                                              .secure(false)
                                               .sameSite("Lax")
                                               .path("/")
                                               .maxAge(ACCESS_TOKEN_MAX_AGE)
@@ -70,7 +75,7 @@ public class CookieUtils {
         // Set-Cookie {KEY}={Value}; Path=/; Secure; HttpOnly; Expires=Sat, 11 Feb 2023 05:24:17 GMT;
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_HEADER, value)
                                               .httpOnly(true)
-                                              .secure(true)
+                                              .secure(false)
                                               .sameSite("Lax")
                                               .path("/")
                                               .maxAge(REFRESH_TOKEN_MAX_AGE)

@@ -49,9 +49,9 @@ public class UserController {
         String refreshToken = userLoginResponse.getRefreshToken();
 
         if (userLoginResponse.getRefreshToken() != null) {
-            log.info("헤더에 저장된 AccessToken :");
+            log.info("쿠키에 저장된 AccessToken :");
             log.info("Authorization = {};", accessToken);
-            HeaderUtils.addAccessTokenAtHeader(response, accessToken);
+            CookieUtils.addAccessTokenAtCookie(response, accessToken);
         }
 
         if (userLoginResponse.getRefreshToken() != null) {

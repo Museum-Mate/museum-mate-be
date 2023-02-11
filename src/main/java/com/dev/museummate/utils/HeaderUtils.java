@@ -11,7 +11,7 @@ public class HeaderUtils {
 
     private final static String BEARER = "Bearer ";
     private final static String ACCESS_TOKEN_HEADER = "Authorization";
-//    private final static String REFRESH_TOKEN_HEADER = "Authorization-refresh";
+    private final static String REFRESH_TOKEN_HEADER = "Authorization-refresh";
 
     public static void addAccessTokenAtHeader(HttpServletResponse response, String token) {
         response.setStatus(HttpServletResponse.SC_OK);

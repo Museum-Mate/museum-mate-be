@@ -6,6 +6,7 @@ import com.dev.museummate.utils.CookieUtils;
 import com.dev.museummate.utils.HeaderUtils;
 import com.dev.museummate.utils.JwtUtils;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -58,8 +59,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             log.info("accessToken: {}", accessToken);
             log.info("refreshToken: {}", refreshToken);
 
-            // 헤더, 쿠키에 토큰 저장
-            HeaderUtils.addAccessTokenAtHeader(response, accessToken);
+            // 쿠키에 토큰 저장
+            CookieUtils.addAccessTokenAtCookie(response, accessToken);
             CookieUtils.addRefreshTokenAtCookie(response, refreshToken);
 
             response.sendRedirect(getDefaultTargetUrl());
@@ -75,8 +76,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             log.info("accessToken: {}", accessToken);
             log.info("refreshToken: {}", refreshToken);
 
-            // 헤더, 쿠키에 토큰 저장
-            HeaderUtils.addAccessTokenAtHeader(response, accessToken);
+            // 쿠키에 토큰 저장
+            CookieUtils.addAccessTokenAtCookie(response, accessToken);
             CookieUtils.addRefreshTokenAtCookie(response, refreshToken);
 
             // 추가정보 기입을 위해서 회원가입 페이지로 리다이렉트

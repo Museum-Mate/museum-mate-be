@@ -1,15 +1,12 @@
 package com.dev.museummate.security;
 
 import com.dev.museummate.configuration.redis.RedisDao;
-import com.dev.museummate.configuration.redis.service.TokenService;
 import com.dev.museummate.repository.UserRepository;
 import com.dev.museummate.security.oauth2.CustomOAuth2UserService;
 import com.dev.museummate.security.oauth2.OAuth2FailureHandler;
 import com.dev.museummate.security.oauth2.OAuth2SuccessHandler;
 import com.dev.museummate.utils.JwtUtils;
-import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -18,9 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 @Configuration
@@ -41,12 +35,11 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/v1/users/join","/api/v1/users/login","/api/v1/users/check","/api/v1/users/sendMail").permitAll()
-                        .requestMatchers(HttpMethod.POST, "api/v1/reviews/**").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/v1/example/security").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/v1/example/security/admin").hasRole("ADMIN")
                         .requestMatchers("/api/v1/users/reissue","/api/v1/users/logout","/api/v1/users/modify","/api/v1/users/delete").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/v1/my/calendars","/api/v1/my/**").authenticated()
-                        .requestMatchers(HttpMethod.POST,"/api/v1/reviews/**").authenticated() // 추가
+                        .requestMatchers(HttpMethod.POST,"/api/v1/reviews/**", "/api/v1/exhibitions/**").authenticated() // 추가
                         .requestMatchers("/api/v1/gatherings/**").authenticated()
                         .anyRequest().permitAll()   //고정
                 )

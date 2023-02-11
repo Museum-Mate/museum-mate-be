@@ -41,8 +41,8 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final String LOGIN = "/login";
     private final String LOGIN_URI = "/api/v1/users/login";
-//    private final String GOOGLE_LOGIN_URI = "/oauth2/authorization/code/google";
-//    private final String NAVER_LOGIN_URI = "/oauth2/authorization/code/naver";
+    private final String GOOGLE_LOGIN_URI = "/oauth2/authorization/code/google";
+    private final String NAVER_LOGIN_URI = "/oauth2/authorization/code/naver";
     private final String JOIN_URI = "/join";
     private final String SOCIAL_JOIN = "/join/social";
 
@@ -76,43 +76,51 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // Login 요청일 때 토큰 검증을 하지 않는다.
         if (request.getRequestURI().equals(LOGIN_URI)
-            || request.getRequestURI().equals(LOGIN)
-            || request.getRequestURI().equals(JOIN_URI)
-            || request.getRequestURI().equals(SOCIAL_JOIN)) {
-            log.info("로그인 및 회원가입 요청입니다.");
+            || request.getRequestURI().equals(LOGIN)) {
+            log.info("로그인 요청입니다.");
             filterChain.doFilter(request, response);
             return; // 필터가 더 이상 진행되지 않도록 리턴
         }
 
-//        if (request.getRequestURI().equals(GOOGLE_LOGIN_URI)
-//            || request.getRequestURI().equals(NAVER_LOGIN_URI)) {
-//            log.info("소셜 로그인 요청입니다.");
-//            log.info("request.getRequestURI() : {}", request.getRequestURI());
-//            log.info("request.getRequestURL() : {}", request.getRequestURL());
-//            filterChain.doFilter(request, response);
-//            return; // 필터가 더 이상 진행되지 않도록 리턴
-//        }
+        if (request.getRequestURI().equals(JOIN_URI)
+            || request.getRequestURI().equals(SOCIAL_JOIN)) {
+            log.info("회원가입 요청입니다.");
+            filterChain.doFilter(request, response);
+            return; // 필터가 더 이상 진행되지 않도록 리턴
+        }
 
-//        Optional<Cookie> AccessTokenAtCookie = CookieUtils.getCookie(request, "Authorization");
-//        Optional<Cookie> RefreshTokenAtCookie = CookieUtils.getCookie(request, "Authorization-refreshToken");
+        if (request.getRequestURI().equals(GOOGLE_LOGIN_URI)
+            || request.getRequestURI().equals(NAVER_LOGIN_URI)) {
 
-        Optional<String> accessTokenAtHeader = HeaderUtils.extractAccessToken(request);
-        Optional<Cookie> refreshTokenAtCookie = CookieUtils.extractRefreshToken(request);
+            if (request.getRequestURI().equals(GOOGLE_LOGIN_URI)) {
+                log.info("구글 로그인 요청입니다.");
+            } else if (request.getRequestURI().equals(NAVER_LOGIN_URI)) {
+                log.info("네이버 로그인 요청입니다.");
+            }
+            log.info("request.getRequestURI() : {}", request.getRequestURI());
+            log.info("request.getRequestURL() : {}", request.getRequestURL());
+            filterChain.doFilter(request, response);
+            return; // 필터가 더 이상 진행되지 않도록 리턴
+        }
 
-        // 헤더에 토큰이 없고, 쿠키에 토큰이 없을 때
-        if (accessTokenAtHeader.isEmpty() && refreshTokenAtCookie.isEmpty()) {
+
+        Optional<String> accessTokenAtCookie = CookieUtils.extractAccessToken(request);
+        Optional<String> refreshTokenAtCookie = CookieUtils.extractRefreshToken(request);
+
+        // 쿠키에 토큰이 없을 때
+        if (accessTokenAtCookie.isEmpty() && refreshTokenAtCookie.isEmpty()) {
             log.error("모든 토큰이 없습니다.");
             log.info("request.getRequestURI() : {}", request.getRequestURI());
-            log.info("[AccessTokenAtCookie] : {}", accessTokenAtHeader);
+            log.info("[AccessTokenAtCookie] : {}", accessTokenAtCookie);
             log.info("[RefreshTokenAtCookie] : {}", refreshTokenAtCookie);
             filterChain.doFilter(request, response);
             return; // 필터가 더 이상 진행되지 않도록 리턴
         }
 
-        String accessToken = String.valueOf(accessTokenAtHeader.get());
-        String refreshToken = String.valueOf(refreshTokenAtCookie.get());
+        String accessToken = accessTokenAtCookie.get();
+//        String  refreshToken = refreshTokenAtCookie.get().getValue();
         log.info("accessToken : {}", accessToken);
-        log.info("refreshToken : {}", refreshToken);
+//        log.info("refreshToken : {}", refreshToken);
 
         UserEntity userEntity;
         try {
@@ -129,10 +137,21 @@ public class JwtFilter extends OncePerRequestFilter {
                 userRepository.findByEmail(email)
                               .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND));
 
-        } catch (ExpiredJwtException e) {
+        } catch (Exception e) {
             log.error("Access Token 만료");
             log.info("request.getRequestURI() : {}", request.getRequestURI());
             log.info("request.getRequestURL() : {}", request.getRequestURL());
+
+            // refresh Token 존재 여부 확인
+            if (refreshTokenAtCookie.isEmpty()) {
+                log.error("Refresh Token이 없습니다.");
+                log.info("request.getRequestURI() : {}", request.getRequestURI());
+                log.info("request.getRequestURL() : {}", request.getRequestURL());
+                throw new JwtException ("Refresh Token이 없습니다.");
+            }
+
+            String  refreshToken = refreshTokenAtCookie.get();
+            log.info("refreshToken : {}", refreshToken);
 
             // access Token 만료된 경우 -> refresh Token 검증
             if (jwtUtils.isExpired(refreshToken)) {
@@ -143,7 +162,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
             // refresh Token 유효한 경우 -> access Token / refresh Token 재발급
-            String email = jwtUtils.getEmail(refreshToken);
+            String email = jwtUtils.getEmail(accessToken);
             log.info("email : {}", email);
             String newAccessToken = jwtUtils.createAccessToken(email);
             log.info("newAccessToken : {}", newAccessToken);
@@ -158,10 +177,7 @@ public class JwtFilter extends OncePerRequestFilter {
                               .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND, "유저 정보를 찾을 수 없습니다."));
 
             // 발급된 accessToken을 response cookie 에 저장
-//            CookieUtils.addAccessTokenAtCookie(response, newAccessToken);
-
-            // 발급된 accessToken을 response header 에 저장
-            HeaderUtils.addAccessTokenAtHeader(response, newAccessToken);
+            CookieUtils.addAccessTokenAtCookie(response, newAccessToken);
             // 발급된 refreshToken을 response cookie 에 저장
             CookieUtils.addRefreshTokenAtCookie(response, newRefreshToken);
         }
