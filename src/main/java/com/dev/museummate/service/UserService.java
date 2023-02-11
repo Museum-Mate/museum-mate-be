@@ -25,7 +25,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder encoder;
     private final RedisDao redisDao;
-    private final TokenService tokenService;
     private final JwtUtils jwtUtils;
 
     @Value("${jwt.secret}")

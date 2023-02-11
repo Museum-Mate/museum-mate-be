@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class RedisDao {
@@ -15,26 +16,31 @@ public class RedisDao {
         this.redisTemplate = redisTemplate;
     }
 
+    @Transactional
     public void setValues(String key, String value) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         values.set(key, value);
     }
 
+    @Transactional
     public void setValues(String key, String value, Duration duration) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         values.set(key, value, duration);
     }
 
+    @Transactional
     public void setValues(String key, String value, long timeout, TimeUnit unit) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         values.set(key, value, timeout, unit);
     }
 
+    @Transactional
     public String getValues(String key) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         return values.get(key);
     }
 
+    @Transactional
     public void deleteValues(String key) {
         redisTemplate.delete(key);
     }

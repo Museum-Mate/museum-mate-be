@@ -60,7 +60,7 @@ public class CookieUtils {
     public static void addAccessTokenAtCookie(HttpServletResponse response, String value) {
         ResponseCookie cookie = ResponseCookie.from(ACCESS_TOKEN_HEADER, value)
                                               .httpOnly(false)
-                                              .secure(false)
+                                              .secure(true)
                                               .sameSite("Lax")
                                               .path("/")
                                               .maxAge(ACCESS_TOKEN_MAX_AGE)
@@ -72,10 +72,9 @@ public class CookieUtils {
     }
 
     public static void addRefreshTokenAtCookie(HttpServletResponse response, String value) {
-        // Set-Cookie {KEY}={Value}; Path=/; Secure; HttpOnly; Expires=Sat, 11 Feb 2023 05:24:17 GMT;
         ResponseCookie cookie = ResponseCookie.from(REFRESH_TOKEN_HEADER, value)
                                               .httpOnly(true)
-                                              .secure(false)
+                                              .secure(true)
                                               .sameSite("Lax")
                                               .path("/")
                                               .maxAge(REFRESH_TOKEN_MAX_AGE)
