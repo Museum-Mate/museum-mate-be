@@ -141,12 +141,15 @@ public class UserService {
     @Transactional
     public String modifyUser(UserModifyRequest userModifyRequest, String email) {
 
-        userRepository.findByUserName(userModifyRequest.getUserName())
-                .ifPresent(user ->{
-                    throw new AppException(ErrorCode.DUPLICATE_USERNAME,String.format("%s는 중복 된 닉네임입니다.",userModifyRequest.getUserName()));
-                });
-
         UserEntity findUser = findUserByEmail(email);
+
+        if(!findUser.getUserName().equals(userModifyRequest.getUserName())) {
+            userRepository.findByUserName(userModifyRequest.getUserName())
+                          .ifPresent(user -> {
+                              throw new AppException(ErrorCode.DUPLICATE_USERNAME,
+                                                     String.format("%s는 중복 된 닉네임입니다.", userModifyRequest.getUserName()));
+                          });
+        }
 
         findUser.updateInfo(userModifyRequest);
 
