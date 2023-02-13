@@ -81,11 +81,9 @@ public class ReviewService {
             throw new AppException(ErrorCode.INVALID_PERMISSION, ""); // 리뷰 작성자 일치 여부 and 삭제자 권한 ADMIN 여부 검증
         }
 
-        reviewRepository.delete(reviewEntity); //검증 통과 시 삭제
+        reviewRepository.delete(reviewEntity); // 검증 통과 시 softDelete
 
-        ReviewDto deletedReview = ReviewDto.builder() // 삭제 완료한 리뷰 번호로 DTO 생성하여 컨트롤러 레이어로 반환
-            .id(reviewId)
-            .build();
+        ReviewDto deletedReview = ReviewDto.toDto(reviewEntity);
 
         return deletedReview;
     }

@@ -15,7 +15,7 @@ import org.hibernate.annotations.Where;
 @Table(name = "review")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE review SET is_deleted = TRUE WHERE id = ?")
+@SQLDelete(sql = "UPDATE review SET is_deleted = TRUE, deleted_at = now() WHERE id = ?")
 @Where(clause = "is_deleted = FALSE") // NOT to select deleted review
 public class ReviewEntity extends BaseEntity{
     @Id
