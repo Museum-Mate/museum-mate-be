@@ -17,14 +17,10 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE user SET deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at is NULL")
-public class UserEntity extends BaseTimeEntity{
+public class UserEntity extends BaseTimeEntity {
 
     /**
-     * id : idx
-     * email : 유저 이메일
-     * userName : 유저 닉네임
-     * name : 유저 실명
-     * auth : 이메일 인증 상태 false = 인증 안됨 true = 인증 됨
+     * id : idx email : 유저 이메일 userName : 유저 닉네임 name : 유저 실명 auth : 이메일 인증 상태 false = 인증 안됨 true = 인증 됨
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,11 +43,16 @@ public class UserEntity extends BaseTimeEntity{
     private String address;
     @Enumerated(EnumType.STRING)
     private UserRole role;
-    private Boolean auth;
-    private String authNum;
+    private Boolean auth = false;
+    private java.lang.String authNum = "1234";
+    private String providerId;
+    private String providerType = "general";
+
 
     @Builder
-    public UserEntity(Long id, String email, String password, String name, String userName, String birth, String phoneNumber, String address, UserRole role) {
+    public UserEntity(Long id, String email, String password, String name,
+                      String userName, String birth, String phoneNumber, String address,
+                      UserRole role, Boolean auth, String authNum, String providerId, String providerType) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -61,9 +62,12 @@ public class UserEntity extends BaseTimeEntity{
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.role = role;
-        this.auth = false;
-        this.authNum = "1234";
+        this.auth = auth;
+        this.authNum = authNum;
+        this.providerId = providerId;
+        this.providerType = providerType;
     }
+
 
     public void updateInfo(UserModifyRequest userModifyRequest) {
         if (userModifyRequest.getUserName().length() > 0) {
@@ -76,6 +80,7 @@ public class UserEntity extends BaseTimeEntity{
             this.address = userModifyRequest.getAddress();
         }
     }
+
     public void updateAuthNum(String authNum) {
         this.authNum = authNum;
     }

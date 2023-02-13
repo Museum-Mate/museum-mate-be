@@ -4,6 +4,7 @@ import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.dto.exhibition.BookmarkAddResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionEditRequest;
+import com.dev.museummate.domain.dto.exhibition.ExhibitionResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionWriteRequest;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
@@ -55,16 +56,46 @@ class ExhibitionControllerTest {
 
     @BeforeEach
     void set() {
-        exhibitionDto1 = new ExhibitionDto(1l, "이집트미라전", "09:00", "18:00", "18000", "8세", "none",
-            "서울", "testgallery",
-            new UserEntity(1l, "www@www.com", "1234", "moon", "112233", "010-0000-0000", "서울시", "서울시",UserRole.ROLE_USER),
-            "20%", "80%", "20%", "20%", "20%", "20%", "20%",
-            "www", "www", "www");
+        UserEntity user1 = UserEntity.builder()
+                                     .id(1L)
+                                     .email("test@test.com")
+                                     .password("test")
+                                     .name("김재근")
+                                     .userName("geun")
+                                     .birth("961210")
+                                     .phoneNumber("010-9864-1772")
+                                     .address("서울시 송파구")
+                                     .role(UserRole.ROLE_USER)
+                                     .build();
+
+        exhibitionDto1 = ExhibitionDto.builder()
+                                      .id(1L)
+                                      .name("이집트미라전")
+                                      .startAt("2022-12-01")
+                                      .endAt("2022-12-31")
+                                      .price("10000")
+                                      .user(user1)
+                                      .ageLimit("10")
+                                      .statMale("")
+                                      .statFemale("")
+                                      .statAge10("")
+                                      .statAge20("")
+                                      .statAge30("")
+                                      .statAge40("")
+                                      .statAge50("")
+                                      .detailInfo("test")
+                                      .galleryLocation("test")
+                                      .galleryName("test")
+                                      .detailInfoImgUrl("")
+                                      .mainImgUrl("")
+                                      .noticeImgUrl("")
+                                      .build();
     }
 
     @Nested
     @DisplayName("전시 상세 조회")
     class GetExhibition {
+
         @Test
         @WithMockUser
         @DisplayName("전시 상세 조회 성공")
@@ -72,31 +103,31 @@ class ExhibitionControllerTest {
             Long exhibitionId = 1L;
 
             ExhibitionDto exhibitionDto =
-                    ExhibitionDto.builder()
-                            .id(exhibitionId)
-                            .name("test")
-                            .startAt("2022-12-01")
-                            .endAt("2022-12-31")
-                            .price("10000")
-                            .ageLimit("10")
-                            .detailInfo("test")
-                            .galleryLocation("test")
-                            .galleryName("test")
-                            .build();
+                ExhibitionDto.builder()
+                             .id(exhibitionId)
+                             .name("test")
+                             .startAt("2022-12-01")
+                             .endAt("2022-12-31")
+                             .price("10000")
+                             .ageLimit("10")
+                             .detailInfo("test")
+                             .galleryLocation("test")
+                             .galleryName("test")
+                             .build();
 
             given(exhibitionService.getOne(exhibitionId)).willReturn(exhibitionDto);
 
             mockMvc.perform(get("/api/v1/exhibitions/" + exhibitionId)
-                            .with(csrf()))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
-                    .andExpect(jsonPath("$.result.name").exists())
-                    .andExpect(jsonPath("$.result.startAt").exists())
-                    .andExpect(jsonPath("$.result.endAt").exists())
-                    .andExpect(jsonPath("$.result.price").exists())
-                    .andExpect(jsonPath("$.result.ageLimit").exists())
-                    .andExpect(jsonPath("$.result.detailInfo").exists())
-                    .andDo(print());
+                                .with(csrf()))
+                   .andExpect(status().isOk())
+                   .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+                   .andExpect(jsonPath("$.result.name").exists())
+                   .andExpect(jsonPath("$.result.startAt").exists())
+                   .andExpect(jsonPath("$.result.endAt").exists())
+                   .andExpect(jsonPath("$.result.price").exists())
+                   .andExpect(jsonPath("$.result.ageLimit").exists())
+                   .andExpect(jsonPath("$.result.detailInfo").exists())
+                   .andDo(print());
         }
 
         @Test
@@ -106,32 +137,32 @@ class ExhibitionControllerTest {
 
             Long notExistExhibitionId = 1L;
             given(exhibitionService.getOne(anyLong())).willThrow(
-                    new AppException(ErrorCode.EXHIBITION_NOT_FOUND,"")
-            );
+                new AppException(ErrorCode.EXHIBITION_NOT_FOUND, "")
+                                                                );
 
             mockMvc.perform(get("/api/v1/exhibitions/" + notExistExhibitionId)
-                            .with(csrf()))
-                    .andExpect(status().isNotFound())
-                    .andDo(print());
+                                .with(csrf()))
+                   .andExpect(status().isNotFound())
+                   .andDo(print());
         }
     }
 
     @Test
     @DisplayName("전시회 전체 리스트 조회 성공")
     @WithMockUser
-    void exhibitionList_success () throws Exception {
+    void exhibitionList_success() throws Exception {
 //        500error
 //        ExhibitionDto exhibitionDto = ExhibitionDto.builder().name("test").build();
 //        Page<ExhibitionDto> exhibitionDtoPage = new PageImpl<>(List.of(exhibitionDto));
         given(exhibitionService.findAllExhibitions(any())).willReturn(Page.empty());
 
         mockMvc.perform(get("/api/v1/exhibitions").with(csrf()).contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(Page.empty())))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
-                .andExpect(jsonPath("$.result.content").exists())
-                .andExpect(jsonPath("$.result.pageable").exists())
-                .andDo(print());
+                                                  .content(objectMapper.writeValueAsBytes(Page.empty())))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+               .andExpect(jsonPath("$.result.content").exists())
+               .andExpect(jsonPath("$.result.pageable").exists())
+               .andDo(print());
     }
 
     @Test
@@ -139,7 +170,17 @@ class ExhibitionControllerTest {
     @WithMockUser
     void writeSuccess() throws Exception {
 
-        UserEntity user = new UserEntity(1L, "test", "test", "test", "test", "test", "test", "test", UserRole.ROLE_USER);
+        UserEntity user1 = UserEntity.builder()
+                                     .id(1L)
+                                     .email("test@test.com")
+                                     .password("test")
+                                     .name("김재근")
+                                     .userName("geun")
+                                     .birth("961210")
+                                     .phoneNumber("010-9864-1772")
+                                     .address("서울시 송파구")
+                                     .role(UserRole.ROLE_USER)
+                                     .build();
 
         ExhibitionWriteRequest exhibitionWriteRequest = ExhibitionWriteRequest.builder()
                                                                               .name("test")
@@ -152,9 +193,8 @@ class ExhibitionControllerTest {
                                                                               .galleryName("test")
                                                                               .mainImgUrl("test")
                                                                               .noticeImgUrl("test")
-                                                                              .detailImgUrl("test")
+                                                                              .detailInfoImgUrl("test")
                                                                               .build();
-
 
         ExhibitionDto exhibitionDto = ExhibitionDto.builder()
                                                    .id(1L)
@@ -166,7 +206,7 @@ class ExhibitionControllerTest {
                                                    .detailInfo("test")
                                                    .galleryLocation("test")
                                                    .galleryName("test")
-                                                   .user(user)
+                                                   .user(user1)
                                                    .statMale("test")
                                                    .statFemale("test")
                                                    .statAge10("test")
@@ -176,30 +216,30 @@ class ExhibitionControllerTest {
                                                    .statAge50("test")
                                                    .mainImgUrl("test")
                                                    .noticeImgUrl("test")
-                                                   .detailImgUrl("test")
+                                                   .detailInfoImgUrl("test")
                                                    .build();
 
         given(exhibitionService.write(any(), anyString())).willReturn(exhibitionDto);
 
         mockMvc.perform(post("/api/v1/exhibitions/new")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(exhibitionWriteRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.name").exists())
-                .andExpect(jsonPath("$.result.startAt").exists())
-                .andExpect(jsonPath("$.result.endAt").exists())
-                .andExpect(jsonPath("$.result.price").exists())
-                .andExpect(jsonPath("$.result.ageLimit").exists())
-                .andExpect(jsonPath("$.result.detailInfo").exists())
-                .andExpect(jsonPath("$.result.statMale").exists())
-                .andExpect(jsonPath("$.result.statFemale").exists())
-                .andExpect(jsonPath("$.result.statAge10").exists())
-                .andExpect(jsonPath("$.result.statAge20").exists())
-                .andExpect(jsonPath("$.result.statAge30").exists())
-                .andExpect(jsonPath("$.result.statAge40").exists())
-                .andExpect(jsonPath("$.result.statAge50").exists())
-                .andDo(print());
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(exhibitionWriteRequest)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.result.name").exists())
+               .andExpect(jsonPath("$.result.startAt").exists())
+               .andExpect(jsonPath("$.result.endAt").exists())
+               .andExpect(jsonPath("$.result.price").exists())
+               .andExpect(jsonPath("$.result.ageLimit").exists())
+               .andExpect(jsonPath("$.result.detailInfo").exists())
+               .andExpect(jsonPath("$.result.statMale").exists())
+               .andExpect(jsonPath("$.result.statFemale").exists())
+               .andExpect(jsonPath("$.result.statAge10").exists())
+               .andExpect(jsonPath("$.result.statAge20").exists())
+               .andExpect(jsonPath("$.result.statAge30").exists())
+               .andExpect(jsonPath("$.result.statAge40").exists())
+               .andExpect(jsonPath("$.result.statAge50").exists())
+               .andDo(print());
     }
 
     @Test
@@ -217,17 +257,17 @@ class ExhibitionControllerTest {
                                                                               .galleryName("test")
                                                                               .mainImgUrl("test")
                                                                               .noticeImgUrl("test")
-                                                                              .detailImgUrl("test")
+                                                                              .detailInfoImgUrl("test")
                                                                               .build();
 
         given(exhibitionService.write(any(), anyString())).willThrow(new AppException(ErrorCode.INVALID_TOKEN, ""));
 
         mockMvc.perform(post("/api/v1/exhibitions/new")
-                        .with(csrf())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(exhibitionWriteRequest)))
-                .andExpect(status().isUnauthorized())
-                .andDo(print());
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(exhibitionWriteRequest)))
+               .andExpect(status().is3xxRedirection()) // 인증 실패로 인해서 Spring Security에서 리다이렉트 -> 302
+               .andDo(print());
 
     }
 
@@ -235,12 +275,12 @@ class ExhibitionControllerTest {
     @DisplayName("북마크 추가 성공")
     @WithMockUser
     void addToBookmarkSuccess() throws Exception {
-        when(exhibitionService.addToBookmark(anyLong(), anyString())).thenReturn(new BookmarkAddResponse("",1l));
+        when(exhibitionService.addToBookmark(anyLong(), anyString())).thenReturn(new BookmarkAddResponse("", 1l));
         mockMvc.perform(post("/api/v1/exhibitions/1/bookmarks")
-                        .with(csrf()))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.message").exists());
+                            .with(csrf()))
+               .andDo(print())
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.result.message").exists());
     }
 
     @Test
@@ -249,20 +289,20 @@ class ExhibitionControllerTest {
     void addToBookmarkFailure1() throws Exception {
         when(exhibitionService.addToBookmark(anyLong(), anyString())).thenThrow(new AppException(ErrorCode.NOT_FOUND_POST, ""));
         mockMvc.perform(post("/api/v1/exhibitions/1/bookmarks")
-                        .with(csrf()))
-                .andExpect(status().isNotFound())
-                .andDo(print());
+                            .with(csrf()))
+               .andExpect(status().isNotFound())
+               .andDo(print());
     }
 
     @Test
     @DisplayName("북마크 추가 실패 - 로그인 되지 않은 경우")
     @WithAnonymousUser
     void addToBookmarkFailure2() throws Exception {
-        when(exhibitionService.addToBookmark(anyLong(), anyString())).thenReturn(new BookmarkAddResponse("",1l));
+        when(exhibitionService.addToBookmark(anyLong(), anyString())).thenReturn(new BookmarkAddResponse("", 1l));
         mockMvc.perform(post("/api/v1/exhibitions/1/bookmarks")
-                        .with(csrf()))
-                .andExpect(status().isUnauthorized())
-                .andDo(print());
+                            .with(csrf()))
+               .andExpect(status().is3xxRedirection()) // 인증 실패로 인해서 Spring Security에서 리다이렉트 -> 302
+               .andDo(print());
     }
 
     @Test
@@ -271,51 +311,62 @@ class ExhibitionControllerTest {
     public void edit_success() throws Exception {
 
         UserEntity user = UserEntity.builder()
-            .id(1l).email("www@www.com").password("1234").userName("moon")
-            .birth("112233").phoneNumber("010-0000-0000").address("서울시").role(UserRole.ROLE_USER)
-            .build();
+                                    .id(1L)
+                                    .email("test@test.com")
+                                    .password("test")
+                                    .name("김재근")
+                                    .userName("geun")
+                                    .birth("961210")
+                                    .phoneNumber("010-9864-1772")
+                                    .address("서울시 송파구")
+                                    .role(UserRole.ROLE_USER)
+                                    .build();
 
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
-            .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
-            .galleryLocation("서울").galleryName("test").user(user).statMale("20%").statFemale("80%").mainImgUrl("www")
-            .noticeImgUrl("www").detailImgUrl("www")
-            .build();
+                                                                           .id(1l)
+                                                                           .name("이집트미라전")
+                                                                           .startAt("09:00")
+                                                                           .endAt("18:00")
+                                                                           .price("18000")
+                                                                           .ageLimit("8세")
+                                                                           .detailInfo("none")
+                                                                           .galleryLocation("서울")
+                                                                           .galleryName("test")
+                                                                           .user(user)
+                                                                           .statMale("20%")
+                                                                           .statFemale("80%")
+                                                                           .mainImgUrl("test")
+                                                                           .noticeImgUrl("test")
+                                                                           .detailInfoImgUrl("test")
+                                                                           .build();
 
         given(exhibitionService.edit(any(), any(), any())).willReturn(exhibitionDto1);
 
-        mockMvc.perform(put("/api/v1/exhibitions/1/edit")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
-            .andExpect(jsonPath("$.result.id").exists())
-            .andExpect(jsonPath("$.result.name").exists())
-            .andExpect(jsonPath("$.result.startAt").exists())
-            .andExpect(jsonPath("$.result.endAt").exists())
-            .andExpect(jsonPath("$.result.price").exists())
-            .andExpect(jsonPath("$.result.ageLimit").exists())
-            .andExpect(jsonPath("$.result.detailInfo").exists())
-            .andExpect(jsonPath("$.result.galleryName").exists())
-            .andExpect(jsonPath("$.result.user.id").exists())
-            .andExpect(jsonPath("$.result.user.email").exists())
-            .andExpect(jsonPath("$.result.user.password").exists())
-            .andExpect(jsonPath("$.result.user.userName").exists())
-            .andExpect(jsonPath("$.result.user.birth").exists())
-            .andExpect(jsonPath("$.result.user.phoneNumber").exists())
-            .andExpect(jsonPath("$.result.user.address").exists())
-            .andExpect(jsonPath("$.result.user.role").exists())
-            .andExpect(jsonPath("$.result.statMale").exists())
-            .andExpect(jsonPath("$.result.statFemale").exists())
-            .andExpect(jsonPath("$.result.statAge10").exists())
-            .andExpect(jsonPath("$.result.statAge20").exists())
-            .andExpect(jsonPath("$.result.statAge30").exists())
-            .andExpect(jsonPath("$.result.statAge40").exists())
-            .andExpect(jsonPath("$.result.statAge50").exists())
-            .andExpect(jsonPath("$.result.mainImgUrl").exists())
-            .andExpect(jsonPath("$.result.noticeImgUrl").exists())
-            .andExpect(jsonPath("$.result.detailImgUrl").exists())
-            .andDo(print());
+        mockMvc.perform(put("/api/v1/exhibitions/1")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.resultCode").value("SUCCESS"))
+               .andExpect(jsonPath("$.result.id").exists())
+               .andExpect(jsonPath("$.result.name").exists())
+               .andExpect(jsonPath("$.result.startAt").exists())
+               .andExpect(jsonPath("$.result.endAt").exists())
+               .andExpect(jsonPath("$.result.price").exists())
+               .andExpect(jsonPath("$.result.ageLimit").exists())
+               .andExpect(jsonPath("$.result.detailInfo").exists())
+               .andExpect(jsonPath("$.result.galleryName").exists())
+               .andExpect(jsonPath("$.result.statMale").exists())
+               .andExpect(jsonPath("$.result.statFemale").exists())
+               .andExpect(jsonPath("$.result.statAge10").exists())
+               .andExpect(jsonPath("$.result.statAge20").exists())
+               .andExpect(jsonPath("$.result.statAge30").exists())
+               .andExpect(jsonPath("$.result.statAge40").exists())
+               .andExpect(jsonPath("$.result.statAge50").exists())
+               .andExpect(jsonPath("$.result.mainImgUrl").exists())
+               .andExpect(jsonPath("$.result.noticeImgUrl").exists())
+               .andExpect(jsonPath("$.result.detailInfoImgUrl").exists())
+               .andDo(print());
     }
 
     @Test
@@ -324,24 +375,26 @@ class ExhibitionControllerTest {
     void edit_fail_DB() throws Exception {
 
         UserEntity user = UserEntity.builder()
-            .id(1l).email("www@www.com").password("1234").userName("moon")
-            .birth("112233").phoneNumber("010-0000-0000").address("서울시").role(UserRole.ROLE_USER)
-            .build();
+                                    .id(1l).email("www@www.com").password("1234").userName("moon")
+                                    .birth("112233").phoneNumber("010-0000-0000").address("서울시").role(UserRole.ROLE_USER)
+                                    .build();
 
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
-            .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
-            .galleryLocation("서울").galleryName("test").user(user).statMale("20%").statFemale("80%").mainImgUrl("www")
-            .noticeImgUrl("www").detailImgUrl("www")
-            .build();
+                                                                           .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00")
+                                                                           .price("18000").ageLimit("8세").detailInfo("none")
+                                                                           .galleryLocation("서울").galleryName("test").user(user)
+                                                                           .statMale("20%").statFemale("80%").mainImgUrl("www")
+                                                                           .noticeImgUrl("www").detailInfoImgUrl("www")
+                                                                           .build();
 
         given(exhibitionService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.DATABASE_ERROR, "데이터베이스 에러"));
 
-        mockMvc.perform(put("/api/v1/exhibitions/1/edit")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))
-            .andExpect(status().isInternalServerError())
-            .andDo(print());
+        mockMvc.perform(put("/api/v1/exhibitions/1")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))
+               .andExpect(status().isInternalServerError())
+               .andDo(print());
     }
 
     @Test
@@ -350,23 +403,25 @@ class ExhibitionControllerTest {
     void edit_fail_userName() throws Exception {
 
         UserEntity user = UserEntity.builder()
-            .id(1l).email("www@www.com").password("1234").userName("moon")
-            .birth("112233").phoneNumber("010-0000-0000").address("서울시").role(UserRole.ROLE_USER)
-            .build();
+                                    .id(1l).email("www@www.com").password("1234").userName("moon")
+                                    .birth("112233").phoneNumber("010-0000-0000").address("서울시").role(UserRole.ROLE_USER)
+                                    .build();
 
         ExhibitionEditRequest exhibitionEditRequest = ExhibitionEditRequest.builder()
-            .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00").price("18000").ageLimit("8세").detailInfo("none")
-            .galleryLocation("서울").galleryName("Test").user(user).statMale("20%").statFemale("80%").mainImgUrl("www")
-            .noticeImgUrl("www").detailImgUrl("www")
-            .build();
+                                                                           .id(1l).name("이집트미라전").startAt("09:00").endAt("18:00")
+                                                                           .price("18000").ageLimit("8세").detailInfo("none")
+                                                                           .galleryLocation("서울").galleryName("Test").user(user)
+                                                                           .statMale("20%").statFemale("80%").mainImgUrl("www")
+                                                                           .noticeImgUrl("www").detailInfoImgUrl("www")
+                                                                           .build();
 
         given(exhibitionService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.INVALID_PERMISSION, "작성자와 유저가 일치하지 않습니다."));
 
-        mockMvc.perform(put("/api/v1/exhibitions/1/edit")
-                .with(csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))
-            .andExpect(status().isUnauthorized())
-            .andDo(print());
+        mockMvc.perform(put("/api/v1/exhibitions/1")
+                            .with(csrf())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsBytes(exhibitionEditRequest)))
+               .andExpect(status().isUnauthorized())
+               .andDo(print());
     }
 }

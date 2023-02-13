@@ -23,6 +23,7 @@ public class ExhibitionDto {
     private String galleryLocation;
 
     private String galleryName;
+    private String notice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -37,13 +38,14 @@ public class ExhibitionDto {
     private String statAge50;
     private String mainImgUrl;
     private String noticeImgUrl;
-    private String detailImgUrl;
+    private String detailInfoImgUrl;
+    private String detailInfoUrl;
 
     @Builder
     public ExhibitionDto(Long id, String name, String startAt, String endAt, String price, String ageLimit, String detailInfo,
-                         String galleryLocation, String galleryName, UserEntity user, String statMale, String statFemale, String statAge10,
-                         String statAge20, String statAge30, String statAge40, String statAge50, String mainImgUrl, String noticeImgUrl,
-                         String detailImgUrl) {
+                         String galleryLocation, String galleryName, String notice, UserEntity user, String statMale, String statFemale,
+                         String statAge10, String statAge20, String statAge30, String statAge40, String statAge50, String mainImgUrl,
+                         String noticeImgUrl, String detailInfoImgUrl, String detailInfoUrl) {
         this.id = id;
         this.name = name;
         this.startAt = startAt;
@@ -53,6 +55,7 @@ public class ExhibitionDto {
         this.detailInfo = detailInfo;
         this.galleryLocation = galleryLocation;
         this.galleryName = galleryName;
+        this.notice = notice;
         this.user = user;
         this.statMale = statMale;
         this.statFemale = statFemale;
@@ -63,7 +66,8 @@ public class ExhibitionDto {
         this.statAge50 = statAge50;
         this.mainImgUrl = mainImgUrl;
         this.noticeImgUrl = noticeImgUrl;
-        this.detailImgUrl = detailImgUrl;
+        this.detailInfoImgUrl = detailInfoImgUrl;
+        this.detailInfoUrl = detailInfoUrl;
     }
 
     /**
@@ -81,6 +85,7 @@ public class ExhibitionDto {
                 .detailInfo(exhibitionEntity.getDetailInfo())
                 .galleryLocation(exhibitionEntity.getGalleryLocation())
                 .galleryName(exhibitionEntity.getGalleryName())
+                .notice(exhibitionEntity.getNotice())
                 .user(exhibitionEntity.getUser())
                 .statMale(exhibitionEntity.getStatMale())
                 .statFemale(exhibitionEntity.getStatFemale())
@@ -91,7 +96,8 @@ public class ExhibitionDto {
                 .statAge50(exhibitionEntity.getStatAge_50())
                 .mainImgUrl(exhibitionEntity.getMainImgUrl())
                 .noticeImgUrl(exhibitionEntity.getNoticeImgUrl())
-                .detailImgUrl(exhibitionEntity.getDetailImgUrl())
+                .detailInfoImgUrl(exhibitionEntity.getDetailInfoImgUrl())
+                .detailInfoUrl(exhibitionEntity.getDetailInfoUrl())
                 .build();
     }
 }

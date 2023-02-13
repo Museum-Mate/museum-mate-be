@@ -1,0 +1,13 @@
+# JWT
+jwt:
+  secret: example
+  access:
+    expiration: 10800000 # 3시간 (ms)
+    header: Authorization
+  refresh:
+    expiration: 1209600000 # 2주 (ms)
+    header: Authorization-refresh
+
+# For Cookie, Redis
+access-token-maxage: 10800 # 3시간 (sec)
+refresh-token-maxage: 1209600 # 2주 (sec)

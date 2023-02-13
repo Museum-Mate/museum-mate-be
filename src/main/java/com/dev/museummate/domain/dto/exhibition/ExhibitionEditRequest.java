@@ -9,7 +9,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-@Getter @Builder
+@Getter
+@Builder
 @AllArgsConstructor
 public class ExhibitionEditRequest {
 
@@ -37,30 +38,32 @@ public class ExhibitionEditRequest {
     private String statAge_50;
     private String mainImgUrl;
     private String noticeImgUrl;
-    private String detailImgUrl;
+    private String detailInfoImgUrl;
+    private String detailInfoUrl;
 
     public ExhibitionEntity toEntity(UserEntity user) {
 
         return ExhibitionEntity.builder()
-                .name(this.name)
-                .startAt(this.startAt)
-                .endAt(this.endAt)
-                .price(this.price)
-                .ageLimit(this.ageLimit)
-                .detailInfo(this.detailInfo)
-                .galleryLocation(this.galleryLocation)
-                .galleryName(this.galleryName)
-                .user(user)
-                .statMale(null)
-                .statFemale(null)
-                .statAge_10(null)
-                .statAge_20(null)
-                .statAge_30(null)
-                .statAge_40(null)
-                .statAge_50(null)
-                .mainImgUrl(this.mainImgUrl)
-                .noticeImgUrl(this.noticeImgUrl)
-                .detailImgUrl(this.detailImgUrl)
-                .build();
+                               .name(this.name)
+                               .startAt(this.startAt)
+                               .endAt(this.endAt)
+                               .price(this.price)
+                               .ageLimit(this.ageLimit)
+                               .detailInfo(this.detailInfo)
+                               .galleryLocation(this.galleryLocation)
+                               .galleryName(this.galleryName)
+                               .user(user)
+                               .statMale(null)
+                               .statFemale(null)
+                               .statAge_10(null)
+                               .statAge_20(null)
+                               .statAge_30(null)
+                               .statAge_40(null)
+                               .statAge_50(null)
+                               .mainImgUrl(this.mainImgUrl)
+                               .noticeImgUrl(this.noticeImgUrl)
+                               .detailInfoImgUrl(this.detailInfoImgUrl)
+                               .detailInfoUrl(this.detailInfoUrl)
+                               .build();
     }
 }

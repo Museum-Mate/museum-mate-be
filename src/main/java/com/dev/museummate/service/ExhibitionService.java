@@ -33,6 +33,18 @@ public class ExhibitionService {
         return exhibitionEntities.map(exhibition -> ExhibitionDto.toDto(exhibition));
     }
 
+    public Page<ExhibitionDto> findAllByPrice (Pageable pageable, String price) {
+        if (price.equals("무료")) {
+            Page<ExhibitionEntity> exhibitionEntities = exhibitionRepository.findAllByPrice(pageable, price);
+            return exhibitionEntities.map(exhibition -> ExhibitionDto.toDto(exhibition));
+        }
+
+        String p = "무료";
+
+        Page<ExhibitionEntity> exhibitionEntities = exhibitionRepository.findAllByPriceNot(pageable, p);
+        return exhibitionEntities.map(exhibition -> ExhibitionDto.toDto(exhibition));
+    }
+
     // 전시 상세 조회
     public ExhibitionDto getOne(long exhibitionId) {
         ExhibitionEntity selectedExhibition = exhibitionRepository.findById(exhibitionId)
@@ -105,6 +117,7 @@ public class ExhibitionService {
         ExhibitionEntity exhibitionEntity = getExihibitionById(exhibitionId);
 
         ExhibitionEntity savedExhibition = exhibitionRepository.save(exhibitionEditRequest.toEntity(user));
+
         ExhibitionDto exhibitionDto = ExhibitionDto.toDto(savedExhibition);
 
         return exhibitionDto;

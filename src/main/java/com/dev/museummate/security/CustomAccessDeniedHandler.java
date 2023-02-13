@@ -1,6 +1,6 @@
 package com.dev.museummate.security;
 
-import com.dev.museummate.configuration.Response;
+import com.dev.museummate.domain.dto.Response;
 import com.dev.museummate.domain.dto.ErrorResponse;
 import com.dev.museummate.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;

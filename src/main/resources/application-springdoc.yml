@@ -1,0 +1,15 @@
+# springdoc
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true                   # 기본경로 해제
+    path: /swagger-ui.html                              # swagger-ui.html을 기본 경로로 설정
+    groups-order: DESC                                  # Swagger Grouping 정렬
+    operations-sorter: method                           # method, alpha
+    display-request-duration: true                      # 요청 시간 표시
+
+  api-docs:
+    path: /api-docs                                     # API 문서 경로 (Json 형태)
+  paths-to-match: /api/**                               # Swagger 문서에 표시할 경로
+  show-actuator: true                                   # Actuator API 문서 표시
+  default-produces-media-type: application/json         # 기본 응답 타입
+  default-consumes-media-type: application/json         # 기본 요청 타입
