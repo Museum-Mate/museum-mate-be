@@ -41,10 +41,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.KEY }}
           script: |
-
-
-
-      ## sudo docker rm -f web
-      ## sudo docker pull ${{ secrets.DOCKER_REPO }}/museum-mate-web
-      ## docker-compose -f /home/ubuntu/docker-setting/docker-compose.yaml up -d
-      ## docker image prune -f
+            sudo docker rm -f web
+            sudo docker pull ${{ secrets.DOCKER_REPO }}/museum-mate-web
+            docker-compose -f /home/ubuntu/docker/museum-mate/nginx/compose/docker-compose.yml up -d
+            docker image prune -f
