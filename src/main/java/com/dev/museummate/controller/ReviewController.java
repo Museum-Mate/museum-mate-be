@@ -1,6 +1,6 @@
 package com.dev.museummate.controller;
 
-import com.dev.museummate.configuration.Response;
+import com.dev.museummate.domain.dto.Response;
 import com.dev.museummate.domain.dto.review.DeleteReviewResponse;
 import com.dev.museummate.domain.dto.review.EditReviewRequest;
 import com.dev.museummate.domain.dto.review.EditReviewResponse;
@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;

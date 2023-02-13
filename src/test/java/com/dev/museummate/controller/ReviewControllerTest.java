@@ -160,7 +160,7 @@ class ReviewControllerTest {
                             .with(csrf())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsBytes(writeReviewRequest)))
-               .andExpect(status().isUnauthorized())
+               .andExpect(status().is3xxRedirection()) // 인증 실패로 인해서 Spring Security에서 리다이렉트 -> 302
                .andDo(print());
 
     }

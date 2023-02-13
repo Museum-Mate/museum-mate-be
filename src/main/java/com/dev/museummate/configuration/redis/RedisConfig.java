@@ -21,6 +21,9 @@ public class RedisConfig {
         return new LettuceConnectionFactory(redisHost, redisPort);
     }
 
+    /**
+     * RedisTemplate: java Object를 redis에 저장하는 경우 사용
+     */
     @Bean
     public RedisTemplate<?, ?> redisTemplate(){
         RedisTemplate<?, ?> redisTemplate = new RedisTemplate<>();

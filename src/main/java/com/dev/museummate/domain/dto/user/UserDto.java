@@ -18,9 +18,11 @@ public class UserDto {
     private String phoneNumber;
     private String address;
     private Boolean auth;
+    private String providerType;
 
     @Builder
-    public UserDto(Long id, String email, String password, String name, String userName, String birth, String phoneNumber, String address, Boolean auth) {
+    public UserDto(Long id, String email, String password, String name, String userName, String birth, String phoneNumber, String address,
+                   Boolean auth, String providerType) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -30,6 +32,7 @@ public class UserDto {
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.auth = auth;
+        this.providerType = providerType;
     }
 
     /**
@@ -38,14 +41,15 @@ public class UserDto {
     public static UserDto toDto(UserEntity savedUser) {
 
         return UserDto.builder()
-                .id(savedUser.getId())
-                .email(savedUser.getEmail())
-                .password(savedUser.getPassword())
-                .name(savedUser.getName())
-                .userName(savedUser.getUserName())
-                .birth(savedUser.getBirth())
-                .phoneNumber(savedUser.getPhoneNumber())
-                .auth(savedUser.getAuth())
-                .build();
+                      .id(savedUser.getId())
+                      .email(savedUser.getEmail())
+                      .name(savedUser.getName())
+                      .userName(savedUser.getUserName())
+                      .birth(savedUser.getBirth())
+                      .address(savedUser.getAddress())
+                      .phoneNumber(savedUser.getPhoneNumber())
+                      .auth(savedUser.getAuth())
+                      .providerType(savedUser.getProviderType())
+                      .build();
     }
 }

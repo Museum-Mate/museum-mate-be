@@ -1,10 +1,7 @@
 package com.dev.museummate.security;
 
-import com.dev.museummate.configuration.Response;
-import com.dev.museummate.domain.dto.ErrorResponse;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;

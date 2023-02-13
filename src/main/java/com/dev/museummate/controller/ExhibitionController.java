@@ -1,6 +1,6 @@
 package com.dev.museummate.controller;
 
-import com.dev.museummate.configuration.Response;
+import com.dev.museummate.domain.dto.Response;
 import com.dev.museummate.domain.dto.exhibition.BookmarkAddResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionEditRequest;
@@ -58,7 +58,7 @@ public class ExhibitionController {
     @GetMapping
     public Response<Page<ExhibitionResponse>> findAllExhibitions(
         @PageableDefault(size = 20, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-        @RequestParam("sort") String sort,
+        @RequestParam(value = "sort", required = false) String sort,
         @RequestParam("price") Optional<String> price) {
 
         String p = price.orElse("");
@@ -114,7 +114,7 @@ public class ExhibitionController {
         return Response.success(bookmarkAddResponse);
     }
 
-    @PutMapping("/{exhibitionId}/edit")
+    @PutMapping("/{exhibitionId}")
     @Operation(summary = "전시회 게시물 수정")
     public Response edit(@PathVariable Long exhibitionId, @RequestBody ExhibitionEditRequest exhibitionEditRequest,
                          Authentication authentication) {
@@ -122,6 +122,8 @@ public class ExhibitionController {
         ExhibitionDto exhibitionDto = exhibitionService.edit(exhibitionId, exhibitionEditRequest,
                                                              authentication.getName());
 
-        return Response.success(exhibitionDto);
+        ExhibitionResponse exhibitionResponse = ExhibitionResponse.of(exhibitionDto);
+
+        return Response.success(exhibitionResponse);
     }
 }

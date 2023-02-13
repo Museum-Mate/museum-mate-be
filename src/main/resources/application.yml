@@ -15,6 +15,7 @@ spring:
       - oauth
       - springdoc
       - jwt
+      - redis
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -53,14 +54,6 @@ spring:
             descriptor:
               sql: trace
 
-  ## Redis
-  data:
-    redis:
-      host:
-        localhost
-      port:
-        6379
-
   ## Mail
   mail:
     host: smtp.gmail.com
@@ -77,9 +70,6 @@ spring:
 app:
   mail:
     url: http://localhost:8080
-
-cookie:
-  maxage: 86400 # 24시간 (sec)
 
 # CORS
 cors:

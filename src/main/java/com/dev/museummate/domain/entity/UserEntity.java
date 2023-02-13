@@ -17,14 +17,10 @@ import org.hibernate.annotations.Where;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE user SET deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at is NULL")
-public class UserEntity extends BaseTimeEntity{
+public class UserEntity extends BaseTimeEntity {
 
     /**
-     * id : idx
-     * email : 유저 이메일
-     * userName : 유저 닉네임
-     * name : 유저 실명
-     * auth : 이메일 인증 상태 false = 인증 안됨 true = 인증 됨
+     * id : idx email : 유저 이메일 userName : 유저 닉네임 name : 유저 실명 auth : 이메일 인증 상태 false = 인증 안됨 true = 인증 됨
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,31 +28,31 @@ public class UserEntity extends BaseTimeEntity{
     private Long id;
     @Column(unique = true)
     @NotNull
-    private java.lang.String email;
+    private String email;
     @NotNull
-    private java.lang.String password;
+    private String password;
     @NotNull
-    private java.lang.String name;
+    private String name;
     @NotNull
-    private java.lang.String userName;
+    private String userName;
     @NotNull
-    private java.lang.String birth;
+    private String birth;
     @NotNull
-    private java.lang.String phoneNumber;
+    private String phoneNumber;
     @NotNull
-    private java.lang.String address;
+    private String address;
     @Enumerated(EnumType.STRING)
     private UserRole role;
-    private Boolean auth;
-    private java.lang.String authNum;
-    private java.lang.String providerId;
-    private String providerType;
+    private Boolean auth = false;
+    private java.lang.String authNum = "1234";
+    private String providerId;
+    private String providerType = "general";
 
 
     @Builder
-    public UserEntity(Long id, java.lang.String email, java.lang.String password, java.lang.String name, java.lang.String userName, java.lang.String birth, java.lang.String phoneNumber,
-                      java.lang.String address,
-                      UserRole role, java.lang.String providerId, String providerType) {
+    public UserEntity(Long id, String email, String password, String name,
+                      String userName, String birth, String phoneNumber, String address,
+                      UserRole role, Boolean auth, String authNum, String providerId, String providerType) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -66,11 +62,12 @@ public class UserEntity extends BaseTimeEntity{
         this.phoneNumber = phoneNumber;
         this.address = address;
         this.role = role;
-        this.auth = false;
-        this.authNum = "1234";
+        this.auth = auth;
+        this.authNum = authNum;
         this.providerId = providerId;
         this.providerType = providerType;
     }
+
 
     public void updateInfo(UserModifyRequest userModifyRequest) {
         if (userModifyRequest.getUserName().length() > 0) {
@@ -83,7 +80,8 @@ public class UserEntity extends BaseTimeEntity{
             this.address = userModifyRequest.getAddress();
         }
     }
-    public void updateAuthNum(java.lang.String authNum) {
+
+    public void updateAuthNum(String authNum) {
         this.authNum = authNum;
     }
 
