@@ -31,8 +31,8 @@ jobs:
       - name: web docker build and push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }}/museum-mate-web . 
-          docker push ${{ secrets.DOCKER_REPO }}/museum-mate-web
+          docker build -t ${{ secrets.DOCKER_REPO }}/museum-mate-backend . 
+          docker push ${{ secrets.DOCKER_REPO }}/museum-mate-backend
       ## docker compose up
       - name: executing remote ssh commands using password
         uses: appleboy/ssh-action@master
