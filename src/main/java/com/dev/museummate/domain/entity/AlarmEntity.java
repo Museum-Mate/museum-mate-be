@@ -22,17 +22,14 @@ public class AlarmEntity extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
     private String alarmMessage;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotNull
     private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "exhibition_id")
-    @NotNull
     private ExhibitionEntity exhibition;
 
     @Builder

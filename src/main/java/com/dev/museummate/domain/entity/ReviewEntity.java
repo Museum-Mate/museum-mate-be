@@ -27,20 +27,15 @@ public class ReviewEntity extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull
     private String title;
-    @NotNull
     private String content;
-    @NotNull
     private Integer star;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotNull
     private UserEntity user;
     @ManyToOne
     @JoinColumn(name = "exhibition_id")
-    @NotNull
     private ExhibitionEntity exhibition;
     private String visitedDate;
     private Boolean isDeleted = Boolean.FALSE; // Soft Delete 컬럼, 삭제 여부 기본값(FALSE) 셋팅
