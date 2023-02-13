@@ -37,7 +37,7 @@ public class ReviewEntity extends BaseEntity{
     @NotNull
     private ExhibitionEntity exhibition;
     private String visitedDate;
-    private boolean isDeleted = Boolean.FALSE; // Soft Delete 컬럼, 삭제 여부 기본값(FALSE) 셋팅
+    private Boolean isDeleted = Boolean.FALSE; // Soft Delete 컬럼, 삭제 여부 기본값(FALSE) 셋팅
 
     /*
     builder 생성자 추가
