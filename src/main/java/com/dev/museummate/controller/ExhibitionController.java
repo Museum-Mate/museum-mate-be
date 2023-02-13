@@ -50,6 +50,7 @@ public class ExhibitionController {
                                                   .mainImgUrl(exhibitionDto.getMainImgUrl())
                                                   .noticeImgUrl(exhibitionDto.getNoticeImgUrl())
                                                   .detailInfoImgUrl(exhibitionDto.getDetailInfoImgUrl())
+                                                  .detailInfoUrl(exhibitionDto.getDetailInfoUrl())
                                                   .build());
     }
 

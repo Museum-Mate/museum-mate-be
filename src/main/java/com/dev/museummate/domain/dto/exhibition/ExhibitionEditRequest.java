@@ -38,6 +38,7 @@ public class ExhibitionEditRequest {
     private String mainImgUrl;
     private String noticeImgUrl;
     private String detailInfoImgUrl;
+    private String detailInfoUrl;
 
     public ExhibitionEntity toEntity(UserEntity user) {
 
@@ -61,6 +62,7 @@ public class ExhibitionEditRequest {
                 .mainImgUrl(this.mainImgUrl)
                 .noticeImgUrl(this.noticeImgUrl)
                 .detailInfoImgUrl(this.detailInfoImgUrl)
+                .detailInfoUrl(this.detailInfoUrl)
                 .build();
     }
 }

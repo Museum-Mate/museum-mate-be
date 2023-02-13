@@ -33,6 +33,7 @@ public class ExhibitionResponse {
     private String mainImgUrl;
     private String noticeImgUrl;
     private String detailInfoImgUrl;
+    private String detailInfoUrl;
 
     public static Page<ExhibitionResponse> of(Page<ExhibitionDto> exhibitions) {
         return exhibitions.map(exhibition -> ExhibitionResponse.builder()
@@ -56,6 +57,7 @@ public class ExhibitionResponse {
                 .mainImgUrl(exhibition.getMainImgUrl())
                 .noticeImgUrl(exhibition.getNoticeImgUrl())
                 .detailInfoImgUrl(exhibition.getDetailInfoImgUrl())
+                .detailInfoUrl(exhibition.getDetailInfoUrl())
                 .build());
     }
 
@@ -82,6 +84,7 @@ public class ExhibitionResponse {
                 .mainImgUrl(exhibition.getMainImgUrl())
                 .noticeImgUrl(exhibition.getNoticeImgUrl())
                 .detailInfoImgUrl(exhibition.getDetailInfoImgUrl())
+                .detailInfoUrl(exhibition.getDetailInfoUrl())
                 .build();
     }
 }

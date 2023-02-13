@@ -22,10 +22,12 @@ public class ExhibitionWriteRequest {
     private String mainImgUrl;
     private String noticeImgUrl;
     private String detailInfoImgUrl;
+    private String detailInfoUrl;
 
     @Builder
     public ExhibitionWriteRequest(String name, String startAt, String endAt, String price, String ageLimit, String detailInfo,
-                                  String galleryLocation, String galleryName, String mainImgUrl, String noticeImgUrl, String detailInfoImgUrl) {
+                                  String galleryLocation, String galleryName, String mainImgUrl, String noticeImgUrl, String detailInfoImgUrl,
+                                  String detailInfoUrl) {
         this.name = name;
         this.startAt = startAt;
         this.endAt = endAt;
@@ -37,6 +39,7 @@ public class ExhibitionWriteRequest {
         this.mainImgUrl = mainImgUrl;
         this.noticeImgUrl = noticeImgUrl;
         this.detailInfoImgUrl = detailInfoImgUrl;
+        this.detailInfoUrl = detailInfoUrl;
     }
 
     public ExhibitionEntity toEntity(UserEntity user) {
@@ -61,6 +64,7 @@ public class ExhibitionWriteRequest {
                 .mainImgUrl(this.mainImgUrl)
                 .noticeImgUrl(this.noticeImgUrl)
                 .detailInfoImgUrl(this.detailInfoImgUrl)
+                .detailInfoUrl(this.detailInfoUrl)
                 .build();
     }
 }
