@@ -39,12 +39,13 @@ public class ExhibitionDto {
     private String mainImgUrl;
     private String noticeImgUrl;
     private String detailInfoImgUrl;
+    private String detailInfoUrl;
 
     @Builder
     public ExhibitionDto(Long id, String name, String startAt, String endAt, String price, String ageLimit, String detailInfo,
                          String galleryLocation, String galleryName, String notice, UserEntity user, String statMale, String statFemale,
                          String statAge10, String statAge20, String statAge30, String statAge40, String statAge50, String mainImgUrl,
-                         String noticeImgUrl, String detailInfoImgUrl) {
+                         String noticeImgUrl, String detailInfoImgUrl, String detailInfoUrl) {
         this.id = id;
         this.name = name;
         this.startAt = startAt;
@@ -66,6 +67,7 @@ public class ExhibitionDto {
         this.mainImgUrl = mainImgUrl;
         this.noticeImgUrl = noticeImgUrl;
         this.detailInfoImgUrl = detailInfoImgUrl;
+        this.detailInfoUrl = detailInfoUrl;
     }
 
     /**
@@ -95,6 +97,7 @@ public class ExhibitionDto {
                 .mainImgUrl(exhibitionEntity.getMainImgUrl())
                 .noticeImgUrl(exhibitionEntity.getNoticeImgUrl())
                 .detailInfoImgUrl(exhibitionEntity.getDetailInfoImgUrl())
+                .detailInfoUrl(exhibitionEntity.getDetailInfoUrl())
                 .build();
     }
 }

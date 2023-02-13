@@ -39,6 +39,7 @@ public class ExhibitionEditRequest {
     private String mainImgUrl;
     private String noticeImgUrl;
     private String detailInfoImgUrl;
+    private String detailInfoUrl;
 
     public ExhibitionEntity toEntity(UserEntity user) {
 
@@ -52,16 +53,17 @@ public class ExhibitionEditRequest {
                                .galleryLocation(this.galleryLocation)
                                .galleryName(this.galleryName)
                                .user(user)
-                               .statMale(this.statMale)
-                               .statFemale(this.statFemale)
-                               .statAge_10(this.statAge_10)
-                               .statAge_20(this.statAge_20)
-                               .statAge_30(this.statAge_30)
-                               .statAge_40(this.statAge_40)
-                               .statAge_50(this.statAge_50)
+                               .statMale(null)
+                               .statFemale(null)
+                               .statAge_10(null)
+                               .statAge_20(null)
+                               .statAge_30(null)
+                               .statAge_40(null)
+                               .statAge_50(null)
                                .mainImgUrl(this.mainImgUrl)
                                .noticeImgUrl(this.noticeImgUrl)
                                .detailInfoImgUrl(this.detailInfoImgUrl)
+                               .detailInfoUrl(this.detailInfoUrl)
                                .build();
     }
 }
