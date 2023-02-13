@@ -1,6 +1,6 @@
-package com.dev.museummate.configuration.redis.repository;
+package com.dev.museummate.global.redis.repository;
 
-import com.dev.museummate.configuration.redis.entity.TokenEntity;
+import com.dev.museummate.global.redis.entity.TokenEntity;
 import java.util.Optional;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

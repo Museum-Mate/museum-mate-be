@@ -5,21 +5,29 @@ import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.review.ReviewDto;
 import com.dev.museummate.domain.dto.user.UserDto;
-import com.dev.museummate.domain.entity.*;
+import com.dev.museummate.domain.entity.AlarmEntity;
+import com.dev.museummate.domain.entity.ExhibitionEntity;
+import com.dev.museummate.domain.entity.GatheringEntity;
+import com.dev.museummate.domain.entity.ParticipantEntity;
+import com.dev.museummate.domain.entity.ReviewEntity;
+import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
-import com.dev.museummate.repository.*;
+import com.dev.museummate.repository.AlarmRepository;
+import com.dev.museummate.repository.BookmarkRepository;
+import com.dev.museummate.repository.GatheringRepository;
+import com.dev.museummate.repository.ParticipantRepository;
+import com.dev.museummate.repository.ReviewRepository;
+import com.dev.museummate.repository.UserRepository;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

@@ -1,10 +1,9 @@
-package com.dev.museummate.configuration.redis.service;
+package com.dev.museummate.global.redis.service;
 
-import com.dev.museummate.configuration.redis.entity.TokenEntity;
-import com.dev.museummate.configuration.redis.repository.TokenRepository;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
-import java.util.concurrent.TimeUnit;
+import com.dev.museummate.global.redis.entity.TokenEntity;
+import com.dev.museummate.global.redis.repository.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

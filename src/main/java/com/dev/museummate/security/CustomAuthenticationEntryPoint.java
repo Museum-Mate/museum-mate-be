@@ -1,18 +1,17 @@
 package com.dev.museummate.security;
 
-import com.dev.museummate.domain.dto.Response;
 import com.dev.museummate.domain.dto.ErrorResponse;
+import com.dev.museummate.domain.dto.Response;
 import com.dev.museummate.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 @Component
 @Slf4j

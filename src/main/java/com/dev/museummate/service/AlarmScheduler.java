@@ -3,17 +3,16 @@ package com.dev.museummate.service;
 import com.dev.museummate.domain.AlarmType;
 import com.dev.museummate.domain.entity.AlarmEntity;
 import com.dev.museummate.domain.entity.BookmarkEntity;
+import com.dev.museummate.global.utils.MailUtils;
 import com.dev.museummate.repository.AlarmRepository;
 import com.dev.museummate.repository.BookmarkRepository;
-import com.dev.museummate.utils.MailUtils;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor

@@ -1,10 +1,10 @@
 package com.dev.museummate.domain.dto.user;
 
+import com.dev.museummate.domain.entity.UserEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import com.dev.museummate.domain.entity.UserEntity;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

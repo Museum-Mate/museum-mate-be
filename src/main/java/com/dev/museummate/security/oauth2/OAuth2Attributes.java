@@ -1,6 +1,5 @@
 package com.dev.museummate.security.oauth2;
 
-import com.dev.museummate.domain.UserRole;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;

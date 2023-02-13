@@ -1,6 +1,5 @@
-package com.dev.museummate.utils;
+package com.dev.museummate.global.utils;
 
-import com.dev.museummate.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
