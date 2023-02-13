@@ -33,6 +33,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -164,20 +165,20 @@ class GatheringControllerTest {
 
     @Test
     @DisplayName("모집글 수정 실패 - 인증실패")
-    @WithMockUser
+    @WithAnonymousUser
     void edit_Fail2() throws Exception {
 
         Long gatheringId = 1L;
 
         GatheringPostRequest request = new GatheringPostRequest(gatheringId, "test1", "test", 4, "test", "test");
 
-        given(gatheringService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
+        given(gatheringService.edit(any(), any(), any())).willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND));
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/gatherings/1")
                                               .with(csrf())
                                               .contentType(MediaType.APPLICATION_JSON)
                                               .content(objectMapper.writeValueAsBytes(request)))
-               .andExpect(status().isUnauthorized())
+               .andExpect(status().is3xxRedirection()) // 인증 실패시 리다이렉트 -> Location:"http://localhost/login"
                .andDo(print());
     }
 

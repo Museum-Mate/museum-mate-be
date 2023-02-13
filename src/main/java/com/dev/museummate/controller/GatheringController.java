@@ -1,6 +1,6 @@
 package com.dev.museummate.controller;
 
-import com.dev.museummate.configuration.Response;
+import com.dev.museummate.domain.dto.Response;
 import com.dev.museummate.domain.dto.gathering.CommentDto;
 import com.dev.museummate.domain.dto.gathering.CommentPostResponse;
 import com.dev.museummate.domain.dto.gathering.CommentRequest;
@@ -83,7 +83,7 @@ public class GatheringController {
         return Response.success(msg);
     }
 
-    @GetMapping()
+    @GetMapping
     public Response<Page<GatheringResponse>> findAllGatherings(@PageableDefault(size = 20,
                                                                                 sort = "id", direction = Direction.DESC) Pageable pageable) {
         Page<GatheringDto> gatheringDtos = gatheringService.findAllGatherings(pageable);

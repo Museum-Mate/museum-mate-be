@@ -78,9 +78,6 @@ app:
   mail:
     url: http://localhost:8080
 
-cookie:
-  maxage: 86400 # 24시간 (sec)
-
 # CORS
 cors:
     allowed-origins: http://localhost:3000

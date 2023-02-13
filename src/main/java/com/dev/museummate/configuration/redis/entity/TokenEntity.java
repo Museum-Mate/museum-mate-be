@@ -6,15 +6,15 @@ import lombok.Getter;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
-@AllArgsConstructor
 @Getter
+@AllArgsConstructor
 @RedisHash(value = "Token", timeToLive = 60 * 60 * 24 * 3) // 3일
 public class TokenEntity {
 
     @Id
     private String id;
-    private String refreshToken;
     @Indexed
     private String accessToken;
+    private String refreshToken;
 
 }

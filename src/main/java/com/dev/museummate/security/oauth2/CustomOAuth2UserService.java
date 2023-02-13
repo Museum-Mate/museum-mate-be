@@ -70,7 +70,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                                               .email(userProfile.getEmail())
                                               .name(userProfile.getName())
                                               .role(UserRole.ROLE_SOCIAL_USER)
-                                              .providerId(userNameAttributeName)
+                                              .providerId(attributes.get("id").toString())
                                               .providerType(registrationId)
                                               .build();
 

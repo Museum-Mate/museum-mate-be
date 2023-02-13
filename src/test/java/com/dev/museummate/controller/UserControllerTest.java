@@ -231,7 +231,7 @@ class UserControllerTest {
     @WithMockUser
     void reissue_success() throws Exception {
 
-        UserReissueRequest userReissueRequest = new UserReissueRequest("actk", "rftk");
+        UserTokenRequest userTokenRequest = new UserTokenRequest("actk", "rftk");
         UserLoginResponse userLoginResponse = new UserLoginResponse("actk-123", "rftk-123");
 
         //given
@@ -242,7 +242,7 @@ class UserControllerTest {
         mockMvc.perform(post("/api/v1/users/reissue")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userReissueRequest))
+                        .content(objectMapper.writeValueAsBytes(userTokenRequest))
                         )
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -254,7 +254,7 @@ class UserControllerTest {
     @WithMockUser
     void reissue_fail_1() throws Exception {
 
-        UserReissueRequest userReissueRequest = new UserReissueRequest("actk", "rftk");
+        UserTokenRequest userTokenRequest = new UserTokenRequest("actk", "rftk");
         UserLoginResponse userLoginResponse = new UserLoginResponse("actk-123", "rftk-123");
 
         //given
@@ -265,7 +265,7 @@ class UserControllerTest {
         mockMvc.perform(post("/api/v1/users/reissue")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userReissueRequest))
+                        .content(objectMapper.writeValueAsBytes(userTokenRequest))
                 )
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -277,7 +277,7 @@ class UserControllerTest {
     @WithAnonymousUser
     void reissue_fail_2() throws Exception {
 
-        UserReissueRequest userReissueRequest = new UserReissueRequest("actk", "rftk");
+        UserTokenRequest userTokenRequest = new UserTokenRequest("actk", "rftk");
         UserLoginResponse userLoginResponse = new UserLoginResponse("actk-123", "rftk-123");
 
         //given
@@ -288,10 +288,10 @@ class UserControllerTest {
         mockMvc.perform(post("/api/v1/users/reissue")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userReissueRequest))
+                        .content(objectMapper.writeValueAsBytes(userTokenRequest))
                 )
                 .andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is3xxRedirection()); // 인증 실패로 인해서 Spring Security에서 리다이렉트 -> 302
         //then
     }
 
@@ -300,7 +300,7 @@ class UserControllerTest {
     @WithMockUser
     void reissue_fail_3() throws Exception {
 
-        UserReissueRequest userReissueRequest = new UserReissueRequest("actk", "rftk");
+        UserTokenRequest userTokenRequest = new UserTokenRequest("actk", "rftk");
         UserLoginResponse userLoginResponse = new UserLoginResponse("actk-123", "rftk-123");
 
         //given
@@ -311,7 +311,7 @@ class UserControllerTest {
         mockMvc.perform(post("/api/v1/users/reissue")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userReissueRequest))
+                        .content(objectMapper.writeValueAsBytes(userTokenRequest))
                 )
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
@@ -323,7 +323,7 @@ class UserControllerTest {
     @WithMockUser
     void reissue_fail_4() throws Exception {
 
-        UserReissueRequest userReissueRequest = new UserReissueRequest("actk", "rftk");
+        UserTokenRequest userTokenRequest = new UserTokenRequest("actk", "rftk");
         UserLoginResponse userLoginResponse = new UserLoginResponse("actk-123", "rftk-123");
 
         //given
@@ -334,7 +334,7 @@ class UserControllerTest {
         mockMvc.perform(post("/api/v1/users/reissue")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userReissueRequest))
+                        .content(objectMapper.writeValueAsBytes(userTokenRequest))
                 )
                 .andDo(print())
                 .andExpect(status().isUnauthorized());
@@ -346,7 +346,7 @@ class UserControllerTest {
     @WithMockUser
     void logout_success() throws Exception {
 
-        UserReissueRequest userReissueRequest = new UserReissueRequest("actk", "rftk");
+        UserTokenRequest userTokenRequest = new UserTokenRequest("actk", "rftk");
         UserLoginResponse userLoginResponse = new UserLoginResponse("actk-123", "rftk-123");
 
         //given
@@ -357,7 +357,7 @@ class UserControllerTest {
         mockMvc.perform(post("/api/v1/users/logout")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userReissueRequest)))
+                        .content(objectMapper.writeValueAsBytes(userTokenRequest)))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -367,7 +367,7 @@ class UserControllerTest {
     @WithAnonymousUser
     void logout_fail_1() throws Exception {
 
-        UserReissueRequest userReissueRequest = new UserReissueRequest("actk", "rftk");
+        UserTokenRequest userTokenRequest = new UserTokenRequest("actk", "rftk");
         UserLoginResponse userLoginResponse = new UserLoginResponse("actk-123", "rftk-123");
 
         //given
@@ -378,9 +378,9 @@ class UserControllerTest {
         mockMvc.perform(post("/api/v1/users/logout")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(userReissueRequest)))
+                        .content(objectMapper.writeValueAsBytes(userTokenRequest)))
                 .andDo(print())
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().is3xxRedirection()); // 인증 실패로 인해서 Spring Security에서 리다이렉트 -> 302
     }
 
     @Test
@@ -442,7 +442,7 @@ class UserControllerTest {
                 .willReturn("수정이 완료 되었습니다.");
 
         //when
-        mockMvc.perform(put("/api/v1/users/modify")
+        mockMvc.perform(put("/api/v1/users")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userModifyRequest)))
@@ -482,7 +482,7 @@ class UserControllerTest {
         given(userService.deleteUser(any()))
                 .willReturn("삭제가 완료 되었습니다.");
         //when
-        mockMvc.perform(delete("/api/v1/users/delete")
+        mockMvc.perform(delete("/api/v1/users")
                         .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isOk());

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserReissueRequest {
+public class UserTokenRequest {
     private String accessToken;
     private String refreshToken;
 }

@@ -117,6 +117,7 @@ public class ExhibitionService {
         ExhibitionEntity exhibitionEntity = getExihibitionById(exhibitionId);
 
         ExhibitionEntity savedExhibition = exhibitionRepository.save(exhibitionEditRequest.toEntity(user));
+
         ExhibitionDto exhibitionDto = ExhibitionDto.toDto(savedExhibition);
 
         return exhibitionDto;

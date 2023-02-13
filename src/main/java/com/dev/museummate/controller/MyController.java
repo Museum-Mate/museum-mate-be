@@ -1,6 +1,6 @@
 package com.dev.museummate.controller;
 
-import com.dev.museummate.configuration.Response;
+import com.dev.museummate.domain.dto.Response;
 import com.dev.museummate.domain.dto.alarm.AlarmDto;
 import com.dev.museummate.domain.dto.alarm.AlarmResponse;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
@@ -9,7 +9,6 @@ import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.review.GetReviewResponse;
 import com.dev.museummate.domain.dto.review.ReviewDto;
-import com.dev.museummate.domain.dto.review.ReviewPageResponse;
 import com.dev.museummate.service.MyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

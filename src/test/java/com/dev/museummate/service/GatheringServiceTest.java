@@ -67,12 +67,12 @@ class GatheringServiceTest {
         GatheringEntity gathering = mock(GatheringEntity.class);
 
         given(userRepository.findByEmail("email@naver.com"))
-            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, ""));
+            .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND));
 
         try {
             String enroll = gatheringService.enroll(1L, "email@naver.com");
         } catch (Exception e) {
-            assertEquals(e.getMessage(),"email not found: ");
+            assertEquals(e.getMessage(),"email not found");
         }
     }
 
@@ -88,12 +88,12 @@ class GatheringServiceTest {
             .willReturn(Optional.of(user));
 
         given(gatheringRepository.findById(1L))
-            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND, ""));
+            .willThrow(new AppException(ErrorCode.GATHERING_POST_NOT_FOUND));
 
         try {
             String enroll = gatheringService.enroll(1L, "email@naver.com");
         } catch (Exception e) {
-            assertEquals(e.getMessage(),"Gathering post not found: ");
+            assertEquals(e.getMessage(),"Gathering post not found");
         }
     }
 
