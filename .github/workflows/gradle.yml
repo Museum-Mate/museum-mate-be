@@ -43,5 +43,5 @@ jobs:
           script: |
             sudo docker rm -f web
             sudo docker pull ${{ secrets.DOCKER_REPO }}/museum-mate-backend
-            docker-compose -f /home/ubuntu/docker/museum-mate/nginx/compose/docker-compose.yml up -d
+            docker compose -f /home/ubuntu/docker/museum-mate/nginx/compose/docker-compose.yml up -d
             docker image prune -f
