@@ -61,7 +61,7 @@ public class SecurityConfiguration {
                 .and()
 
                 .addFilterBefore(new JwtFilter(userRepository, redisDao, jwtUtils), UsernamePasswordAuthenticationFilter.class)
-//                .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtFilter.class)
                 .build();
     }
 
