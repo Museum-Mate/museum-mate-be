@@ -34,10 +34,8 @@ public class CommentEntity extends BaseEntity {
     private UserEntity user;
 
     @ColumnDefault("0")
-    @NotNull
     private Long parentId;
 
-    @NotNull
     private String content;
 
     @ManyToOne

@@ -25,12 +25,10 @@ public class BookmarkEntity extends BaseTimeEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotNull
     private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "exhibition_id")
-    @NotNull
     private ExhibitionEntity exhibition;
 
     @Builder

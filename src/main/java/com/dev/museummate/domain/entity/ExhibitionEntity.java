@@ -24,13 +24,9 @@ public class ExhibitionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     private String name;
-    @NotNull
     private String startAt;
-    @NotNull
     private String endAt;
-    @NotNull
     private String price;
     private String ageLimit;
     private String detailInfo;

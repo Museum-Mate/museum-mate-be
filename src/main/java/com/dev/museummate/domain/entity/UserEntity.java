@@ -31,27 +31,19 @@ public class UserEntity extends BaseTimeEntity {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull
     private Long id;
     @Column(unique = true)
-    @NotNull
     private String email;
-    @NotNull
     private String password;
-    @NotNull
     private String name;
-    @NotNull
     private String userName;
-    @NotNull
     private String birth;
-    @NotNull
     private String phoneNumber;
-    @NotNull
     private String address;
     @Enumerated(EnumType.STRING)
     private UserRole role;
     private Boolean auth = false;
-    private java.lang.String authNum = "1234";
+    private String authNum = "1234";
     private String providerId;
     private String providerType = "general";
 

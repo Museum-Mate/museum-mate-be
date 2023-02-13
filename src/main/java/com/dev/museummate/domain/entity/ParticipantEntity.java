@@ -33,7 +33,6 @@ public class ParticipantEntity extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "gathering_id")
     private GatheringEntity gathering;
-    @NotNull
     private Boolean hostFlag;
 
     private Boolean approve;
