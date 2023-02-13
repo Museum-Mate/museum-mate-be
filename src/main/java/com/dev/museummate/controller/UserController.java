@@ -2,21 +2,31 @@ package com.dev.museummate.controller;
 
 import com.dev.museummate.domain.dto.Response;
 import com.dev.museummate.domain.dto.SimpleMessageResponse;
-import com.dev.museummate.domain.dto.user.*;
+import com.dev.museummate.domain.dto.user.UserCheckRequest;
+import com.dev.museummate.domain.dto.user.UserJoinRequest;
+import com.dev.museummate.domain.dto.user.UserLoginRequest;
+import com.dev.museummate.domain.dto.user.UserLoginResponse;
+import com.dev.museummate.domain.dto.user.UserModifyRequest;
+import com.dev.museummate.domain.dto.user.UserTokenRequest;
+import com.dev.museummate.global.utils.CookieUtils;
 import com.dev.museummate.service.MailService;
 import com.dev.museummate.service.UserService;
-import com.dev.museummate.utils.CookieUtils;
-import com.dev.museummate.utils.HeaderUtils;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.UnsupportedEncodingException;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController

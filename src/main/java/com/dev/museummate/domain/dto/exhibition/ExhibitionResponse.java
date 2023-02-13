@@ -1,6 +1,5 @@
 package com.dev.museummate.domain.dto.exhibition;
 
-import com.dev.museummate.domain.entity.ExhibitionEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
