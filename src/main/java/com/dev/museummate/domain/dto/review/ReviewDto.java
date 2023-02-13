@@ -71,7 +71,7 @@ public class ReviewDto {
                 reviewEntity.getCreatedAt(),
                 reviewEntity.getLastModifiedAt(),
                 reviewEntity.getDeletedAt(),
-                reviewEntity.isDeleted(),
+                reviewEntity.getIsDeleted(),
                 reviewEntity.getCreatedBy(),
                 reviewEntity.getLastModifiedBy()
         );
