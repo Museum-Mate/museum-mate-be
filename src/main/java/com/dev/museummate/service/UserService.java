@@ -1,13 +1,19 @@
 package com.dev.museummate.service;
 
-import com.dev.museummate.configuration.redis.RedisDao;
-import com.dev.museummate.configuration.redis.service.TokenService;
-import com.dev.museummate.domain.dto.user.*;
+import com.dev.museummate.domain.dto.user.UserCheckRequest;
+import com.dev.museummate.domain.dto.user.UserDto;
+import com.dev.museummate.domain.dto.user.UserJoinRequest;
+import com.dev.museummate.domain.dto.user.UserLoginRequest;
+import com.dev.museummate.domain.dto.user.UserLoginResponse;
+import com.dev.museummate.domain.dto.user.UserModifyRequest;
+import com.dev.museummate.domain.dto.user.UserTokenRequest;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
+import com.dev.museummate.global.redis.RedisDao;
+import com.dev.museummate.global.utils.JwtUtils;
 import com.dev.museummate.repository.UserRepository;
-import com.dev.museummate.utils.JwtUtils;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +21,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j

@@ -1,9 +1,6 @@
 package com.dev.museummate.domain.dto.gathering;
 
-import com.dev.museummate.domain.entity.ExhibitionEntity;
-import com.dev.museummate.domain.entity.UserEntity;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

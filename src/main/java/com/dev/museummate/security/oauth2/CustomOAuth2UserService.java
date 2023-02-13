@@ -3,7 +3,6 @@ package com.dev.museummate.security.oauth2;
 import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.repository.UserRepository;
-import jakarta.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.dev.museummate.configuration.redis;
+package com.dev.museummate.global.redis;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -2,7 +2,6 @@ package com.dev.museummate.domain.dto.review;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

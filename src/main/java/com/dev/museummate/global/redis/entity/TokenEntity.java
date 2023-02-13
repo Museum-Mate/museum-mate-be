@@ -1,4 +1,4 @@
-package com.dev.museummate.configuration.redis.entity;
+package com.dev.museummate.global.redis.entity;
 
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;

@@ -1,15 +1,12 @@
 package com.dev.museummate.security.oauth2;
 
 import com.dev.museummate.domain.entity.UserEntity;
+import com.dev.museummate.global.utils.CookieUtils;
+import com.dev.museummate.global.utils.JwtUtils;
 import com.dev.museummate.repository.UserRepository;
-import com.dev.museummate.utils.CookieUtils;
-import com.dev.museummate.utils.HeaderUtils;
-import com.dev.museummate.utils.JwtUtils;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

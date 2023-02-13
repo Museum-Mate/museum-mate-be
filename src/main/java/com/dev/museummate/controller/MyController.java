@@ -9,7 +9,9 @@ import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.review.GetReviewResponse;
 import com.dev.museummate.domain.dto.review.ReviewDto;
+import com.dev.museummate.domain.dto.user.UserDto;
 import com.dev.museummate.service.MyService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,9 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.dev.museummate.domain.dto.user.UserDto;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/my")

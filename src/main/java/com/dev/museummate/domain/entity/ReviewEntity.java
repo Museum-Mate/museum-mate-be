@@ -1,7 +1,13 @@
 package com.dev.museummate.domain.entity;
 
 import com.dev.museummate.domain.dto.review.EditReviewRequest;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
@@ -15,7 +21,7 @@ import org.hibernate.annotations.Where;
 @Table(name = "review")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "UPDATE review SET is_deleted = TRUE WHERE id = ?")
+@SQLDelete(sql = "UPDATE review SET is_deleted = TRUE, deleted_at = now() WHERE id = ?")
 @Where(clause = "is_deleted = FALSE") // NOT to select deleted review
 public class ReviewEntity extends BaseEntity{
     @Id
@@ -37,7 +43,7 @@ public class ReviewEntity extends BaseEntity{
     @NotNull
     private ExhibitionEntity exhibition;
     private String visitedDate;
-    private boolean isDeleted = Boolean.FALSE; // Soft Delete 컬럼, 삭제 여부 기본값(FALSE) 셋팅
+    private Boolean isDeleted = Boolean.FALSE; // Soft Delete 컬럼, 삭제 여부 기본값(FALSE) 셋팅
 
     /*
     builder 생성자 추가

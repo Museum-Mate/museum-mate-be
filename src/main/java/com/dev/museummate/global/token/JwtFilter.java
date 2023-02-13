@@ -1,22 +1,18 @@
-package com.dev.museummate.security;
+package com.dev.museummate.global.token;
 
-import com.dev.museummate.configuration.redis.RedisDao;
-import com.dev.museummate.configuration.redis.entity.TokenEntity;
-import com.dev.museummate.configuration.redis.service.TokenService;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
+import com.dev.museummate.global.redis.RedisDao;
+import com.dev.museummate.global.utils.CookieUtils;
+import com.dev.museummate.global.utils.JwtUtils;
 import com.dev.museummate.repository.UserRepository;
-import com.dev.museummate.utils.CookieUtils;
-import com.dev.museummate.utils.HeaderUtils;
-import com.dev.museummate.utils.JwtUtils;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -29,8 +25,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
 
 @RequiredArgsConstructor
 @Slf4j

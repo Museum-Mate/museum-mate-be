@@ -1,6 +1,5 @@
 package com.dev.museummate.domain.entity;
 
-import com.dev.museummate.domain.dto.gathering.GatheringResponse;
 import com.dev.museummate.domain.dto.gathering.ParticipantDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-import org.springframework.security.core.parameters.P;
 
 @Entity
 @Table(name = "participant")

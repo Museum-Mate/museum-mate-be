@@ -1,11 +1,13 @@
 package com.dev.museummate.security;
 
-import com.dev.museummate.configuration.redis.RedisDao;
+import com.dev.museummate.global.redis.RedisDao;
+import com.dev.museummate.global.token.JwtExceptionFilter;
+import com.dev.museummate.global.token.JwtFilter;
+import com.dev.museummate.global.utils.JwtUtils;
 import com.dev.museummate.repository.UserRepository;
 import com.dev.museummate.security.oauth2.CustomOAuth2UserService;
 import com.dev.museummate.security.oauth2.OAuth2FailureHandler;
 import com.dev.museummate.security.oauth2.OAuth2SuccessHandler;
-import com.dev.museummate.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

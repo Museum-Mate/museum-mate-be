@@ -13,7 +13,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.catalina.User;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 

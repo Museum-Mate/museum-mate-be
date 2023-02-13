@@ -1,4 +1,4 @@
-package com.dev.museummate.utils;
+package com.dev.museummate.global.utils;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
