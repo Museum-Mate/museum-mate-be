@@ -20,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.dev.museummate.domain.dto.user.UserDto;
 
 import java.util.List;
 
@@ -29,6 +30,12 @@ import java.util.List;
 public class MyController {
 
     private final MyService myService;
+
+    @GetMapping()
+    public Response getInfo(Authentication authentication) {
+        UserDto userDto = myService.getMyInfo(authentication.getName());
+        return Response.success(userDto);
+    }
 
     @GetMapping("/calendars")
     public Response getMyCalendar(Authentication authentication){

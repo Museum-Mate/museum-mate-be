@@ -4,6 +4,7 @@ import com.dev.museummate.domain.dto.alarm.AlarmDto;
 import com.dev.museummate.domain.dto.exhibition.ExhibitionDto;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.review.ReviewDto;
+import com.dev.museummate.domain.dto.user.UserDto;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
@@ -212,4 +213,39 @@ public class MyControllerTest {
                .andDo(print());
     }
 
+    @Test
+    @DisplayName("내 정보 조회 성공")
+    @WithMockUser
+    void get_myInfo_success() throws Exception {
+
+        UserDto userDto = UserDto.builder()
+                                 .userName("엄준식")
+                                 .email("chlalswns200@naver.com")
+                                 .build();
+
+        when(myService.getMyInfo(any()))
+            .thenReturn(userDto);
+
+        mockMvc.perform(get("/api/v1/my"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.result").exists())
+               .andDo(print());
+    }
+    @Test
+    @DisplayName("내 정보 조회 실패 - 유저 조회 불가")
+    @WithMockUser
+    void get_myInfo_fail() throws Exception {
+
+        UserDto userDto = UserDto.builder()
+                                 .userName("엄준식")
+                                 .email("chlalswns200@naver.com")
+                                 .build();
+
+        when(myService.getMyInfo(any()))
+            .thenThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, "이메일 조회 불가"));
+
+        mockMvc.perform(get("/api/v1/my"))
+               .andExpect(status().isNotFound())
+               .andDo(print());
+    }
 }
