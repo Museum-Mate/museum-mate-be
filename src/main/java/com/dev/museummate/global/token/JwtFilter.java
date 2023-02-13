@@ -33,11 +33,11 @@ public class JwtFilter extends OncePerRequestFilter {
     private final RedisDao redisDao;
     private final JwtUtils jwtUtils;
 
-    private final String LOGIN = "/login";
+    private final String LOGIN = "/api/v1/users/login";
     private final String LOGIN_URI = "/api/v1/users/login";
     private final String GOOGLE_LOGIN_URI = "/oauth2/authorization/code/google";
     private final String NAVER_LOGIN_URI = "/oauth2/authorization/code/naver";
-    private final String JOIN_URI = "/join";
+    private final String JOIN_URI = "/api/v1/users/join";
     private final String SOCIAL_JOIN = "/join/social";
 
     @Value("${access-token-maxage}")
