@@ -45,8 +45,8 @@ public class CookieUtils {
     public static void addCookie(HttpServletResponse response, String key, String value, int maxAge) {
 
         ResponseCookie cookie = ResponseCookie.from(key, value)
-                                              .httpOnly(true)
-                                              .secure(true)
+                                              .httpOnly(false)
+                                              .secure(false)
                                               .sameSite("Lax")
                                               .path("/")
                                               .maxAge(maxAge)
@@ -60,7 +60,7 @@ public class CookieUtils {
     public static void addAccessTokenAtCookie(HttpServletResponse response, String value) {
         ResponseCookie cookie = ResponseCookie.from(ACCESS_TOKEN_HEADER, value)
                                               .httpOnly(false)
-                                              .secure(true)
+                                              .secure(false)
                                               .sameSite("Lax")
                                               .path("/")
                                               .maxAge(ACCESS_TOKEN_MAX_AGE)

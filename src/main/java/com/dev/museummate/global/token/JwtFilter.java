@@ -10,6 +10,7 @@ import com.dev.museummate.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -97,6 +98,8 @@ public class JwtFilter extends OncePerRequestFilter {
             return; // 필터가 더 이상 진행되지 않도록 리턴
         }
 
+        Cookie[] cookie = request.getCookies();
+        log.info("request.getCookies() : {}", (Object[]) request.getCookies());
 
         Optional<String> accessTokenAtCookie = CookieUtils.extractAccessToken(request);
         Optional<String> refreshTokenAtCookie = CookieUtils.extractRefreshToken(request);
