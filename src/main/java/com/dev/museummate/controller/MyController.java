@@ -80,4 +80,15 @@ public class MyController {
 
         return Response.success(gatheringResponses);
     }
+
+    @GetMapping("/gatherings/approves")
+    public Response getApproves(@PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                               Authentication authentication){
+        Page<GatheringDto> enrollDtos = myService.getMyApprove(pageable, authentication.getName());
+
+        Page<GatheringResponse> gatheringResponses = enrollDtos.map(gatheringDto -> GatheringResponse.createGetOne(gatheringDto));
+
+        return Response.success(gatheringResponses);
+    }
+
 }

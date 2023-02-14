@@ -12,6 +12,6 @@ public interface ParticipantRepository extends JpaRepository<ParticipantEntity, 
     Optional<ParticipantEntity> findByUserIdAndGatheringId(Long userId, Long gatheringId);
     List<ParticipantEntity> findAllByGatheringIdAndApprove(Long gatheringId, Boolean approve);
     Integer countByGatheringIdAndApproveTrue(Long gatheringId);
-    Page<ParticipantEntity> findAllByUserIdAndHostFlag(Long userId, Boolean hostFlag,Pageable pageable);
+    Page<ParticipantEntity> findAllByUserIdAndHostFlagAndApprove(Long userId, Boolean hostFlag,Boolean approve,Pageable pageable);
 
 }
