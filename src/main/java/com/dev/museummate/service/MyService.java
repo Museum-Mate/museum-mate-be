@@ -80,7 +80,9 @@ public class MyService {
 
     public Page<GatheringDto> getMyEnrolls(Pageable pageable, String email) {
         UserEntity user = findUserByEmail(email);
-        Page<ParticipantEntity> enrollGatheringList = participantRepository.findAllByUserIdAndHostFlag(user.getId(), Boolean.FALSE,
+        Page<ParticipantEntity> enrollGatheringList = participantRepository.findAllByUserIdAndHostFlagAndApprove(user.getId(),
+                                                                                                                 Boolean.FALSE,
+                                                                                                                 Boolean.FALSE,
                                                                                                           pageable);
         List<GatheringDto> gatheringDtos = new ArrayList<>();
         for (ParticipantEntity participant : enrollGatheringList) {
@@ -91,6 +93,24 @@ public class MyService {
         }
 
         return new PageImpl<>(gatheringDtos,pageable,gatheringDtos.size());
+    }
+
+    public Page<GatheringDto> getMyApprove(Pageable pageable, String email) {
+        UserEntity user = findUserByEmail(email);
+        Page<ParticipantEntity> enrollGatheringList = participantRepository.findAllByUserIdAndHostFlagAndApprove(user.getId(),
+                                                                                                                 Boolean.FALSE,
+                                                                                                                 Boolean.TRUE,
+                                                                                                                 pageable);
+        List<GatheringDto> gatheringDtos = new ArrayList<>();
+        for (ParticipantEntity participant : enrollGatheringList) {
+            Optional<GatheringEntity> findGathering = gatheringRepository.findById(participant.getGathering().getId());
+            GatheringDto gatheringDto = GatheringDto.toDto(findGathering.get(), participantRepository.countByGatheringIdAndApproveTrue(
+                findGathering.get().getId()));
+            gatheringDtos.add(gatheringDto);
+        }
+
+        return new PageImpl<>(gatheringDtos,pageable,gatheringDtos.size());
+
     }
 
     public UserDto getMyInfo(String email) {
