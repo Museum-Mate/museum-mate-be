@@ -19,6 +19,12 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
+  servlet:
+    multipart: # MULTIPART (MultipartProperties) Enable support of multipart uploads.
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+
 
   ## DB (datasource)
   datasource:
@@ -78,3 +84,18 @@ cors:
     allowed-headers: Content-Type,Authorization
     allow-credentials: true
     max-age: 3600
+
+# AWS S3
+cloud:
+  aws:
+    credentials:
+      access-key: S3_ACCESS_KEY
+      secret-key: S3_SECRET_KEY
+    s3:
+      bucket: S3_BUCKET_NAME
+      url: S3_BUCKET_URL
+      dir: /img
+    region:
+      static: S3_REGION
+    stack:
+      auto: false

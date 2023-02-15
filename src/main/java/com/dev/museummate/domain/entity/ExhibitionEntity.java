@@ -79,4 +79,8 @@ public class ExhibitionEntity {
         this.notice = notice;
         this.detailInfoUrl = detailInfoUrl;
     }
+
+    public void insertMainImgUrl(String s3Url) {
+        this.mainImgUrl = s3Url;
+    }
 }
