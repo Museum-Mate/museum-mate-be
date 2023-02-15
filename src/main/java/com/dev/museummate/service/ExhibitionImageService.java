@@ -41,9 +41,9 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 @RequiredArgsConstructor
 public class ExhibitionImageService {
   private final AmazonS3Client amazonS3Client;
-  private final ExhibitionRepository exhibitionRepository;
+//  private final ExhibitionRepository exhibitionRepository;
   private final UserRepository userRepository;
-  private final ExhibitionService exhibitionService;
+//  private final ExhibitionService exhibitionService;
 
   @Value("${cloud.aws.s3.bucket}")
   private String bucket;
@@ -60,12 +60,12 @@ public class ExhibitionImageService {
     return userEntity;
   }
 
-  public ExhibitionEntity checkExhibition(Long exhibitionId) {
-    ExhibitionEntity exhibitionEntity = exhibitionRepository.findById(exhibitionId)
-        .orElseThrow(() -> new AppException(ErrorCode.EXHIBITION_NOT_FOUND, "유효하지 않은 전시입닏나."));
-
-    return exhibitionEntity;
-  }
+//  public ExhibitionEntity checkExhibition(Long exhibitionId) {
+//    ExhibitionEntity exhibitionEntity = exhibitionRepository.findById(exhibitionId)
+//        .orElseThrow(() -> new AppException(ErrorCode.EXHIBITION_NOT_FOUND, "유효하지 않은 전시입닏나."));
+//
+//    return exhibitionEntity;
+//  }
 
   public String uploadAndSaveToDB(String email, MultipartFile multipartFile)
       throws MissingServletRequestPartException {
@@ -120,45 +120,30 @@ public class ExhibitionImageService {
     fileUrl = defaultUrl + "ExhibitionImage/" + imageName;
     log.debug("S3 url: ", fileUrl);
 
-        /*
-        데이터베이스 저장
-         */
-//    ExhibitionEntity mainImage = exhibitionRepository.findById(exhibitionId)
-//        .orElseThrow(()-> new AppException(ErrorCode.EXHIBITION_NOT_FOUND, "해당 전시가 존재하지 않습니다."));
-
-//    mainImage.insertMainImgUrl(fileUrl);
-
-//    exhibitionRepository.save(mainImage);
-
-//    log.info("multipartFile 업로드 성공");
-//    ExhibitionFileUrlResponse response = ExhibitionFileUrlResponse.builder()
-//        .s3ImageUrl(fileUrl)
-//        .exhibitionId(exhibitionId)
-//        .build();
     return fileUrl;
   }
 
-  public void SaveMainImgToDB(Long exhibitionID, String S3ObejctUrl) {
-    ExhibitionEntity exhibitionEntity = exhibitionRepository.findById(exhibitionID)
-        .orElseThrow(() -> new AppException(ErrorCode.EXHIBITION_NOT_FOUND, "해당 전시가 존재하지 않습니다."));
-    exhibitionEntity.insertMainImgUrl(S3ObejctUrl);
-    exhibitionRepository.save(exhibitionEntity);
-    log.info("Main Image의 S3 객체 Url을 DB에 업데이트 했습니다.");
-  }
+//  public void SaveMainImgToDB(Long exhibitionID, String S3ObejctUrl) {
+//    ExhibitionEntity exhibitionEntity = exhibitionRepository.findById(exhibitionID)
+//        .orElseThrow(() -> new AppException(ErrorCode.EXHIBITION_NOT_FOUND, "해당 전시가 존재하지 않습니다."));
+//    exhibitionEntity.insertMainImgUrl(S3ObejctUrl);
+//    exhibitionRepository.save(exhibitionEntity);
+//    log.info("Main Image의 S3 객체 Url을 DB에 업데이트 했습니다.");
+//  }
 
-  public void SaveDetailInfoImgToDB(Long exhibitionID, String S3ObejctUrl) {
-    ExhibitionEntity exhibitionEntity = exhibitionRepository.findById(exhibitionID)
-        .orElseThrow(() -> new AppException(ErrorCode.EXHIBITION_NOT_FOUND, "해당 전시가 존재하지 않습니다."));
-    exhibitionEntity.insertDetailInfoImgUrl(S3ObejctUrl);
-    exhibitionRepository.save(exhibitionEntity);
-    log.info("Detail Information Image의 S3 객체 Url을 DB에 업데이트 했습니다.");
-  }
+//  public void SaveDetailInfoImgToDB(Long exhibitionID, String S3ObejctUrl) {
+//    ExhibitionEntity exhibitionEntity = exhibitionRepository.findById(exhibitionID)
+//        .orElseThrow(() -> new AppException(ErrorCode.EXHIBITION_NOT_FOUND, "해당 전시가 존재하지 않습니다."));
+//    exhibitionEntity.insertDetailInfoImgUrl(S3ObejctUrl);
+//    exhibitionRepository.save(exhibitionEntity);
+//    log.info("Detail Information Image의 S3 객체 Url을 DB에 업데이트 했습니다.");
+//  }
 
-  public void SaveNoticeImgToDB(Long exhibitionID, String S3ObejctUrl) {
-    ExhibitionEntity exhibitionEntity = exhibitionRepository.findById(exhibitionID)
-        .orElseThrow(() -> new AppException(ErrorCode.EXHIBITION_NOT_FOUND, "해당 전시가 존재하지 않습니다."));
-    exhibitionEntity.insertNoticeImgUrl(S3ObejctUrl);
-    exhibitionRepository.save(exhibitionEntity);
-    log.info("Notice Image의 S3 객체 Url을 DB에 업데이트 했습니다.");
-  }
+//  public void SaveNoticeImgToDB(Long exhibitionID, String S3ObejctUrl) {
+//    ExhibitionEntity exhibitionEntity = exhibitionRepository.findById(exhibitionID)
+//        .orElseThrow(() -> new AppException(ErrorCode.EXHIBITION_NOT_FOUND, "해당 전시가 존재하지 않습니다."));
+//    exhibitionEntity.insertNoticeImgUrl(S3ObejctUrl);
+//    exhibitionRepository.save(exhibitionEntity);
+//    log.info("Notice Image의 S3 객체 Url을 DB에 업데이트 했습니다.");
+//  }
 }
