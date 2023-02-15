@@ -1,33 +1,23 @@
-package com.dev.museummate.security;
+package com.dev.museummate.global.security;
 
 import com.dev.museummate.domain.dto.ErrorResponse;
 import com.dev.museummate.domain.dto.Response;
 import com.dev.museummate.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.stereotype.Component;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
-@Component
-@Slf4j
-public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
-
+public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
-        throws IOException {
-        ErrorCode errorCode = (ErrorCode) request.getAttribute("errorCode");
-
-        if (errorCode == null) {
-            errorCode = ErrorCode.TOKEN_NOT_FOUND;
-        }
-
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         ObjectMapper objectMapper = new ObjectMapper();
 
+        ErrorCode errorCode = ErrorCode.FORBIDDEN_ACCESS;
         response.setStatus(errorCode.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");

@@ -1,4 +1,4 @@
-package com.dev.museummate.configuration;
+package com.dev.museummate.global.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -14,10 +14,13 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("*")
+//                .allowedOriginPatterns("*")
 //                .allowedOrigins(allowedOrigins)
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
-                .allowCredentials(true)
-                .maxAge(3600);
+            .allowedOriginPatterns(allowedOrigins)
+            .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
+            .allowedHeaders("*")
+            .exposedHeaders("Set-Cookie")
+            .allowCredentials(true)
+            .maxAge(3600);
     }
 }

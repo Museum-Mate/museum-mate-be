@@ -1,4 +1,4 @@
-package com.dev.museummate.security.oauth2;
+package com.dev.museummate.global.security.oauth2;
 
 import com.dev.museummate.domain.UserRole;
 import com.dev.museummate.domain.entity.UserEntity;

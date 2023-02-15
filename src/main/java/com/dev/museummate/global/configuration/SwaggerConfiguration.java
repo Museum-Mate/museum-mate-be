@@ -1,4 +1,4 @@
-package com.dev.museummate.configuration;
+package com.dev.museummate.global.configuration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;

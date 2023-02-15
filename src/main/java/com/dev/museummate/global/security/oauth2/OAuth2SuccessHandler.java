@@ -1,4 +1,4 @@
-package com.dev.museummate.security.oauth2;
+package com.dev.museummate.global.security.oauth2;
 
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.global.utils.CookieUtils;
