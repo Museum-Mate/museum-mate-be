@@ -1,4 +1,4 @@
-package com.dev.museummate.security.oauth2;
+package com.dev.museummate.global.security.oauth2;
 
 import java.util.Arrays;
 import java.util.Map;

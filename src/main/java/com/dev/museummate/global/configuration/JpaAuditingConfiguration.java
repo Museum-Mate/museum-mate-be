@@ -1,4 +1,4 @@
-package com.dev.museummate.configuration;
+package com.dev.museummate.global.configuration;
 
 import com.dev.museummate.domain.entity.AuditorAwareImpl;
 import org.springframework.context.annotation.Bean;

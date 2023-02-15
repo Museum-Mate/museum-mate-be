@@ -1,4 +1,4 @@
-package com.dev.museummate.configuration;
+package com.dev.museummate.global.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
