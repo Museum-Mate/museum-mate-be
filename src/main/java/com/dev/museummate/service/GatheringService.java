@@ -5,6 +5,7 @@ import com.dev.museummate.domain.dto.gathering.CommentRequest;
 import com.dev.museummate.domain.dto.gathering.GatheringDto;
 import com.dev.museummate.domain.dto.gathering.GatheringPostRequest;
 import com.dev.museummate.domain.dto.gathering.ParticipantDto;
+import com.dev.museummate.domain.entity.AlarmEntity;
 import com.dev.museummate.domain.entity.CommentEntity;
 import com.dev.museummate.domain.entity.ExhibitionEntity;
 import com.dev.museummate.domain.entity.GatheringEntity;
@@ -12,6 +13,7 @@ import com.dev.museummate.domain.entity.ParticipantEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
+import com.dev.museummate.repository.AlarmRepository;
 import com.dev.museummate.repository.CommentRepository;
 import com.dev.museummate.repository.ExhibitionRepository;
 import com.dev.museummate.repository.GatheringRepository;
@@ -37,6 +39,7 @@ public class GatheringService {
     private final UserRepository userRepository;
     private final ExhibitionRepository exhibitionRepository;
     private final ParticipantRepository participantRepository;
+    private final AlarmRepository alarmRepository;
 
     private final CommentRepository commentRepository;
     public UserEntity findUserByEmail(String email) {
@@ -147,6 +150,11 @@ public class GatheringService {
             findGatheringPost.closePost();
             gatheringRepository.save(findGatheringPost);
         }
+
+        AlarmEntity savedAlarm = AlarmEntity.createAlarm(participant.getUser(), findGatheringPost.getExhibition(),
+                                                    String.format("모집글 %s에 신청이 승인 되었습니다",
+                                                                  findGatheringPost.getTitle()));
+        alarmRepository.save(savedAlarm);
 
         return "신청을 승인 했습니다.";
     }
