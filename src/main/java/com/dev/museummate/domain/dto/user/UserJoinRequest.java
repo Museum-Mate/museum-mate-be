@@ -30,6 +30,7 @@ public class UserJoinRequest {
                 .phoneNumber(this.phoneNumber)
                 .password(encodedPassword)
                 .role(UserRole.ROLE_USER)
+                .auth(false)
                 .build();
     }
 }
