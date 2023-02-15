@@ -18,9 +18,9 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 //            .allowedOrigins(allowedOrigins)
 //            .allowedOriginPatterns(allowedOrigins)
             .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
-//            .allowedHeaders("*")
+            .allowedHeaders("*")
 //            .exposedHeaders("Set-Cookie")
-//            .allowCredentials(true)
+            .allowCredentials(true)
             .maxAge(3600);
     }
 }
