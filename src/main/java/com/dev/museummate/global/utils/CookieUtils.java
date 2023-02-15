@@ -63,8 +63,7 @@ public class CookieUtils {
                 .httpOnly(false)
                 .secure(true)
                 .sameSite("None")
-//                .domain("localhost")
-//                .domain("www.withmuma.com")
+                .domain("www.withmuma.com")
                 .path("/")
                 .maxAge(ACCESS_TOKEN_MAX_AGE)
                 .build();
@@ -81,8 +80,7 @@ public class CookieUtils {
                 .httpOnly(false)
                 .secure(true)
                 .sameSite("None")
-//                .domain("localhost")
-//                .domain("www.withmuma.com")
+                .domain("www.withmuma.com")
                 .path("/")
                 .maxAge(REFRESH_TOKEN_MAX_AGE)
                 .build();
