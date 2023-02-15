@@ -13,10 +13,10 @@
 하나의 커뮤니티에서 전시회의 정보를 한눈에 볼 수 있는 서비스를 개발함 으로써
 모든 전시회 관람객 및 관계자들의 불편을 해결하려합니다 !
 
----
+
 ## 🚀 Demo
 영상 촬영 후 데모 넣기
----
+
 ## 🛠 Tech Stacks
 
 ### Frontend
@@ -27,7 +27,6 @@
 
 ## 🔌 Infrastructures
 
----
 ![infra struct](https://user-images.githubusercontent.com/96861601/218961549-018da68e-0d0a-44e3-864a-895923509299.png)
 
 
@@ -37,6 +36,5 @@
 |:-:|:-:|:--:|:-:|:-:|:-:|
 |<img src="https://user-images.githubusercontent.com/96861601/218968547-4e0ad220-911d-471e-bc9e-2136def6b47f.png" alt="geuun" width="100" height="100">|<img src="https://user-images.githubusercontent.com/96861601/218969106-81d3a3a4-5620-4491-ad5e-d8fdf1db40fe.png" alt="hyeonju" width="100" height="100">|<img src="https://user-images.githubusercontent.com/96861601/218969282-01717c16-62c5-48d1-ab2d-35619147cf23.png" alt="kimoon" width="100" height="100">|<img src="https://user-images.githubusercontent.com/96861601/218969539-bb87a3a3-be54-48ea-b80b-ab89915e8982.png" alt="jiyoung" width="100" height="100">|<img src="https://user-images.githubusercontent.com/96861601/218969697-47c02146-a725-48b9-996d-4cfd506e251d.png" alt="sangjun" width="100" height="100">|<img src="https://user-images.githubusercontent.com/96861601/218969796-997d66f6-f1e3-40a5-ba74-b95ab8c6eb2d.png" alt="minjun" width="100" height="100">|
 |[Geuun](https://github.com/Geuun)|[hyeonju01](https://github.com/hyeonju01)|[moomineee](https://github.com/moomineee)|[ahn-ji0](https://github.com/ahn-ji0)|[leejoonsang](https://github.com/leejoonsang)|[chlalswns200](https://github.com/chlalswns200)|
----
 
 <br>
