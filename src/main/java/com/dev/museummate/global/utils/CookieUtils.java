@@ -61,7 +61,7 @@ public class CookieUtils {
         ResponseCookie cookie =
             ResponseCookie.from(ACCESS_TOKEN_HEADER, value)
                 .httpOnly(false)
-                .secure(true)
+                .secure(false)
                 .sameSite("Lax")
                 .domain("www.withmuma.com")
                 .path("/")
@@ -78,7 +78,7 @@ public class CookieUtils {
         ResponseCookie cookie =
             ResponseCookie.from(REFRESH_TOKEN_HEADER, value)
                 .httpOnly(false)
-                .secure(true)
+                .secure(false)
                 .sameSite("Lax")
                 .domain("www.withmuma.com")
                 .path("/")
