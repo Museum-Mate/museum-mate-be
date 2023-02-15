@@ -14,6 +14,7 @@ import com.dev.museummate.service.UserService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,8 +105,12 @@ public class UserController {
     }
 
     @GetMapping("/auth")
-    public Response<SimpleMessageResponse> auth(@RequestParam("authNum") String authNum, @RequestParam("email") String email) {
+    public Response<SimpleMessageResponse> auth(HttpServletResponse response, @RequestParam("authNum") String authNum, @RequestParam("email") String email)
+        throws IOException {
         String msg = userService.auth(authNum, email);
+
+        response.sendRedirect("http://withmuseum.com");
+
         return Response.success(new SimpleMessageResponse(msg));
     }
 }

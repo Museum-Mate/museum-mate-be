@@ -4,6 +4,7 @@ import com.dev.museummate.global.redis.RedisDao;
 import com.dev.museummate.controller.ExampleController;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.fixture.UserEntityFixture;
+import com.dev.museummate.global.security.SecurityConfiguration;
 import com.dev.museummate.repository.UserRepository;
 import com.dev.museummate.global.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
