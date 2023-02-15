@@ -1,7 +1,7 @@
 package com.dev.museummate.controller;
 
 import com.dev.museummate.domain.dto.Response;
-import com.dev.museummate.domain.dto.exhibition.ExhibitionFileUrlResponse;
+//import com.dev.museummate.domain.dto.exhibition.ExhibitionFileUrlResponse;
 import com.dev.museummate.service.ExhibitionImageService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.io.IOException;
