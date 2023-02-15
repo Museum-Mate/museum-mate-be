@@ -1,5 +1,6 @@
 package com.dev.museummate.repository;
 
+import com.dev.museummate.domain.entity.GatheringEntity;
 import com.dev.museummate.domain.entity.ParticipantEntity;
 import java.util.List;
 import java.util.Optional;
@@ -13,5 +14,6 @@ public interface ParticipantRepository extends JpaRepository<ParticipantEntity, 
     List<ParticipantEntity> findAllByGatheringIdAndApprove(Long gatheringId, Boolean approve);
     Integer countByGatheringIdAndApproveTrue(Long gatheringId);
     Page<ParticipantEntity> findAllByUserIdAndHostFlagAndApprove(Long userId, Boolean hostFlag,Boolean approve,Pageable pageable);
+    void deleteAllByGathering(GatheringEntity savedGathering);
 
 }

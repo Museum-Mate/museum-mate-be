@@ -236,6 +236,7 @@ public class GatheringService {
         return GatheringDto.toDto(savedGathering,currentPeople);
     }
 
+    @Transactional
     public Long delete(Long gatheringId, String email) {
 
         UserEntity user = findUserByEmail(email);
@@ -243,6 +244,8 @@ public class GatheringService {
         GatheringEntity savedGathering = findPostById(gatheringId);
 
         checkUser(user, savedGathering.getUser());
+
+        participantRepository.deleteAllByGathering(savedGathering);
 
         gatheringRepository.deleteById(savedGathering.getId());
 
