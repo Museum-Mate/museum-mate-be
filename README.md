@@ -17,8 +17,7 @@
 
 
 ## 🚀 Demo
-![image](https://user-images.githubusercontent.com/96861601/219279490-266184c2-4378-4436-9c4c-31a5dd122446.png)
-
+![main](https://user-images.githubusercontent.com/96861601/219281040-8b8cc08f-7e7c-4439-9679-a0d7b96b0f7a.gif)
 ## 🛠 Tech Stacks
 
 ### Frontend
