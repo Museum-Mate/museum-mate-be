@@ -1,5 +1,7 @@
 # Museum-Mate
 [로고 자리]
+<p align="center"><img src="https://user-images.githubusercontent.com/96861601/219260414-9b026172-7184-4876-b532-db027e06b7d6.png"></p>
+
 <p align="center">
 
   <img src="https://img.shields.io/badge/Node.js-v18.14.0-9?logo=Node.js" alt="Node.js" />
