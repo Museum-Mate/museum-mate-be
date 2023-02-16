@@ -17,7 +17,7 @@
 
 
 ## 🚀 Demo
-영상 촬영 후 데모 넣기
+![image](https://user-images.githubusercontent.com/96861601/219279490-266184c2-4378-4436-9c4c-31a5dd122446.png)
 
 ## 🛠 Tech Stacks
 
