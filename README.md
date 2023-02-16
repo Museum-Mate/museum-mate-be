@@ -18,6 +18,9 @@
 
 ## 🚀 Demo
 ![main](https://user-images.githubusercontent.com/96861601/219281040-8b8cc08f-7e7c-4439-9679-a0d7b96b0f7a.gif)
+![mypage](https://user-images.githubusercontent.com/89567475/219294997-f7dc9ca0-5add-4584-93f3-ba7ac8bfbd33.gif)
+![post1](https://user-images.githubusercontent.com/89567475/219295105-b80af663-b238-418c-b246-02057d1378f6.gif)
+![post2](https://user-images.githubusercontent.com/89567475/219295119-8f059b13-0ae4-4932-8287-d1b68e59f135.gif)
 ## 🛠 Tech Stacks
 
 ### Frontend
