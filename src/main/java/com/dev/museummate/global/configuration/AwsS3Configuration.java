@@ -1,4 +1,4 @@
-package com.dev.museummate.configuration;
+package com.dev.museummate.global.configuration;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
