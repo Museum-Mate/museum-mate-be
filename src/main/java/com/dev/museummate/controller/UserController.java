@@ -109,7 +109,7 @@ public class UserController {
         throws IOException {
         String msg = userService.auth(authNum, email);
 
-        response.sendRedirect("http://withmuseum.com");
+        response.sendRedirect("http://www.withmuma.com");
 
         return Response.success(new SimpleMessageResponse(msg));
     }

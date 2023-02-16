@@ -15,4 +15,7 @@ public interface BookmarkRepository extends JpaRepository<BookmarkEntity, Long> 
     List<BookmarkEntity> findByUser(UserEntity user);
 
     List<BookmarkEntity> findByExhibition_EndAt(String date);
+
+    List<BookmarkEntity> findByExhibition_EndAtStartsWith(String date);
+
 }
