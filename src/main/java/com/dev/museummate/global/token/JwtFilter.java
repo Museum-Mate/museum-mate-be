@@ -15,7 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -101,27 +101,8 @@ public class JwtFilter extends OncePerRequestFilter {
             return; // 필터가 더 이상 진행되지 않도록 리턴
         }
 
-        Cookie[] cookie = request.getCookies();
-        log.info("request.getCookies() : {}", (Object[]) request.getCookies());
-
-        Optional<String> accessTokenAtCookie = CookieUtils.extractAccessToken(request);
-        Optional<String> refreshTokenAtCookie = CookieUtils.extractRefreshToken(request);
-
-        // 쿠키에 토큰이 없을 때
-//        if (accessTokenAtCookie.isEmpty() && refreshTokenAtCookie.isEmpty()) {
-//            log.error("모든 토큰이 없습니다.");
-//            log.info("request.getRequestURI() : {}", request.getRequestURI());
-//            log.info("[AccessTokenAtCookie] : {}", accessTokenAtCookie);
-//            log.info("[RefreshTokenAtCookie] : {}", refreshTokenAtCookie);
-//            filterChain.doFilter(request, response);
-//            return; // 필터가 더 이상 진행되지 않도록 리턴
-//        }
-
-        if (accessTokenAtCookie.isEmpty()) {
-            throw new JwtException("AccessToken이 없습니다.");
-        }
-
-        String accessToken = accessTokenAtCookie.get();
+        String accessToken = CookieUtils.extractAccessToken(request)
+            .orElseThrow(() -> new AppException(ErrorCode.TOKEN_NOT_FOUND));
 
         if (jwtUtils.isValid(accessToken)) {
             throw new JwtException("잘못된 AccessToken 입니다.");
@@ -131,6 +112,10 @@ public class JwtFilter extends OncePerRequestFilter {
             throw new JwtException("만료된 AccessToken 입니다.");
         }
 
+        if (Objects.equals(redisDao.getValues(accessToken), "logout")) {
+            throw new JwtException("로그아웃 된 AccessToken 입니다.");
+        }
+
         String email = jwtUtils.getEmail(accessToken);
 
         UserEntity userEntity =
@@ -138,14 +123,9 @@ public class JwtFilter extends OncePerRequestFilter {
                 .orElseThrow(() -> new AppException(ErrorCode.EMAIL_NOT_FOUND));
 
         // refresh Token 존재 여부 확인
-        if (refreshTokenAtCookie.isEmpty()) {
-            log.error("Refresh Token이 없습니다.");
-            log.info("request.getRequestURI() : {}", request.getRequestURI());
-            log.info("request.getRequestURL() : {}", request.getRequestURL());
-            throw new JwtException("Refresh Token이 없습니다.");
-        }
+        String refreshToken = CookieUtils.extractRefreshToken(request)
+            .orElseThrow(() -> new AppException(ErrorCode.TOKEN_NOT_FOUND));
 
-        String refreshToken = refreshTokenAtCookie.get();
         log.info("refreshToken : {}", refreshToken);
 
         // access Token 만료된 경우 -> refresh Token 검증
@@ -163,7 +143,7 @@ public class JwtFilter extends OncePerRequestFilter {
         log.info("newRefreshToken : {}", newRefreshToken);
 
         // Redis에 재발급된 refresh Token 저장
-//        redisDao.setValues("RT:" + email, newRefreshToken, refreshTokenMaxAge, TimeUnit.SECONDS);
+        redisDao.setValues("RT:" + email, newRefreshToken, refreshTokenMaxAge, TimeUnit.SECONDS);
 
         userEntity =
             userRepository.findByEmail(email)
