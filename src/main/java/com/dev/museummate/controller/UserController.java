@@ -80,9 +80,9 @@ public class UserController {
         return Response.success(userLoginResponse);
     }
 
-    @PostMapping("/logout")
-    public Response<SimpleMessageResponse> logout(@RequestBody UserTokenRequest userLogoutRequest, Authentication authentication) {
-        String msg = userService.logout(userLogoutRequest, authentication.getName());
+    @GetMapping("/logout")
+    public Response<SimpleMessageResponse> logout(HttpServletRequest request, Authentication authentication) {
+        String msg = userService.logout(request, authentication.getName());
         return Response.success(new SimpleMessageResponse(msg));
     }
 
