@@ -77,13 +77,13 @@ class MyServiceTest {
             .phoneNumber("01012341234")
             .build();
 
-        given(userRepository.findByEmail("email@naver.com"))
+        given(userRepository.findByEmail(user.getEmail()))
             .willThrow(new AppException(ErrorCode.EMAIL_NOT_FOUND, "조회 불가"));
 
         try {
             UserDto myInfo = myService.getMyInfo("email@naver.com");
         } catch (Exception e) {
-            assertEquals("email not found: 조회 불가",e.getMessage());
+            assertEquals("조회 불가",e.getMessage());
         }
 
     }
