@@ -12,6 +12,7 @@ import com.dev.museummate.domain.entity.ParticipantEntity;
 import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
+import com.dev.museummate.repository.AlarmRepository;
 import com.dev.museummate.repository.CommentRepository;
 import com.dev.museummate.repository.ExhibitionRepository;
 import com.dev.museummate.repository.GatheringRepository;
@@ -31,10 +32,11 @@ class GatheringServiceTest {
     ExhibitionRepository exhibitionRepository = mock(ExhibitionRepository.class);
     ParticipantRepository participantRepository = mock(ParticipantRepository.class);
     CommentRepository commentRepository = mock(CommentRepository.class);
+    AlarmRepository alarmRepository = mock(AlarmRepository.class);
 
     @BeforeEach
     public void setUp() {
-        gatheringService = new GatheringService(gatheringRepository, userRepository, exhibitionRepository, participantRepository, commentRepository);
+        gatheringService = new GatheringService(gatheringRepository, userRepository, exhibitionRepository, participantRepository, alarmRepository, commentRepository);
     }
 
     @Test

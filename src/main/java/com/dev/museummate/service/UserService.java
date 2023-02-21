@@ -11,8 +11,10 @@ import com.dev.museummate.domain.entity.UserEntity;
 import com.dev.museummate.exception.AppException;
 import com.dev.museummate.exception.ErrorCode;
 import com.dev.museummate.global.redis.RedisDao;
+import com.dev.museummate.global.utils.CookieUtils;
 import com.dev.museummate.global.utils.JwtUtils;
 import com.dev.museummate.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -124,11 +126,10 @@ public class UserService {
 
     }
 
-    public String logout(UserTokenRequest userTokenRequest, String email) {
+    public String logout(HttpServletRequest request, String email) {
 
-        UserEntity findUser = findUserByEmail(email);
-
-        String accessToken = userTokenRequest.getAccessToken();
+        String accessToken = CookieUtils.extractAccessToken(request)
+            .orElseThrow(() -> new AppException(ErrorCode.INVALID_TOKEN, "잘못된 토큰입니다."));
 
         if (jwtUtils.isExpired(accessToken)) {
             throw new AppException(ErrorCode.INVALID_TOKEN, "만료된 토큰입니다.");
@@ -138,14 +139,16 @@ public class UserService {
             throw new AppException(ErrorCode.INVALID_TOKEN, "잘못된 토큰입니다.");
         }
 
+        UserEntity findUser = findUserByEmail(email);
+
         // Token 삭제
         redisDao.deleteValues("RT:" + findUser.getEmail());
 
-        int expiration = jwtUtils.getExpiration(userTokenRequest.getAccessToken()).intValue() / 1000;
+        int expiration = jwtUtils.getExpiration(accessToken).intValue() / 1000;
 
         log.info("expiration = {}sec", expiration);
 
-        redisDao.setValues(userTokenRequest.getAccessToken(), "logout", expiration, TimeUnit.SECONDS);
+        redisDao.setValues(accessToken, "logout", expiration, TimeUnit.SECONDS);
 
         return "로그아웃 되었습니다.";
     }

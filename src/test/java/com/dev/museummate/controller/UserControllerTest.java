@@ -354,7 +354,7 @@ class UserControllerTest {
                 .willReturn("로그아웃 되었습니다.");
 
         //when
-        mockMvc.perform(post("/api/v1/users/logout")
+        mockMvc.perform(get("/api/v1/users/logout")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(userTokenRequest)))
@@ -516,7 +516,7 @@ class UserControllerTest {
                         .param("email","chlalswns200@naver.com")
                         .with(csrf()))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().is3xxRedirection()); // 인증 성공으로 인해서 Spring Security에서 리다이렉트 -> 302
     }
 
     @Test
